@@ -1,0 +1,273 @@
+version: "3.9"
+
+x-python-env: &python-env
+  PYTHONUNBUFFERED: "1"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: outing
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres_admin_pw
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d outing"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"   # management UI: guest/guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  user-service:
+    build:
+      context: .
+      dockerfile: services/user-service/Dockerfile
+    environment:
+      <<: *python-env
+      # app_role: CRUD on tenant-owned schemas only, enforced by RLS (see postgres/init.sql)
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/outing
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8001:8000"
+
+  place-service:
+    build:
+      context: .
+      dockerfile: services/place-service/Dockerfile
+    environment:
+      <<: *python-env
+      # app_role: CRUD on tenant-owned schemas only, enforced by RLS (see postgres/init.sql)
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/outing
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8002:8000"
+
+  context-service:
+    build:
+      context: .
+      dockerfile: services/context-service/Dockerfile
+    environment:
+      <<: *python-env
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - redis
+    ports:
+      - "8003:8000"
+
+  interaction-service:
+    build:
+      context: .
+      dockerfile: services/interaction-service/Dockerfile
+    environment:
+      <<: *python-env
+      # app_role: CRUD on tenant-owned schemas only, enforced by RLS (see postgres/init.sql)
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/outing
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8004:8000"
+
+  recommendation-engine:
+    build:
+      context: .
+      dockerfile: services/recommendation-engine/Dockerfile
+    environment:
+      <<: *python-env
+      MODEL_PATH: /models/xgboost_model.json
+      MODEL_METADATA_PATH: /models/xgboost_model.meta.json
+      RANKING_CONFIG_PATH: /configs/ranking.yaml
+      EVALUATION_RESULTS_PATH: /evaluation/evaluation_results.csv
+      REDIS_URL: redis://redis:6379/0
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+      USER_SERVICE_URL: http://user-service:8000
+      PLACE_SERVICE_URL: http://place-service:8000
+      CONTEXT_SERVICE_URL: http://context-service:8000
+      INTERACTION_SERVICE_URL: http://interaction-service:8000
+    volumes:
+      - models_data:/models
+      - ./configs:/configs:ro
+      - ./evaluation:/evaluation:ro
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      user-service:
+        condition: service_started
+      place-service:
+        condition: service_started
+      context-service:
+        condition: service_started
+      interaction-service:
+        condition: service_started
+    ports:
+      - "8005:8000"
+
+  itinerary-service:
+    build:
+      context: .
+      dockerfile: services/itinerary-service/Dockerfile
+    environment:
+      <<: *python-env
+      # app_role: CRUD on tenant-owned schemas only, enforced by RLS (see postgres/init.sql)
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/outing
+      # worker_role: read-only on platform.tenants, used to enumerate every
+      # tenant for the feedback-reminder and weather-watch background loops.
+      PLATFORM_DATABASE_URL: postgresql://worker_role:worker_role_pw@postgres:5432/outing
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+      PLACE_SERVICE_URL: http://place-service:8000
+      CONTEXT_SERVICE_URL: http://context-service:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      place-service:
+        condition: service_started
+      context-service:
+        condition: service_started
+    ports:
+      - "8006:8000"
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: services/notification-service/Dockerfile
+    environment:
+      <<: *python-env
+      # app_role: CRUD on tenant-owned schemas only, enforced by RLS (see postgres/init.sql)
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/outing
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8007:8000"
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    environment:
+      <<: *python-env
+      # gateway_role: resolves X-API-Key -> tenant_id and provisions new
+      # tenants via POST /tenants. No access to any tenant-owned schema.
+      PLATFORM_DATABASE_URL: postgresql://gateway_role:gateway_role_pw@postgres:5432/outing
+      REDIS_URL: redis://redis:6379/0
+      USER_SERVICE_URL: http://user-service:8000
+      PLACE_SERVICE_URL: http://place-service:8000
+      CONTEXT_SERVICE_URL: http://context-service:8000
+      INTERACTION_SERVICE_URL: http://interaction-service:8000
+      RECOMMENDATION_ENGINE_URL: http://recommendation-engine:8000
+      ITINERARY_SERVICE_URL: http://itinerary-service:8000
+      NOTIFICATION_SERVICE_URL: http://notification-service:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      user-service:
+        condition: service_started
+      place-service:
+        condition: service_started
+      context-service:
+        condition: service_started
+      interaction-service:
+        condition: service_started
+      recommendation-engine:
+        condition: service_started
+      itinerary-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000/api
+        NEXT_PUBLIC_API_KEY: demo-key
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api
+      NEXT_PUBLIC_API_KEY: demo-key
+    depends_on:
+      - api-gateway
+    ports:
+      - "3001:3000"
+
+  model-training-worker:
+    build:
+      context: .
+      dockerfile: services/model-training-worker/Dockerfile
+    environment:
+      <<: *python-env
+      MODEL_PATH: /models/xgboost_model.json
+      MODEL_METADATA_PATH: /models/xgboost_model.meta.json
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+    volumes:
+      - models_data:/models
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    profiles: ["tools"]   # run on demand: docker compose run --rm model-training-worker
+
+  sentiment-worker:
+    build:
+      context: .
+      dockerfile: services/sentiment-worker/Dockerfile
+    environment:
+      <<: *python-env
+      PLACE_SERVICE_URL: http://place-service:8000
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+      # worker_role: read-only on platform.tenants, used to enumerate every
+      # tenant for the startup catalog sweep.
+      PLATFORM_DATABASE_URL: postgresql://worker_role:worker_role_pw@postgres:5432/outing
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      place-service:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  models_data:

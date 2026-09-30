@@ -1,0 +1,476 @@
+/* ---------------------------------------------------------------------
+   Nearby & Co. — a private booking-desk aesthetic for outing planning.
+   Signature element: recommendations render as reservation ticket
+   stubs (perforated divider, mono ticket numbers) rather than generic
+   listing cards — the one idea this page is built around.
+--------------------------------------------------------------------- */
+
+:root {
+  --ink: #14171f;
+  --ink-2: #1b1f29;
+  --ink-3: #232838;
+  --paper: #fbf8f2;
+  --paper-dim: #f1ecdf;
+  --brass: #c9a15a;
+  --brass-bright: #ddb96f;
+  --brass-dim: #8a7343;
+  --burgundy: #b0505c;
+  --sage: #8ea27e;
+  --slate: #9aa0ad;
+  --slate-strong: #c6cad3;
+  --on-paper-ink: #201c14;
+  --on-paper-muted: #6f6858;
+  --hairline: rgba(255, 255, 255, 0.09);
+  --hairline-paper: rgba(32, 28, 20, 0.14);
+
+  --font-display: var(--font-display), "Iowan Old Style", serif;
+  --font-body: var(--font-body), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: var(--font-mono), "SFMono-Regular", monospace;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(201, 161, 90, 0.10), transparent 60%),
+    var(--ink);
+  color: var(--slate-strong);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fade-in {
+    animation: fadeIn 0.5s ease both;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+.page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 56px 20px 100px;
+}
+
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin: 0 0 10px;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-style: italic;
+  font-size: 2.1rem;
+  letter-spacing: -0.01em;
+  color: #fff;
+  margin: 0 0 6px;
+}
+
+.subtitle {
+  color: var(--slate);
+  margin: 0;
+  font-size: 0.95rem;
+  max-width: 42ch;
+}
+
+a {
+  color: var(--brass);
+}
+
+/* ---------- form card (a "reservation request" slip) ---------- */
+
+.card {
+  background: var(--paper);
+  color: var(--on-paper-ink);
+  border-radius: 4px;
+  padding: 26px 26px 24px;
+  margin-bottom: 22px;
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.55);
+  border-top: 3px solid var(--brass);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+}
+
+label {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--on-paper-muted);
+  margin-bottom: 5px;
+  margin-top: 14px;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--hairline-paper);
+  border-radius: 3px;
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  background: #fff;
+  color: var(--on-paper-ink);
+}
+
+input:focus-visible,
+select:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+
+input[type="range"] {
+  padding: 0;
+  accent-color: var(--brass-dim);
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 3px;
+  padding: 11px 20px;
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+button:active {
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--brass-bright);
+  margin-top: 20px;
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--brass-dim);
+  border: 1px solid var(--brass-dim);
+  padding: 7px 12px;
+  font-size: 0.78rem;
+  margin-top: 8px;
+}
+
+.btn-tiny {
+  background: transparent;
+  color: var(--on-paper-muted);
+  border: 1px solid var(--hairline-paper);
+  padding: 5px 11px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.btn-tiny:hover {
+  border-color: var(--brass-dim);
+  color: var(--on-paper-ink);
+}
+
+.toggle-row {
+  margin-top: 16px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--on-paper-ink);
+  margin: 0;
+  cursor: pointer;
+}
+.checkbox-label input {
+  width: auto;
+}
+
+.advanced-panel {
+  border-top: 1px dashed var(--hairline-paper);
+  margin-top: 16px;
+  padding-top: 14px;
+}
+
+.slider-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.slider-row label {
+  margin: 0;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.82rem;
+}
+
+.hint {
+  font-size: 0.78rem;
+  color: var(--on-paper-muted);
+  margin: 4px 0 0;
+}
+
+.error {
+  color: var(--burgundy);
+  background: rgba(176, 80, 92, 0.08);
+  border: 1px solid rgba(176, 80, 92, 0.35);
+  border-radius: 3px;
+  padding: 10px 12px;
+  margin-top: 14px;
+  font-size: 0.85rem;
+}
+
+/* ---------- results panel ---------- */
+
+.results-card {
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  border-top: none;
+}
+
+.context-line {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--slate);
+  letter-spacing: 0.02em;
+  margin-bottom: 16px;
+  padding-left: 2px;
+}
+
+.empty {
+  color: var(--slate);
+  font-size: 0.9rem;
+  padding: 20px 2px;
+}
+
+/* ---------- ticket-stub recommendation cards ---------- */
+
+.ticket {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  background: var(--paper);
+  color: var(--on-paper-ink);
+  border-radius: 4px;
+  margin-bottom: 14px;
+  box-shadow: 0 14px 34px -18px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.ticket-stub {
+  position: relative;
+  background: var(--paper-dim);
+  padding: 16px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-right: 2px dashed var(--hairline-paper);
+}
+
+.ticket-stub::before,
+.ticket-stub::after {
+  content: "";
+  position: absolute;
+  right: -9px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+.ticket-stub::before {
+  top: -9px;
+}
+.ticket-stub::after {
+  bottom: -9px;
+}
+
+.ticket-score {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--brass-dim);
+  line-height: 1;
+}
+.ticket-score-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-paper-muted);
+  margin-top: 4px;
+}
+.ticket-category {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-paper-muted);
+  margin-top: 10px;
+}
+
+.ticket-main {
+  padding: 16px 18px 14px;
+  min-width: 0;
+}
+
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.ticket-name {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.15rem;
+  color: var(--on-paper-ink);
+  margin: 0;
+}
+
+.ticket-meta {
+  color: var(--on-paper-muted);
+  font-size: 0.82rem;
+  margin: 3px 0 10px;
+}
+
+.reasons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.reason-chip {
+  background: rgba(201, 161, 90, 0.14);
+  border: 1px solid rgba(201, 161, 90, 0.3);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  color: var(--brass-dim);
+}
+
+.action-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.breakdown {
+  margin-top: 12px;
+  background: var(--ink);
+  color: var(--slate-strong);
+  border-radius: 3px;
+  padding: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  overflow-x: auto;
+}
+
+/* ---------- model-card page ---------- */
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.metric-tile {
+  background: var(--paper-dim);
+  border-radius: 3px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--brass);
+}
+
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  color: var(--on-paper-ink);
+}
+
+.metric-label {
+  font-size: 0.72rem;
+  color: var(--on-paper-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+table.eval-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  margin-top: 8px;
+}
+table.eval-table th,
+table.eval-table td {
+  text-align: left;
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--hairline-paper);
+}
+table.eval-table th {
+  color: var(--on-paper-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+}
+
+/* ---------- responsive ---------- */
+
+@media (max-width: 520px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .ticket {
+    grid-template-columns: 72px 1fr;
+  }
+  .top-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

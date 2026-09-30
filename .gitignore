@@ -1,0 +1,39 @@
+# --- Secrets / local config ---
+.env
+.env.*
+!.env.example
+docker-compose.override.yml
+
+# --- Archives ---
+*.zip
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+*.egg-info/
+
+# --- Node / Next.js (frontend) ---
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+npm-debug.log*
+
+# --- Trained models / generated artifacts ---
+*.pkl
+*.joblib
+models/
+
+# --- Logs ---
+*.log
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

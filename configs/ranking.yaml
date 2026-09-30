@@ -1,0 +1,68 @@
+# Ranking weight configuration (Review §48: config-driven, not hard-coded).
+#
+# Two profiles per the cold-start strategy (Review §9):
+#   - new_user:      little/no interaction history -> drop collaborative filtering
+#                     to avoid it becoming a blocking dependency; lean on
+#                     content, context, popularity, and XGBoost instead.
+#   - existing_user:  enough interaction history -> collaborative filtering
+#                     contributes meaningfully.
+#
+# All weights within a profile should sum to ~1.0. Tune experimentally
+# (Review §37-39: evaluation + ablation study) rather than by intuition.
+
+cold_start:
+  # a user with fewer than this many positive interactions (save/visit/rating)
+  # is treated as "new" for weighting purposes
+  min_interactions_for_cf: 3
+
+profiles:
+  new_user:
+    content: 0.30
+    collaborative: 0.00
+    ml: 0.30
+    context: 0.15
+    distance: 0.10
+    popularity: 0.15
+    sentiment: 0.00
+
+  existing_user:
+    content: 0.20
+    collaborative: 0.20
+    ml: 0.30
+    context: 0.10
+    distance: 0.10
+    popularity: 0.05
+    sentiment: 0.05
+
+# Sub-weights for ContextScore = a*Weather + b*Time + c*Budget + d*Group (Review §17)
+context_subweights:
+  weather: 0.35
+  time: 0.25
+  budget: 0.20
+  group: 0.20
+
+# Group consensus (Uniqueness §1): when a request includes multiple user_ids,
+# per-user fused scores are combined with one of these methods rather than a
+# plain average, so one person's taste can't quietly dominate the group.
+#   least_misery  - group score = min(scores) -> nobody hates the pick
+#   average       - group score = mean(scores)
+#   borda         - group score = mean of each user's *rank* position (lower rank number wins)
+group_aggregation:
+  default_method: least_misery
+
+# Explore/exploit re-ranking (Uniqueness §2): after fusion, a diversity pass
+# can penalize candidates too similar to already-selected ones. diversity=0
+# disables it (safe picks); diversity=1 favors variety aggressively. The
+# request-level `diversity` param overrides this default.
+diversity:
+  default: 0.15
+  category_similarity_weight: 0.7
+  ambience_similarity_weight: 0.3
+
+# Place-side cold start (Uniqueness §7): a small UCB-style exploration bonus
+# for low-review-count places so the system doesn't calcify around already-
+# popular spots. bonus = strength / sqrt(review_count + 1), capped.
+place_exploration:
+  strength: 0.08
+  max_bonus: 0.08
+  review_count_ceiling: 200  # places at/above this are considered "established", no bonus
