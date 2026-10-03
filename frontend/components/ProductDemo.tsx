@@ -1,159 +1,137 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import RecommendationCard from "./RecommendationCard";
+import { useState, useMemo, useEffect } from "react";
 import { DEMO_PLACES } from "../lib/demo-data";
 
-const OUTING = ["Solo", "Couple", "Friends", "Family"];
-const BUDGET = ["Low", "Medium", "High"];
-const CATEGORY = ["Any", "Café", "Restaurant", "Cinema", "Park", "Museum", "Bar"];
-const MOOD = ["Any", "Quiet", "Lively", "Romantic", "Adventure"];
-const SETTING = ["Any", "Indoor", "Outdoor"];
+const MOODS = [
+  { id: "slow", label: "Slow & easy", emoji: "☕" },
+  { id: "curious", label: "Curious", emoji: "🔍" },
+  { id: "night", label: "Make it a night", emoji: "🌙" },
+];
 
 export default function ProductDemo() {
-  const [outing, setOuting] = useState("Friends");
-  const [budget, setBudget] = useState("Medium");
-  const [category, setCategory] = useState("Any");
-  const [mood, setMood] = useState("Any");
-  const [setting, setSetting] = useState("Any");
-  const [searched, setSearched] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [mood, setMood] = useState("slow");
+  const [budget, setBudget] = useState(35);
+  const [explore, setExplore] = useState(40);
   const [skipped, setSkipped] = useState<Set<number>>(new Set());
   const [liked, setLiked] = useState<Set<number>>(new Set());
-  const [whyId, setWhyId] = useState<number | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
+  const [animKey, setAnimKey] = useState(0);
+
+  useEffect(() => { setAnimKey((k) => k + 1); }, [mood, budget, explore, skipped]);
 
   const results = useMemo(() => {
-    if (!searched) return [];
     let list = [...DEMO_PLACES];
-    if (category !== "Any") {
-      const map: Record<string, string> = {
-        Café: "cafe", Restaurant: "restaurant", Cinema: "cinema",
-        Park: "park", Museum: "museum", Bar: "bar",
-      };
-      const cat = map[category];
-      if (cat) list = list.filter((p) => p.category === cat).concat(list.filter((p) => p.category !== cat));
+    if (mood === "slow") {
+      list = list.sort((a, b) => {
+        const aQuiet = a.ambience.toLowerCase().includes("quiet") || a.ambience.toLowerCase().includes("calm") ? 1 : 0;
+        const bQuiet = b.ambience.toLowerCase().includes("quiet") || b.ambience.toLowerCase().includes("calm") ? 1 : 0;
+        return bQuiet - aQuiet || b.match - a.match;
+      });
+    } else if (mood === "night") {
+      list = list.sort((a, b) => {
+        const aNight = ["bar","restaurant","cinema"].includes(a.category) ? 1 : 0;
+        const bNight = ["bar","restaurant","cinema"].includes(b.category) ? 1 : 0;
+        return bNight - aNight || b.match - a.match;
+      });
+    } else {
+      list = list.sort((a, b) => b.match - a.match);
     }
-    if (setting === "Indoor") list = list.filter((p) => p.indoor);
-    if (setting === "Outdoor") list = list.filter((p) => !p.indoor);
-    if (budget === "Low") list = list.filter((p) => p.price_range <= 2);
-    if (budget === "High") list = list.sort((a, b) => b.rating - a.rating);
-    return list.filter((p) => !skipped.has(p.id)).slice(0, 4);
-  }, [searched, category, setting, budget, skipped]);
+    if (budget <= 25) list = list.filter((p) => p.price_range <= 2);
+    else if (budget >= 55) list = list.filter((p) => p.price_range >= 2);
+    if (explore > 60) list = list.sort((a, b) => a.match - b.match + (Math.random() - 0.5) * 10);
+    return list.filter((p) => !skipped.has(p.id)).slice(0, 3).map((p, i) => ({
+      ...p,
+      match: Math.min(99, Math.max(72, p.match + (mood === "slow" && p.ambience.includes("Quiet") ? 4 : 0) - i * 2)),
+    }));
+  }, [mood, budget, explore, skipped]);
 
-  const find = () => {
-    setLoading(true);
-    setSkipped(new Set());
-    setTimeout(() => {
-      setSearched(true);
-      setLoading(false);
-    }, 700);
-  };
-
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 2200);
-  };
+  const handleSkip = (id: number) => setSkipped((s) => new Set(s).add(id));
+  const handleLike = (id: number) => setLiked((s) => { const n = new Set(s); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+  const reset = () => { setSkipped(new Set()); setLiked(new Set()); setAnimKey((k) => k + 1); };
 
   return (
-    <div className="demo-panel">
-      <div className="demo-filters">
-        <div>
-          <div className="form-label">Who&apos;s going?</div>
-          <div className="chip-group">
-            {OUTING.map((o) => (
-              <button key={o} type="button" className={`chip ${outing === o ? "active" : ""}`} onClick={() => setOuting(o)}>
-                {o}
+    <div className="demo-shell">
+      <div className="demo-controls">
+        <div className="demo-control-block">
+          <div className="demo-step">01</div>
+          <div className="form-label">What’s the mood?</div>
+          <div className="mood-pills">
+            {MOODS.map((m) => (
+              <button key={m.id} type="button" className={`mood-pill ${mood === m.id ? "active" : ""}`} onClick={() => setMood(m.id)}>
+                <span className="mood-emoji">{m.emoji}</span>{m.label}
               </button>
             ))}
           </div>
         </div>
-        <div>
-          <div className="form-label">Budget</div>
-          <div className="chip-group">
-            {BUDGET.map((b) => (
-              <button key={b} type="button" className={`chip ${budget === b ? "active" : ""}`} onClick={() => setBudget(b)}>
-                {b}
-              </button>
-            ))}
+        <div className="demo-control-block">
+          <div className="demo-step">02</div>
+          <div className="form-label">What feels right? <span className="budget-value">${budget} / person</span></div>
+          <div className="slider-wrap">
+            <span className="slider-edge">$15</span>
+            <input type="range" min={15} max={70} step={5} value={budget} onChange={(e) => setBudget(Number(e.target.value))} className="premium-slider" />
+            <span className="slider-edge">$70+</span>
           </div>
         </div>
-        <div>
-          <div className="form-label">Category</div>
-          <div className="chip-group">
-            {CATEGORY.map((c) => (
-              <button key={c} type="button" className={`chip ${category === c ? "active" : ""}`} onClick={() => setCategory(c)}>
-                {c}
-              </button>
-            ))}
+        <div className="demo-control-block">
+          <div className="demo-step">03</div>
+          <div className="form-label">Something familiar or new?</div>
+          <div className="slider-wrap">
+            <span className="slider-edge">Familiar</span>
+            <input type="range" min={0} max={100} step={5} value={explore} onChange={(e) => setExplore(Number(e.target.value))} className="premium-slider" />
+            <span className="slider-edge">Explore</span>
           </div>
         </div>
-        <div>
-          <div className="form-label">Mood · Setting</div>
-          <div className="chip-group">
-            {MOOD.map((m) => (
-              <button key={m} type="button" className={`chip ${mood === m ? "active" : ""}`} onClick={() => setMood(m)}>
-                {m}
-              </button>
-            ))}
-            {SETTING.map((s) => (
-              <button key={s} type="button" className={`chip ${setting === s ? "active" : ""}`} onClick={() => setSetting(s)}>
-                {s}
-              </button>
-            ))}
-          </div>
+        <div className="demo-weather-note">
+          <span className="weather-icon">🌧</span>
+          <div><strong>Light rain at 9 PM</strong><p>Outdoor plans get a backup</p></div>
         </div>
-        <button type="button" className="btn btn-primary" onClick={find} disabled={loading}>
-          {loading ? "Finding…" : "Find My Outing"}
-        </button>
       </div>
-
-      <div className="demo-results">
-        {!searched && !loading && (
-          <p className="empty" style={{ padding: "24px 0" }}>
-            Choose your preferences above, then hit Find My Outing.
-          </p>
-        )}
-        {loading && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="skeleton" style={{ height: 100 }} />
-            ))}
+      <div className="demo-results-panel">
+        <div className="demo-results-header">
+          <div>
+            <span className="results-count">{results.length} places ranked for you</span>
+            <span className="live-dot"><span className="pulse" /> live ranking</span>
           </div>
-        )}
-        {searched && !loading && results.length === 0 && (
-          <p className="empty">No places left — try different filters or clear skips.</p>
-        )}
-        {searched &&
-          !loading &&
-          results.map((p) => (
-            <RecommendationCard
-              key={p.id}
-              name={p.name}
-              category={p.category}
-              match={p.match}
-              rating={p.rating}
-              distance_km={p.distance_km}
-              price_range={p.price_range}
-              reason={p.reason}
-              weather_fit={p.weather_fit}
-              liked={liked.has(p.id)}
-              showWhy={whyId === p.id}
-              whyContent={`Match ${p.match}% · ${p.ambience} · ${p.weather_fit}\nAligned with ${outing} · ${budget} budget · ${mood} mood`}
-              onLike={() => {
-                setLiked((s) => new Set(s).add(p.id));
-                showToast(`Liked ${p.name}`);
-              }}
-              onSkip={() => {
-                setSkipped((s) => new Set(s).add(p.id));
-                showToast("Skipped");
-              }}
-              onAdd={() => showToast(`Added ${p.name} to itinerary`)}
-              onWhy={() => setWhyId(whyId === p.id ? null : p.id)}
-            />
+          <button type="button" className="btn-ghost-sm" onClick={reset}>Reset list</button>
+        </div>
+        <div className="demo-results-list" key={animKey}>
+          {results.length === 0 ? (
+            <p className="empty">No places left — try resetting or changing filters.</p>
+          ) : results.map((p, i) => (
+            <div key={p.id} className="demo-result-card" style={{ animationDelay: `${i * 80}ms` }}>
+              <div className="drc-visual" data-cat={p.category}>
+                <span className="drc-icon">
+                  {p.category === "cafe" && "☼"}
+                  {p.category === "park" && "🌳"}
+                  {p.category === "cinema" && "🎬"}
+                  {p.category === "bar" && "🍸"}
+                  {p.category === "museum" && "◌"}
+                  {p.category === "restaurant" && "✦"}
+                </span>
+              </div>
+              <div className="drc-body">
+                <div className="drc-meta">
+                  <span className="drc-cat">{p.category} · {p.distance_km} mi</span>
+                  <span className="drc-match">{p.match}%</span>
+                </div>
+                <h4>{p.name}</h4>
+                <p className="drc-reason">{p.reason.split("·")[0].trim()}</p>
+                <div className="drc-tags">
+                  {p.price_range <= 2 && <span className="tag">Under budget</span>}
+                  {p.indoor && <span className="tag">Rain-safe</span>}
+                  {p.ambience.toLowerCase().includes("quiet") && <span className="tag">Quiet</span>}
+                  {i === 0 && <span className="tag">Local favorite</span>}
+                </div>
+              </div>
+              <div className="drc-actions">
+                <button type="button" className={`btn-tiny ${liked.has(p.id) ? "liked" : ""}`} onClick={() => handleLike(p.id)} title="Like">{liked.has(p.id) ? "♥" : "♡"}</button>
+                <button type="button" className="btn-tiny" onClick={() => handleSkip(p.id)} title="Skip">Skip ↗</button>
+              </div>
+            </div>
           ))}
+        </div>
+        <p className="demo-footnote">Ranking updates instantly as you react.</p>
       </div>
-      {toast && <div className="toast">{toast}</div>}
     </div>
   );
 }
