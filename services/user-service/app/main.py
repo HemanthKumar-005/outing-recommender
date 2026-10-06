@@ -20,6 +20,8 @@ class UserCreate(BaseModel):
     budget_max: int = Field(4, ge=0, le=4)
     preferred_categories: list[str] = []
     ambience_preferences: list[str] = []
+    preferred_occasions: list[str] = []
+    preferred_duration: str = "4-6 hours"
     preferred_distance_km: float = 10.0
     preferred_outing_type: str = Field("friends", pattern="^(couple|friends|family|solo)$")
     home_lat: float | None = None
@@ -31,6 +33,8 @@ class PreferencesUpdate(BaseModel):
     budget_max: int | None = None
     preferred_categories: list[str] | None = None
     ambience_preferences: list[str] | None = None
+    preferred_occasions: list[str] | None = None
+    preferred_duration: str | None = None
     preferred_distance_km: float | None = None
     preferred_outing_type: str | None = Field(None, pattern="^(couple|friends|family|solo)$")
 
@@ -57,6 +61,7 @@ def create_user(payload: UserCreate, tenant_id: str = Depends(require_tenant)):
             payload.preferred_categories, payload.ambience_preferences,
             payload.home_lat, payload.home_lng, payload.age_group,
             payload.preferred_distance_km, payload.preferred_outing_type,
+            payload.preferred_occasions, payload.preferred_duration
         )
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"could not create user: {e}")
@@ -83,6 +88,7 @@ def update_preferences(user_id: int, payload: PreferencesUpdate, tenant_id: str 
         tenant_id, user_id, payload.budget_min, payload.budget_max,
         payload.preferred_categories, payload.ambience_preferences,
         payload.preferred_distance_km, payload.preferred_outing_type,
+        payload.preferred_occasions, payload.preferred_duration
     )
     if not user:
         raise HTTPException(status_code=404, detail="user not found")

@@ -1,89 +1,127 @@
+"""Itinerary persistence (tenant-scoped)."""
+from __future__ import annotations
+
 import sys
+from typing import Any
 
 sys.path.insert(0, "/shared")
 from pgdb import tenant_cursor  # noqa: E402
+from psycopg.types.json import Json  # noqa: E402
 
 
-def create_itinerary(tenant_id: str, user_id: int | None, start_time: str, end_time: str, items: list) -> dict:
+def create_itinerary(tenant_id: str, payload: dict[str, Any]) -> dict:
     with tenant_cursor(tenant_id) as cur:
         cur.execute(
-            "INSERT INTO itineraries.itineraries (tenant_id, user_id, start_time, end_time) "
-            "VALUES (%s, %s, %s, %s) RETURNING *",
-            (tenant_id, user_id, start_time, end_time),
+            """
+            INSERT INTO itineraries.itineraries (
+                tenant_id, user_id, start_time, end_time, occasion, duration,
+                title, description, budget_estimate, romantic_tips, backup_plan,
+                timeline_meta, includes_breweries
+            ) VALUES (
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+            ) RETURNING *
+            """,
+            (
+                tenant_id,
+                payload.get("user_id"),
+                payload["start_time"],
+                payload["end_time"],
+                payload.get("occasion"),
+                payload.get("duration"),
+                payload.get("title"),
+                payload.get("description"),
+                payload.get("budget_estimate"),
+                Json(payload.get("romantic_tips") or []),
+                payload.get("backup_plan"),
+                Json(payload.get("timeline_meta") or []),
+                payload.get("includes_breweries", False),
+            ),
         )
-        itinerary = cur.fetchone()
-        for item in items:
-            cur.execute(
-                """INSERT INTO itineraries.itinerary_items
-                   (tenant_id, itinerary_id, place_id, name, category, indoor_outdoor, lat, lng, arrival, departure)
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                (tenant_id, itinerary["id"], item["place_id"], item["name"], item["category"],
-                 item.get("indoor_outdoor", "indoor"), item["lat"], item["lng"],
-                 item["arrival"], item["departure"]),
-            )
-    return get_itinerary(tenant_id, itinerary["id"])
+        return cur.fetchone()
+
+
+def add_item(tenant_id: str, itinerary_id: int, item: dict[str, Any]) -> dict:
+    with tenant_cursor(tenant_id) as cur:
+        cur.execute(
+            """
+            INSERT INTO itineraries.itinerary_items (
+                tenant_id, itinerary_id, place_id, name, category,
+                indoor_outdoor, lat, lng, arrival, departure
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING *
+            """,
+            (
+                tenant_id,
+                itinerary_id,
+                item["place_id"],
+                item["name"],
+                item["category"],
+                item.get("indoor_outdoor", "indoor"),
+                item["lat"],
+                item["lng"],
+                item["arrival"],
+                item["departure"],
+            ),
+        )
+        return cur.fetchone()
 
 
 def get_itinerary(tenant_id: str, itinerary_id: int) -> dict | None:
     with tenant_cursor(tenant_id) as cur:
-        cur.execute("SELECT * FROM itineraries.itineraries WHERE id = %s", (itinerary_id,))
-        itinerary = cur.fetchone()
-        if not itinerary:
-            return None
         cur.execute(
-            "SELECT * FROM itineraries.itinerary_items WHERE itinerary_id = %s ORDER BY arrival",
+            "SELECT * FROM itineraries.itineraries WHERE id = %s",
             (itinerary_id,),
         )
-        items = cur.fetchall()
-    return {**itinerary, "items": items}
+        return cur.fetchone()
 
 
-def due_for_feedback_reminder(tenant_id: str, now_iso: str) -> list:
-    """Items whose visit window has ended, haven't been rated, and haven't
-    already had a reminder sent, for one tenant."""
+def list_items(tenant_id: str, itinerary_id: int) -> list:
     with tenant_cursor(tenant_id) as cur:
         cur.execute(
-            """SELECT ii.*, it.user_id FROM itineraries.itinerary_items ii
-               JOIN itineraries.itineraries it ON it.id = ii.itinerary_id
-               WHERE ii.departure < %s AND ii.rated = false AND ii.reminder_sent = false
-                 AND it.user_id IS NOT NULL""",
-            (now_iso,),
+            """SELECT * FROM itineraries.itinerary_items
+               WHERE itinerary_id = %s ORDER BY arrival""",
+            (itinerary_id,),
         )
         return cur.fetchall()
 
 
-def upcoming_items(tenant_id: str, now_iso: str, horizon_iso: str) -> list:
-    """Items arriving within the given horizon that haven't had a weather
-    alert sent yet, for one tenant."""
+def list_itineraries(tenant_id: str, user_id: int | None = None, limit: int = 50) -> list:
     with tenant_cursor(tenant_id) as cur:
-        cur.execute(
-            """SELECT ii.*, it.user_id FROM itineraries.itinerary_items ii
-               JOIN itineraries.itineraries it ON it.id = ii.itinerary_id
-               WHERE ii.arrival BETWEEN %s AND %s AND ii.weather_alert_sent = false
-                 AND it.user_id IS NOT NULL""",
-            (now_iso, horizon_iso),
-        )
+        if user_id is not None:
+            cur.execute(
+                """SELECT * FROM itineraries.itineraries
+                   WHERE user_id = %s ORDER BY created_at DESC LIMIT %s""",
+                (user_id, limit),
+            )
+        else:
+            cur.execute(
+                "SELECT * FROM itineraries.itineraries ORDER BY created_at DESC LIMIT %s",
+                (limit,),
+            )
         return cur.fetchall()
 
 
-def mark_reminder_sent(tenant_id: str, item_id: int) -> None:
-    with tenant_cursor(tenant_id) as cur:
-        cur.execute("UPDATE itineraries.itinerary_items SET reminder_sent = true WHERE id = %s", (item_id,))
-
-
-def mark_weather_alert_sent(tenant_id: str, item_id: int) -> None:
-    with tenant_cursor(tenant_id) as cur:
-        cur.execute("UPDATE itineraries.itinerary_items SET weather_alert_sent = true WHERE id = %s", (item_id,))
-
-
-def mark_rated(tenant_id: str, user_id: int, place_id: int) -> int:
-    """Called when an `interactions` event with type=rating arrives. Marks
-    any matching not-yet-rated items as rated. Returns rows updated."""
+def update_plan_fields(tenant_id: str, itinerary_id: int, fields: dict[str, Any]) -> dict | None:
+    allowed = {
+        "title", "description", "budget_estimate", "romantic_tips",
+        "backup_plan", "timeline_meta", "includes_breweries", "occasion", "duration",
+    }
+    sets = []
+    params: list[Any] = []
+    for k, v in fields.items():
+        if k not in allowed:
+            continue
+        if k in ("romantic_tips", "timeline_meta"):
+            sets.append(f"{k} = %s")
+            params.append(Json(v))
+        else:
+            sets.append(f"{k} = %s")
+            params.append(v)
+    if not sets:
+        return get_itinerary(tenant_id, itinerary_id)
+    params.extend([itinerary_id])
     with tenant_cursor(tenant_id) as cur:
         cur.execute(
-            """UPDATE itineraries.itinerary_items SET rated = true
-               WHERE place_id = %s AND rated = false
-                 AND itinerary_id IN (SELECT id FROM itineraries.itineraries WHERE user_id = %s)""",
-            (place_id, user_id),
+            f"UPDATE itineraries.itineraries SET {', '.join(sets)} WHERE id = %s RETURNING *",
+            params,
         )
-        return cur.rowcount
+        return cur.fetchone()

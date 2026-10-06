@@ -1,301 +1,219 @@
-import csv
-import io
-import json
+"""
+Lightweight recommendation endpoint that applies occasion-aware fusion.
+
+When a full CF/XGBoost pipeline is present elsewhere, import fuse_candidate
+from fusion.py. This service provides a working path using place catalog +
+occasion scoring so Date Planner and Discover can function end-to-end.
+"""
+from __future__ import annotations
+
+import math
 import os
 import sys
-import threading
-import uuid
+from typing import Any
 
-import redis
-import xgboost as xgb
-from fastapi import Depends, FastAPI, HTTPException
+import httpx
+from fastapi import Depends, FastAPI
 from pydantic import BaseModel, Field
 
 sys.path.insert(0, "/shared")
-from eventbus import consume_in_background  # noqa: E402
-from features import FEATURE_NAMES, build_feature_vector  # noqa: E402
-from ranking_config import load_config  # noqa: E402
+from config_loader import list_occasions_public, ranking_config  # noqa: E402
+from occasion_scoring import occasion_score  # noqa: E402
 from tenant import require_tenant  # noqa: E402
 
-from app import clients, scoring
+from .fusion import fuse_candidate, profile_weights
 
 app = FastAPI(title="Recommendation Engine")
 
-MODEL_PATH = os.environ.get("MODEL_PATH", "/models/xgboost_model.json")
-MODEL_METADATA_PATH = os.environ.get("MODEL_METADATA_PATH", "/models/xgboost_model.meta.json")
-EVALUATION_RESULTS_PATH = os.environ.get("EVALUATION_RESULTS_PATH", "/evaluation/evaluation_results.csv")
-REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379/0")
-SESSION_TTL_SECONDS = 1800
-
-_model_lock = threading.Lock()
-_model: xgb.Booster | None = None
-_model_metadata: dict | None = None
-_redis = redis.from_url(REDIS_URL, decode_responses=True)
+PLACE_SERVICE_URL = os.environ.get("PLACE_SERVICE_URL", "http://place-service:8000")
+_client = httpx.AsyncClient(timeout=8.0)
 
 
-def _load_model() -> None:
-    global _model, _model_metadata
-    if os.path.exists(MODEL_PATH):
-        booster = xgb.Booster()
-        booster.load_model(MODEL_PATH)
-        with _model_lock:
-            _model = booster
-        print(f"[recommendation-engine] loaded model from {MODEL_PATH}")
-    else:
-        print(f"[recommendation-engine] no model found at {MODEL_PATH} yet, using neutral fallback score")
-
-    if os.path.exists(MODEL_METADATA_PATH):
-        with open(MODEL_METADATA_PATH) as f:
-            _model_metadata = json.load(f)
-
-
-def _predict(feature_rows: list) -> list:
-    with _model_lock:
-        model = _model
-    if model is None or not feature_rows:
-        return [0.5] * len(feature_rows)
-    dmatrix = xgb.DMatrix(feature_rows, feature_names=FEATURE_NAMES)
-    return [float(x) for x in model.predict(dmatrix)]
-
-
-def _on_event(routing_key: str, payload: dict):
-    if routing_key == "model.updated":
-        print(f"[recommendation-engine] model.updated received: {payload}, reloading")
-        _load_model()
-
-
-@app.on_event("startup")
-def startup():
-    _load_model()
-    consume_in_background("recommendation-engine.model-updates", ["model.updated"], _on_event)
-
-
-class RecommendationRequest(BaseModel):
-    user_id: int
-    user_ids: list[int] | None = None  # if set (len > 1), a group consensus recommendation
-    group_aggregation: str | None = Field(None, pattern="^(least_misery|average|borda)$")
-    lat: float
-    lng: float
-    radius_km: float = Field(5.0, gt=0, le=50)
-    at: str | None = None  # ISO datetime, defaults to now
+class RecommendRequest(BaseModel):
+    user_id: int | None = None
+    lat: float | None = None
+    lng: float | None = None
+    radius_km: float | None = None
+    city: str | None = None
+    state: str | None = None
     category: str | None = None
-    outing_type: str = Field("friends", pattern="^(couple|friends|family|solo)$")
-    open_now: bool = False
-    top_k: int = Field(10, ge=1, le=50)
-    diversity: float | None = Field(None, ge=0, le=1)  # explore/exploit dial; None = config default
-    weight_overrides: dict | None = None  # e.g. {"distance": 0.3, "popularity": 0.05}
+    outing_type: str | None = None
+    occasion: str | None = None
+    duration: str | None = None
+    diversity: float | None = None
+    limit: int = 20
 
 
-class FeedbackRequest(BaseModel):
-    place_id: int
-    action: str = Field(..., pattern="^(skip|like)$")
+def _haversine(lat1: float, lng1: float, lat2: float, lng2: float) -> float:
+    r = 6371.0
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dl = math.radians(lng2 - lng1)
+    a = math.sin(dphi / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+    return 2 * r * math.asin(math.sqrt(a))
+
+
+def _distance_score(dist_km: float, radius_km: float) -> float:
+    if radius_km <= 0:
+        return 0.0
+    return max(0.0, 1.0 - dist_km / radius_km)
 
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "service": "recommendation-engine", "model_loaded": _model is not None}
+    return {"status": "ok", "service": "recommendation-engine"}
 
 
-@app.get("/ready")
-def ready():
-    try:
-        load_config()
-        return {"status": "ready", "config_loaded": True, "model_loaded": _model is not None}
-    except Exception as e:  # noqa: BLE001
-        raise HTTPException(status_code=503, detail=f"ranking config not available: {e}")
+@app.get("/occasions")
+def occasions():
+    return {"occasions": list_occasions_public()}
 
 
 @app.get("/model-info")
 def model_info():
-    return {"model_loaded": _model is not None, "metadata": _model_metadata}
-
-
-@app.get("/model-card")
-def model_card():
-    """Public model card (Uniqueness §8): current model metadata + the most
-    recent offline evaluation/ablation results, so the ranking behaviour is
-    inspectable instead of a black box."""
-    evaluation_rows = []
-    if os.path.exists(EVALUATION_RESULTS_PATH):
-        with open(EVALUATION_RESULTS_PATH) as f:
-            evaluation_rows = list(csv.DictReader(io.StringIO(f.read())))
     return {
-        "model_loaded": _model is not None,
-        "metadata": _model_metadata,
-        "ranking_config": load_config(),
-        "evaluation_results": evaluation_rows,
-        "evaluation_note": (
-            "Offline metrics are computed against a synthetic ground-truth "
-            "generator (no real interaction dataset yet) - see scripts/evaluate.py."
-        ),
+        "occasion_fusion": True,
+        "weights": profile_weights(0),
+        "ranking_config_keys": list(ranking_config().keys()),
     }
-
-
-def _score_candidates_for_user(user: dict, candidates: list, context: dict, outing_type: str,
-                                all_interactions: list, weight_overrides: dict | None) -> tuple:
-    """Returns (scores: {place_id: fused_score}, breakdowns: {place_id: dict}, profile_name)."""
-    cbf = scoring.cbf_scores(user, candidates)
-    cf, prior_positive_count = scoring.cf_scores(user["id"], candidates, all_interactions)
-    profile_name, base_weights = scoring.resolve_weight_profile(prior_positive_count)
-    weights = scoring.merge_weight_overrides(base_weights, weight_overrides)
-
-    feature_rows = [
-        build_feature_vector(place, context, user, cbf[place["id"]], cf[place["id"]])
-        for place in candidates
-    ]
-    xgb_scores = _predict(feature_rows)
-
-    scores, breakdowns = {}, {}
-    for place, xgb_score in zip(candidates, xgb_scores):
-        ctx_score, ctx_components = scoring.context_score(place, context, user, outing_type)
-        bonus = scoring.exploration_bonus(place)
-        final_score = scoring.fuse_scores(
-            xgb_score=xgb_score, cbf_score=cbf[place["id"]], cf_score=cf[place["id"]],
-            distance_km=place["distance_km"], sentiment_score=place.get("sentiment_score", 0.5),
-            popularity_score=place.get("popularity_score", 0.5), ctx_score=ctx_score,
-            weights=weights, place=place,
-        )
-        scores[place["id"]] = final_score
-        breakdowns[place["id"]] = {
-            "xgb_score": round(xgb_score, 4),
-            "cbf_score": round(cbf[place["id"]], 4),
-            "cf_score": round(cf[place["id"]], 4),
-            "distance_km": place["distance_km"],
-            "sentiment_score": place.get("sentiment_score", 0.5),
-            "popularity_score": place.get("popularity_score", 0.5),
-            "context_score": round(ctx_score, 4),
-            "context_components": {k: round(v, 3) for k, v in ctx_components.items()},
-            "exploration_bonus": round(bonus, 4),
-        }
-    return scores, breakdowns, profile_name
 
 
 @app.post("/recommendations")
-def recommend(req: RecommendationRequest, tenant_id: str = Depends(require_tenant)):
-    target_user_ids = req.user_ids if req.user_ids and len(req.user_ids) > 1 else [req.user_id]
-    is_group = len(target_user_ids) > 1
+async def recommend(body: RecommendRequest, tenant_id: str = Depends(require_tenant)):
+    lat, lng = body.lat, body.lng
+    radius = body.radius_km
+    # Prefer explicit city choice — resolve coordinates from pan-India index
+    if body.city and (lat is None or lng is None):
+        try:
+            res = await _client.get(
+                f"{PLACE_SERVICE_URL}/locations/resolve",
+                params={"city": body.city, **({"state": body.state} if body.state else {})},
+                headers={"X-Tenant-Id": tenant_id},
+            )
+            if res.status_code == 200:
+                hit = res.json()
+                lat = float(hit["lat"])
+                lng = float(hit["lng"])
+        except Exception:
+            pass
+    if lat is None or lng is None:
+        return {"recommendations": [], "error": "lat/lng or city required", "context": {}}
+    if radius is None:
+        radius = 25.0
 
-    users = {}
-    for uid in target_user_ids:
-        user = clients.get_user(tenant_id, uid)
-        if not user:
-            raise HTTPException(status_code=404, detail=f"user {uid} not found")
-        users[uid] = user
-
-    context = clients.get_context(req.lat, req.lng, req.at)
-
-    primary_user = users[req.user_id] if req.user_id in users else next(iter(users.values()))
-    candidates = clients.get_nearby_places(
-        tenant_id, req.lat, req.lng, req.radius_km, category=req.category,
-        # Group requests use soft per-user budget_suitability instead of a hard
-        # filter, since a single price range can't correctly bound several
-        # different users' budgets at once.
-        min_price=None if is_group else primary_user.get("budget_min"),
-        max_price=None if is_group else primary_user.get("budget_max"),
-        open_now=req.open_now, limit=100,
+    # Search place catalog by geo — never a hard-coded list of venues
+    r = await _client.get(
+        f"{PLACE_SERVICE_URL}/search",
+        params={
+            "lat": lat,
+            "lng": lng,
+            "radius_km": radius,
+            "limit": 200,
+            **({"category": body.category} if body.category else {}),
+            **({"city": body.city} if body.city else {}),
+            **({"state": body.state} if body.state else {}),
+        },
+        headers={"X-Tenant-Id": tenant_id},
     )
-    if not candidates:
-        return {"user_id": req.user_id, "context": context, "recommendations": []}
+    r.raise_for_status()
+    payload = r.json()
+    places = payload.get("places", payload) if isinstance(payload, dict) else payload
+    
+    CONTEXT_SERVICE_URL = os.environ.get("CONTEXT_SERVICE_URL", "http://context-service:8000")
+    INTERACTION_SERVICE_URL = os.environ.get("INTERACTION_SERVICE_URL", "http://interaction-service:8000")
 
-    all_interactions = clients.get_all_interactions(tenant_id)
-
-    scores_per_user, breakdowns_per_user, profile_names = {}, {}, {}
-    for uid, user in users.items():
-        scores, breakdowns, profile_name = _score_candidates_for_user(
-            user, candidates, context, req.outing_type, all_interactions, req.weight_overrides,
+    # Fetch context
+    env_context = {}
+    try:
+        c_res = await _client.get(
+            f"{CONTEXT_SERVICE_URL}/context",
+            params={"lat": lat, "lng": lng},
+            headers={"X-Tenant-Id": tenant_id}
         )
-        scores_per_user[uid] = scores
-        breakdowns_per_user[uid] = breakdowns
-        profile_names[uid] = profile_name
+        if c_res.status_code == 200:
+            env_context = c_res.json()
+    except Exception:
+        pass
 
-    if is_group:
-        final_scores = scoring.aggregate_group_scores(scores_per_user, req.group_aggregation)
-    else:
-        final_scores = scores_per_user[target_user_ids[0]]
+    # Fetch interaction history
+    n_positive_interactions = 0
+    if body.user_id:
+        try:
+            i_res = await _client.get(
+                f"{INTERACTION_SERVICE_URL}/users/{body.user_id}/interactions",
+                headers={"X-Tenant-Id": tenant_id}
+            )
+            if i_res.status_code == 200:
+                interactions = i_res.json()
+                n_positive_interactions = sum(
+                    1 for i in interactions 
+                    if i.get("type") in ("like", "save", "visit", "rating") and i.get("rating", 4.0) >= 4.0
+                )
+        except Exception:
+            pass
 
-    # Display breakdown/reasons come from the primary user's perspective;
-    # for a group this is clearly labeled as approximate in the response.
-    primary_breakdowns = breakdowns_per_user[req.user_id if req.user_id in users else target_user_ids[0]]
+    results = []
+    for place in places:
+        if body.category and place.get("category") != body.category:
+            continue
+        dist = _haversine(lat, lng, float(place["lat"]), float(place["lng"]))
+        if dist > radius:
+            continue
 
-    places_by_id = {p["id"]: p for p in candidates}
-    ranked = []
-    for place_id, score in final_scores.items():
-        place = places_by_id[place_id]
-        breakdown = primary_breakdowns[place_id]
-        ranked.append({
-            "place": place,
-            "score": round(score, 4),
-            "score_breakdown": breakdown,
-            "reasons": scoring.build_explanation(place, breakdown, place["distance_km"]),
-        })
-    ranked.sort(key=lambda r: r["score"], reverse=True)
+        # Lightweight stand-ins for full CBF/CF/ML until those modules land
+        popularity = float(place.get("popularity_score") or 0.5)
+        sentiment = float(place.get("sentiment_score") or 0.5)
+        rating = float(place.get("rating") or 3.5) / 5.0
+        
+        # Adjust context score based on weather (e.g., lower score for outdoor if raining)
+        context_score = 0.5
+        weather = env_context.get("weather", {})
+        if weather:
+            is_rain = weather.get("condition") == "rain"
+            is_outdoor = place.get("indoor_outdoor") == "outdoor"
+            if is_rain and is_outdoor:
+                context_score = 0.1
+            elif not is_rain and is_outdoor:
+                context_score = 0.8
+                
+        components = {
+            "content": rating,
+            "collaborative": 0.0,
+            "ml": 0.5,
+            "context": context_score,
+            "distance": _distance_score(dist, radius),
+            "popularity": popularity,
+            "sentiment": sentiment,
+        }
+        score, reasons, breakdown = fuse_candidate(
+            place,
+            components,
+            occasion=body.occasion,
+            n_positive_interactions=n_positive_interactions,
+        )
+        if body.outing_type == "couple" and place.get("couple_friendly"):
+            score = min(1.0, score + 0.05)
+            reasons.append("Couple-friendly")
 
-    diversity = req.diversity if req.diversity is not None else load_config()["diversity"]["default"]
-    ranked = scoring.diversify(ranked, diversity)
+        results.append(
+            {
+                "place": place,
+                "score": round(score, 4),
+                "distance_km": round(dist, 2),
+                "reasons": reasons,
+                "breakdown": {k: round(v, 4) for k, v in breakdown.items()},
+            }
+        )
 
-    session_id = str(uuid.uuid4())
-    session_payload = {
-        "tenant_id": tenant_id,
-        "ranked": ranked,
-        "excluded_ids": [],
-        "diversity": diversity,
-        "top_k": req.top_k,
-    }
-    try:
-        _redis.setex(f"session:{session_id}", SESSION_TTL_SECONDS, json.dumps(session_payload))
-    except Exception as e:  # noqa: BLE001
-        print(f"[recommendation-engine] could not cache session: {e}")
-
+    results.sort(key=lambda x: x["score"], reverse=True)
+    limit = max(1, min(body.limit, 50))
     return {
-        "session_id": session_id,
-        "user_id": req.user_id,
-        "group_user_ids": target_user_ids if is_group else None,
-        "group_aggregation": (req.group_aggregation or load_config()["group_aggregation"]["default_method"]) if is_group else None,
-        "outing_type": req.outing_type,
-        "context": context,
-        "weight_profile": profile_names,
-        "diversity": diversity,
-        "recommendations": ranked[: req.top_k],
+        "recommendations": results[:limit],
+        "context": {
+            "occasion": body.occasion,
+            "duration": body.duration,
+            "outing_type": body.outing_type,
+            "radius_km": radius,
+        },
+        "weights": profile_weights(0),
     }
-
-
-@app.post("/recommendations/{session_id}/feedback")
-def feedback(session_id: str, req: FeedbackRequest, tenant_id: str = Depends(require_tenant)):
-    """Live re-ranking within a session (Uniqueness §3): skip/like an item
-    without a full re-query, so the list responds within the same session."""
-    raw = _redis.get(f"session:{session_id}")
-    if not raw:
-        raise HTTPException(status_code=404, detail="session not found or expired")
-    session = json.loads(raw)
-    if session.get("tenant_id") != tenant_id:
-        # Same 404 as "not found" - never reveal that a session exists for
-        # another tenant.
-        raise HTTPException(status_code=404, detail="session not found or expired")
-
-    ranked = session["ranked"]
-    excluded = set(session["excluded_ids"])
-
-    if req.action == "skip":
-        excluded.add(req.place_id)
-    elif req.action == "like":
-        # Nudge similar (same category/ambience) unseen candidates upward.
-        liked_place = next((r["place"] for r in ranked if r["place"]["id"] == req.place_id), None)
-        if liked_place:
-            for r in ranked:
-                if r["place"]["id"] in excluded or r["place"]["id"] == req.place_id:
-                    continue
-                sim = scoring.place_similarity(r["place"], liked_place)
-                r["score"] = round(r["score"] * (1 + 0.15 * sim), 4)
-
-    remaining = [r for r in ranked if r["place"]["id"] not in excluded]
-    remaining.sort(key=lambda r: r["score"], reverse=True)
-    remaining = scoring.diversify(remaining, session["diversity"])
-
-    session["ranked"] = ranked  # keep full pool (with updated scores) for future feedback calls
-    session["excluded_ids"] = list(excluded)
-    try:
-        _redis.setex(f"session:{session_id}", SESSION_TTL_SECONDS, json.dumps(session))
-    except Exception as e:  # noqa: BLE001
-        print(f"[recommendation-engine] could not update session cache: {e}")
-
-    return {"session_id": session_id, "recommendations": remaining[: session["top_k"]]}

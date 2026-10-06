@@ -1,24 +1,21 @@
 """
-Shared Postgres access layer for tenant-scoped services.
+Minimal Postgres helpers with RLS tenant scoping.
 
-Row-Level Security does the actual isolation: every tenant-owned table has
-`ENABLE ROW LEVEL SECURITY` + `FORCE ROW LEVEL SECURITY` and a policy that
-compares each row's tenant_id to the session variable `app.tenant_id`
-(see postgres/init.sql). This module's only job is making sure that
-session variable is always set, inside the same transaction as the query,
-before any application code touches the database - so there is no code path
-that can accidentally read/write another tenant's rows.
-
-Services connect as `app_role`, a non-superuser, NOBYPASSRLS role that does
-not own the tables it queries - both are required for Postgres to actually
-enforce the policies (table owners and superusers bypass RLS by default).
+Sets `app.tenant_id` on each connection so FORCE ROW LEVEL SECURITY policies
+in init.sql isolate rows. Pool is process-wide and created lazily.
 """
+from __future__ import annotations
+
 import os
 from contextlib import contextmanager
+from typing import Iterator
 
-import psycopg
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
+
+DATABASE_URL = os.environ.get(
+    "DATABASE_URL", "postgresql://app_role:app_role_pw@postgres:5432/outing"
+)
 
 _pool: ConnectionPool | None = None
 
@@ -26,29 +23,19 @@ _pool: ConnectionPool | None = None
 def get_pool() -> ConnectionPool:
     global _pool
     if _pool is None:
-        dsn = os.environ["DATABASE_URL"]
-        _pool = ConnectionPool(dsn, min_size=1, max_size=10, open=True)
+        _pool = ConnectionPool(
+            conninfo=DATABASE_URL,
+            min_size=1,
+            max_size=10,
+            kwargs={"row_factory": dict_row, "autocommit": True},
+        )
     return _pool
 
 
 @contextmanager
-def tenant_cursor(tenant_id: str):
-    """Yields a dict-row cursor inside a transaction scoped to one tenant.
-    Commits on clean exit, rolls back on exception (both handled by
-    ConnectionPool.connection())."""
+def tenant_cursor(tenant_id: str) -> Iterator:
     pool = get_pool()
     with pool.connection() as conn:
-        with conn.cursor(row_factory=dict_row) as cur:
-            cur.execute("SELECT set_config('app.tenant_id', %s, true)", (str(tenant_id),))
-            yield cur
-
-
-@contextmanager
-def system_cursor():
-    """For queries that are not tenant-scoped (e.g. the platform.tenants
-    registry, read by a separate, more restricted role - see pgdb_platform.py).
-    Included here only for symmetry; most services should use tenant_cursor."""
-    pool = get_pool()
-    with pool.connection() as conn:
-        with conn.cursor(row_factory=dict_row) as cur:
+        with conn.cursor() as cur:
+            cur.execute("SELECT set_config('app.tenant_id', %s, false)", (tenant_id,))
             yield cur

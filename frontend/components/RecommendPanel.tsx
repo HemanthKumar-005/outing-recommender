@@ -1,4 +1,11 @@
 "use client";
+import LocationPicker, { type LocationSelection } from "./LocationPicker";
+
+type RecommendPanelProps = {
+  location?: LocationSelection | null;
+  onLocationChange?: (loc: LocationSelection) => void;
+  hideLocationPicker?: boolean;
+};
 
 import { useState } from "react";
 import { apiFetch, type RecommendResponse, type Recommendation } from "../lib/api";
@@ -7,12 +14,19 @@ import RecommendationCard from "./RecommendationCard";
 const CATEGORIES = ["", "cafe", "restaurant", "bar", "museum", "park", "cinema", "shopping", "attraction"];
 const OUTING_TYPES = ["friends", "couple", "family", "solo"];
 
-export default function RecommendPanel() {
+export default function RecommendPanel({ location: controlledLocation, onLocationChange, hideLocationPicker }: RecommendPanelProps = {} as RecommendPanelProps) {
   const [userId, setUserId] = useState("1");
-  const [lat, setLat] = useState("12.9716");
-  const [lng, setLng] = useState("77.5946");
-  const [radiusKm, setRadiusKm] = useState("8");
+  const [lat, setLat] = useState("");
+  const [lng, setLng] = useState("");
+  const [radiusKm, setRadiusKm] = useState("25");
   const [category, setCategory] = useState("");
+  const [occasion, setOccasion] = useState("");
+  const [internalLocation, setInternalLocation] = useState<LocationSelection | null>(null);
+  const location = controlledLocation !== undefined ? controlledLocation : internalLocation;
+  const setLocation = (loc: LocationSelection) => {
+    if (onLocationChange) onLocationChange(loc);
+    if (controlledLocation === undefined) setInternalLocation(loc);
+  };
   const [outingType, setOutingType] = useState("friends");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,20 +36,27 @@ export default function RecommendPanel() {
   const [toast, setToast] = useState<string | null>(null);
 
   const recommend = async () => {
+    if (!location && (!lat || !lng)) {
+      setError("Pick a city (anywhere in India) or enter coordinates.");
+      return;
+    }
     setLoading(true);
     setError(null);
     setSkipped(new Set());
     try {
       const body = {
         user_id: parseInt(userId, 10) || 1,
-        lat: parseFloat(lat),
-        lng: parseFloat(lng),
-        radius_km: parseFloat(radiusKm) || 8,
+        lat: location?.lat ?? parseFloat(lat),
+        lng: location?.lng ?? parseFloat(lng),
+        city: location?.city,
+        state: location?.state,
+        radius_km: parseFloat(radiusKm) || 25,
         category: category || undefined,
         outing_type: outingType,
+        occasion: occasion || undefined,
         limit: 8,
       };
-      const res = await apiFetch("recommendations/recommend", {
+      const res = await apiFetch("recommendations/recommendations", {
         method: "POST",
         body: JSON.stringify(body),
       });
@@ -74,6 +95,11 @@ export default function RecommendPanel() {
   return (
     <div>
       <div className="card" style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 16 }}>
+          {!hideLocationPicker && (
+          <LocationPicker value={location} onChange={setLocation} />
+        )}
+        </div>
         <div className="grid-2" style={{ gap: 12 }}>
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">User ID</label>
@@ -88,13 +114,30 @@ export default function RecommendPanel() {
             </select>
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">Latitude</label>
-            <input className="form-input" value={lat} onChange={(e) => setLat(e.target.value)} />
+            <label className="form-label">Occasion</label>
+            <select className="form-select" value={occasion} onChange={(e) => setOccasion(e.target.value)}>
+              <option value="">Any</option>
+              <option value="first_date">First Date</option>
+              <option value="romantic">Romantic</option>
+              <option value="anniversary">Anniversary</option>
+              <option value="brewery_tour">Brewery Tour</option>
+              <option value="adventure">Adventure</option>
+              <option value="cultural">Cultural</option>
+              <option value="casual">Casual</option>
+            </select>
+          </div>
+          {!location && (
+            <>
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label className="form-label">Latitude (optional)</label>
+            <input className="form-input" value={lat} onChange={(e) => setLat(e.target.value)} placeholder="or pick a city above" />
           </div>
           <div className="form-group" style={{ marginBottom: 0 }}>
-            <label className="form-label">Longitude</label>
-            <input className="form-input" value={lng} onChange={(e) => setLng(e.target.value)} />
+            <label className="form-label">Longitude (optional)</label>
+            <input className="form-input" value={lng} onChange={(e) => setLng(e.target.value)} placeholder="or pick a city above" />
           </div>
+            </>
+          )}
           <div className="form-group" style={{ marginBottom: 0 }}>
             <label className="form-label">Radius (km)</label>
             <input className="form-input" value={radiusKm} onChange={(e) => setRadiusKm(e.target.value)} />

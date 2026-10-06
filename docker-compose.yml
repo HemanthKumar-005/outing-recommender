@@ -242,12 +242,12 @@ services:
       MODEL_PATH: /models/xgboost_model.json
       MODEL_METADATA_PATH: /models/xgboost_model.meta.json
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+      DAEMON_MODE: "true"
     volumes:
       - models_data:/models
     depends_on:
       rabbitmq:
         condition: service_healthy
-    profiles: ["tools"]   # run on demand: docker compose run --rm model-training-worker
 
   sentiment-worker:
     build:

@@ -1,48 +1,50 @@
 """
-Seeds sample users and places through the running API gateway so you get a
-working end-to-end demo immediately after `docker compose up`.
+Seeds sample users and places through the running API gateway.
+
+Place catalog is loaded from data/places_catalog.yaml (no hard-coded
+spot lists in this script). Users get preferred_occasions from config ids.
 
 Usage:
     python3 scripts/seed_data.py
-    (requires the `requests` package: pip install requests)
 """
+from __future__ import annotations
+
 import random
+import sys
 import time
+from pathlib import Path
 
 import requests
+import yaml
 
 BASE_URL = "http://localhost:8000/api"
 API_KEY = "demo-key"
 HEADERS = {"X-API-Key": API_KEY, "Content-Type": "application/json"}
 
-# Roughly downtown-Bengaluru-shaped coordinates for a plausible geo spread.
-CENTER_LAT, CENTER_LNG = 12.9716, 77.5946
+ROOT = Path(__file__).resolve().parents[1]
+CATALOG_PATH = ROOT / "data" / "places_catalog.yaml"
+OCCASIONS_PATH = ROOT / "configs" / "occasions.yaml"
 
-CATEGORIES = ["cafe", "restaurant", "bar", "museum", "park", "cinema", "shopping", "attraction"]
-AMBIENCES = ["cozy", "lively", "quiet", "romantic", "family", "trendy", "outdoor", "casual"]
-OUTING_TYPES = ["couple", "friends", "family", "solo"]
 AGE_GROUPS = ["18-24", "25-34", "35-44", "45-54", "55+"]
-INDOOR_OUTDOOR_BY_CATEGORY = {
-    "cafe": "indoor", "restaurant": "indoor", "bar": "indoor", "museum": "indoor",
-    "park": "outdoor", "cinema": "indoor", "shopping": "indoor", "attraction": "both",
-}
-
-PLACE_NAMES = [
-    "Blue Tokai", "Copper & Cloves", "The Reading Room", "Toit Brewpub", "Third Wave",
-    "Cubbon Park Grounds", "MG Road Museum", "Indiranagar Social", "Glen's Bakehouse",
-    "Skyline Rooftop", "Church Street Diner", "Lalbagh Greens", "The Old Vinyl Cafe",
-    "Forum Mall Cinema", "Koramangala Tacos", "Whitefield Brewhouse", "HSR Art Gallery",
-    "Jayanagar Sweets", "Commercial Street Bazaar", "Nandi Hills Lookout",
-]
+OUTING_TYPES = ["couple", "friends", "family", "solo"]
 
 
-def rand_offset(km_range=8.0):
-    deg = km_range / 111.0
-    return random.uniform(-deg, deg)
+def load_yaml(path: Path) -> dict:
+    with path.open(encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}
 
 
-def seed_users(n=8):
+def occasion_ids() -> list[str]:
+    cfg = load_yaml(OCCASIONS_PATH)
+    return [o["id"] for o in cfg.get("occasions", []) if "id" in o]
+
+
+def seed_users(n: int = 8) -> list[int]:
     ids = []
+    occ = occasion_ids() or ["casual"]
+    durations = [d["id"] for d in load_yaml(OCCASIONS_PATH).get("durations", [])] or [
+        "4-6 hours"
+    ]
     for i in range(n):
         payload = {
             "name": f"Demo User {i + 1}",
@@ -50,50 +52,67 @@ def seed_users(n=8):
             "age_group": random.choice(AGE_GROUPS),
             "budget_min": random.choice([0, 1]),
             "budget_max": random.choice([2, 3, 4]),
-            "preferred_categories": random.sample(CATEGORIES, k=3),
-            "ambience_preferences": random.sample(AMBIENCES, k=2),
-            "preferred_distance_km": random.choice([5, 8, 10, 15]),
+            "preferred_categories": random.sample(
+                ["cafe", "restaurant", "bar", "park", "attraction", "museum"], k=3
+            ),
+            "ambience_preferences": random.sample(
+                ["cozy", "lively", "quiet", "romantic", "outdoor"], k=2
+            ),
+            "preferred_distance_km": random.choice([5, 8, 10, 15, 25]),
             "preferred_outing_type": random.choice(OUTING_TYPES),
-            "home_lat": CENTER_LAT + rand_offset(),
-            "home_lng": CENTER_LNG + rand_offset(),
+            "preferred_occasions": random.sample(occ, k=min(2, len(occ))),
+            "preferred_duration": random.choice(durations),
+            "home_lat": 28.6139 + random.uniform(-0.05, 0.05),
+            "home_lng": 77.2090 + random.uniform(-0.05, 0.05),
         }
         resp = requests.post(f"{BASE_URL}/users/users", json=payload, headers=HEADERS)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            print(f"user seed warning: {resp.status_code} {resp.text[:200]}")
+            continue
         ids.append(resp.json()["id"])
-        print(f"created user {resp.json()['id']}: {payload['name']}")
+        print(f"created user {ids[-1]}")
     return ids
 
 
-def seed_places(n=20):
+def seed_places_from_catalog() -> list[int]:
+    catalog = load_yaml(CATALOG_PATH)
+    places = catalog.get("places") or []
     ids = []
-    for i in range(n):
-        category = random.choice(CATEGORIES)
+    for p in places:
         payload = {
-            "name": PLACE_NAMES[i % len(PLACE_NAMES)],
-            "category": category,
-            "price_range": random.randint(1, 4),
-            "average_cost": random.randint(200, 3000),
-            "rating": round(random.uniform(3.0, 5.0), 1),
-            "review_count": random.randint(5, 500),
-            "lat": CENTER_LAT + rand_offset(),
-            "lng": CENTER_LNG + rand_offset(),
-            "indoor_outdoor": INDOOR_OUTDOOR_BY_CATEGORY.get(category, "indoor"),
-            "ambience": random.sample(AMBIENCES, k=2),
-            "tags": random.sample(["wifi", "outdoor-seating", "live-music", "parking", "pet-friendly"], k=2),
-            "description": f"A popular {category} spot in the neighbourhood.",
-            "family_friendly": random.choice([True, False]),
-            "couple_friendly": random.choice([True, False]),
-            "friends_friendly": random.choice([True, False]),
+            "name": p["name"],
+            "category": p["category"],
+            "subcategory": p.get("subcategory"),
+            "price_range": p.get("price_range", 2),
+            "average_cost": p.get("average_cost"),
+            "rating": round(random.uniform(3.8, 4.9), 1),
+            "review_count": random.randint(20, 800),
+            "lat": p["lat"],
+            "lng": p["lng"],
+            "city": p.get("city"),
+            "state": p.get("state"),
+            "indoor_outdoor": p.get("indoor_outdoor", "indoor"),
+            "ambience": p.get("ambience") or [],
+            "tags": p.get("tags") or [],
+            "description": p.get("description") or "",
+            "family_friendly": p.get("family_friendly", False),
+            "couple_friendly": p.get("couple_friendly", False),
+            "friends_friendly": p.get("friends_friendly", False),
             "opening_hours": {},
         }
         resp = requests.post(f"{BASE_URL}/places/places", json=payload, headers=HEADERS)
-        resp.raise_for_status()
+        if resp.status_code >= 400:
+            print(f"place seed warning: {resp.status_code} {resp.text[:200]}")
+            continue
         ids.append(resp.json()["id"])
-        print(f"created place {resp.json()['id']}: {payload['name']} ({payload['category']})")
+        print(f"created place {ids[-1]}: {payload['name']} ({payload['category']})")
     return ids
 
 
-def seed_interactions(user_ids, place_ids, n=60):
+def seed_interactions(user_ids: list[int], place_ids: list[int], n: int = 60) -> None:
+    if not user_ids or not place_ids:
+        print("skip interactions — missing users or places")
+        return
     types = ["view", "click", "save", "visit", "rating", "share", "skip"]
     for _ in range(n):
         payload = {
@@ -103,20 +122,30 @@ def seed_interactions(user_ids, place_ids, n=60):
         }
         if payload["type"] == "rating":
             payload["rating"] = round(random.uniform(2.5, 5.0), 1)
-        resp = requests.post(f"{BASE_URL}/interactions/interactions", json=payload, headers=HEADERS)
-        resp.raise_for_status()
-    print(f"created {n} interactions")
+        resp = requests.post(
+            f"{BASE_URL}/interactions/interactions", json=payload, headers=HEADERS
+        )
+        if resp.status_code >= 400:
+            print(f"interaction warning: {resp.status_code}")
+    print(f"created up to {n} interactions")
 
 
 if __name__ == "__main__":
+    if not CATALOG_PATH.is_file():
+        print(f"Missing catalog {CATALOG_PATH}", file=sys.stderr)
+        sys.exit(1)
     print("Seeding users...")
     user_ids = seed_users()
-    print("Seeding places...")
-    place_ids = seed_places()
-    time.sleep(1)  # let sentiment-worker's place.updated consumer catch up
+    print("Seeding places from place catalog...")
+    place_ids = seed_places_from_catalog()
+    time.sleep(0.5)
     print("Seeding interactions...")
     seed_interactions(user_ids, place_ids)
-    print("\nDone. Try:")
-    print(f"  curl -H 'X-API-Key: {API_KEY}' "
-          f"'{BASE_URL}/recommendations/recommendations' -X POST -H 'Content-Type: application/json' "
-          f"-d '{{\"user_id\": {user_ids[0]}, \"lat\": {CENTER_LAT}, \"lng\": {CENTER_LNG}, \"radius_km\": 8}}'")
+    print("\nDone. Try surprise:")
+    print(f"  curl -H 'X-API-Key: {API_KEY}' '{BASE_URL}/places/surprise?occasion=romantic'")
+    print("Try generate-plan:")
+    print(
+        f"  curl -H 'X-API-Key: {API_KEY}' -H 'Content-Type: application/json' "
+        f"-d '{{\"occasion\":\"brewery_tour\",\"duration\":\"4-6 hours\",\"budget\":\"medium\"}}' "
+        f"{BASE_URL}/itinerary/generate-plan"
+    )

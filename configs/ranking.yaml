@@ -16,23 +16,26 @@ cold_start:
   min_interactions_for_cf: 3
 
 profiles:
+  # Weights within each profile should sum to ~1.0 including `occasion`.
   new_user:
-    content: 0.30
+    content: 0.26
     collaborative: 0.00
-    ml: 0.30
-    context: 0.15
+    ml: 0.26
+    context: 0.14
     distance: 0.10
-    popularity: 0.15
+    popularity: 0.12
     sentiment: 0.00
+    occasion: 0.12
 
   existing_user:
-    content: 0.20
-    collaborative: 0.20
-    ml: 0.30
+    content: 0.18
+    collaborative: 0.18
+    ml: 0.26
     context: 0.10
-    distance: 0.10
+    distance: 0.08
     popularity: 0.05
     sentiment: 0.05
+    occasion: 0.10
 
 # Sub-weights for ContextScore = a*Weather + b*Time + c*Budget + d*Group (Review §17)
 context_subweights:
