@@ -138,7 +138,6 @@ def search_places(
     q: str | None = None,
     limit: int = 50,
 ) -> list:
-    print(f"[DEBUG place-service] search_places called with tenant_id={repr(tenant_id)}")
     """Geo + text search — recommendations never hard-code a place list."""
     clauses = ["TRUE"]
     params: list[Any] = []
@@ -173,8 +172,6 @@ def search_places(
     where = " AND ".join(clauses)
     params.append(limit)
     sql = f"SELECT * FROM places.places WHERE {where} ORDER BY rating DESC NULLS LAST LIMIT %s"
-    print(f"[DEBUG place-service] sql={sql} params={params}", flush=True)
-    import sys; sys.stdout.flush()
     with tenant_cursor(tenant_id) as cur:
         cur.execute(sql, params)
         return cur.fetchall()
