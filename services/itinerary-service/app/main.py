@@ -1,70 +1,73 @@
-import math
-import sys
-from datetime import datetime, timedelta
+"""Itinerary service — generate-plan, refine, CRUD."""
+from __future__ import annotations
 
+import os
+import sys
+from datetime import datetime
+from typing import Any
+
+import httpx
 from fastapi import Depends, FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 sys.path.insert(0, "/shared")
-from eventbus import consume_in_background  # noqa: E402
+from config_loader import list_occasions_public  # noqa: E402
 from tenant import require_tenant  # noqa: E402
 
-from app import db, workers
+from . import db
+from .planner import generate_plan
 
 app = FastAPI(title="Itinerary Service")
 
-AVG_SPEED_KMH = 25.0  # rough city travel speed assumption
-DEFAULT_VISIT_MINUTES = {
-    "cafe": 45, "restaurant": 75, "bar": 90, "museum": 120, "park": 60,
-    "cinema": 150, "shopping": 90, "attraction": 90,
-}
-FALLBACK_VISIT_MINUTES = 60
+PLACE_SERVICE_URL = os.environ.get("PLACE_SERVICE_URL", "http://place-service:8000")
+_client = httpx.AsyncClient(timeout=8.0)
 
 
-class PlaceStop(BaseModel):
-    id: int
-    name: str
-    category: str
-    lat: float
-    lng: float
-    indoor_outdoor: str = "indoor"
+class GeneratePlanRequest(BaseModel):
+    user_id: int | None = None
+    place_ids: list[int] = Field(default_factory=list)
+    occasion: str | None = None
+    duration: str = "4-6 hours"
+    budget: str = "medium"
+    start_time: str | None = None  # ISO
+    lat: float = 28.6139
+    lng: float = 77.2090
+    radius_km: float = 15.0
+    area_label: str = "your area"
+    persist: bool = True
 
 
-class ItineraryRequest(BaseModel):
-    places: list[PlaceStop]
-    start_time: str  # ISO datetime
-    end_time: str  # ISO datetime
-    user_id: int | None = None  # enables feedback reminders + weather-swap alerts
+class RefineRequest(BaseModel):
+    feedback: str
+    occasion: str | None = None
+    duration: str | None = None
+    budget: str | None = None
 
 
-def _haversine_km(lat1, lng1, lat2, lng2) -> float:
-    r = 6371.0
-    p1, p2 = math.radians(lat1), math.radians(lat2)
-    dphi = math.radians(lat2 - lat1)
-    dlambda = math.radians(lng2 - lng1)
-    a = math.sin(dphi / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dlambda / 2) ** 2
-    return 2 * r * math.asin(math.sqrt(a))
+def _headers(tenant_id: str) -> dict[str, str]:
+    return {"X-Tenant-Id": tenant_id, "Content-Type": "application/json"}
 
 
-def _travel_minutes(km: float) -> float:
-    return (km / AVG_SPEED_KMH) * 60.0
-
-
-def _on_interaction_event(routing_key: str, payload: dict):
-    if routing_key == "interactions" and payload.get("type") == "rating":
-        tenant_id = payload.get("tenant_id")
-        if not tenant_id:
-            return
-        updated = db.mark_rated(tenant_id, payload["user_id"], payload["place_id"])
-        if updated:
-            print(f"[itinerary-service] marked {updated} itinerary item(s) rated "
-                  f"(tenant {tenant_id}, user {payload['user_id']}, place {payload['place_id']})")
-
-
-@app.on_event("startup")
-def startup():
-    workers.start_background_workers()
-    consume_in_background("itinerary-service.rating-updates", ["interactions"], _on_interaction_event)
+async def _fetch_places(tenant_id: str, place_ids: list[int] | None = None) -> list[dict]:
+    if place_ids:
+        # Fetch individually (small N); parallel would be nicer at scale
+        places = []
+        for pid in place_ids:
+            r = await _client.get(
+                f"{PLACE_SERVICE_URL}/places/{pid}",
+                headers=_headers(tenant_id),
+            )
+            if r.status_code == 200:
+                places.append(r.json())
+        return places
+    r = await _client.get(
+        f"{PLACE_SERVICE_URL}/places",
+        params={"limit": 100},
+        headers=_headers(tenant_id),
+    )
+    r.raise_for_status()
+    data = r.json()
+    return data if isinstance(data, list) else data.get("places", data)
 
 
 @app.get("/health")
@@ -72,82 +75,162 @@ def health():
     return {"status": "ok", "service": "itinerary-service"}
 
 
-@app.get("/ready")
-def ready(tenant_id: str = Depends(require_tenant)):
-    try:
-        db.get_itinerary(tenant_id, -1)
-        return {"status": "ready", "database": "ok"}
-    except Exception as e:  # noqa: BLE001
-        raise HTTPException(status_code=503, detail=f"database not ready: {e}")
+@app.get("/occasions")
+def occasions():
+    return {"occasions": list_occasions_public()}
 
 
-@app.get("/itinerary/{itinerary_id}")
-def get_itinerary(itinerary_id: int, tenant_id: str = Depends(require_tenant)):
-    itinerary = db.get_itinerary(tenant_id, itinerary_id)
-    if not itinerary:
-        raise HTTPException(status_code=404, detail="itinerary not found")
-    return itinerary
+@app.post("/generate-plan")
+async def generate_plan_endpoint(
+    body: GeneratePlanRequest,
+    tenant_id: str = Depends(require_tenant),
+):
+    selected = await _fetch_places(tenant_id, body.place_ids or None)
+    if not selected:
+        # Auto-pick from catalog when client didn't select spots
+        pool = await _fetch_places(tenant_id, None)
+        if not pool:
+            raise HTTPException(status_code=400, detail="no places available to plan")
+        selected = pool[:6]
+    else:
+        pool = await _fetch_places(tenant_id, None)
 
+    start = None
+    if body.start_time:
+        try:
+            start = datetime.fromisoformat(body.start_time.replace("Z", "+00:00"))
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=f"invalid start_time: {e}") from e
 
-@app.post("/itinerary")
-def build_itinerary(req: ItineraryRequest, tenant_id: str = Depends(require_tenant)):
-    try:
-        start = datetime.fromisoformat(req.start_time)
-        end = datetime.fromisoformat(req.end_time)
-    except ValueError:
-        raise HTTPException(status_code=400, detail="start_time/end_time must be ISO datetimes")
-    if end <= start:
-        raise HTTPException(status_code=400, detail="end_time must be after start_time")
-    if not req.places:
-        raise HTTPException(status_code=400, detail="places must not be empty")
+    plan = generate_plan(
+        places=selected,
+        candidate_pool=pool,
+        occasion=body.occasion,
+        duration=body.duration,
+        budget=body.budget,
+        start_time=start,
+        lat=body.lat,
+        lng=body.lng,
+        area_label=body.area_label,
+    )
 
-    # Greedy nearest-neighbour ordering starting from the first place given.
-    remaining = req.places.copy()
-    ordered = [remaining.pop(0)]
-    while remaining:
-        last = ordered[-1]
-        remaining.sort(key=lambda p: _haversine_km(last.lat, last.lng, p.lat, p.lng))
-        ordered.append(remaining.pop(0))
+    if not body.persist:
+        return {"success": True, "data": plan}
 
-    items = []
-    current_time = start
-    skipped = []
-    for i, place in enumerate(ordered):
-        if i > 0:
-            prev = ordered[i - 1]
-            travel_km = _haversine_km(prev.lat, prev.lng, place.lat, place.lng)
-            current_time += timedelta(minutes=_travel_minutes(travel_km))
-        else:
-            travel_km = 0.0
-
-        visit_minutes = DEFAULT_VISIT_MINUTES.get(place.category, FALLBACK_VISIT_MINUTES)
-        stop_end = current_time + timedelta(minutes=visit_minutes)
-
-        if stop_end > end:
-            skipped.append(place.name)
-            continue
-
-        items.append({
-            "place_id": place.id,
-            "name": place.name,
-            "category": place.category,
-            "indoor_outdoor": place.indoor_outdoor,
-            "lat": place.lat,
-            "lng": place.lng,
-            "arrival": current_time.isoformat(),
-            "departure": stop_end.isoformat(),
-            "visit_minutes": visit_minutes,
-            "travel_km_from_previous": round(travel_km, 2),
-        })
-        current_time = stop_end
-
-    saved = db.create_itinerary(tenant_id, req.user_id, start.isoformat(), end.isoformat(), items) if items else None
+    row = db.create_itinerary(
+        tenant_id,
+        {
+            "user_id": body.user_id,
+            "start_time": plan["start_time"],
+            "end_time": plan["end_time"],
+            "occasion": plan["occasion"],
+            "duration": plan["duration"],
+            "title": plan["title"],
+            "description": plan["description"],
+            "budget_estimate": plan["budget_estimate"],
+            "romantic_tips": plan["romantic_tips"],
+            "backup_plan": plan["backup_plan"],
+            "timeline_meta": plan["timeline_meta"],
+            "includes_breweries": plan["includes_breweries"],
+        },
+    )
+    items_out = []
+    for item in plan["items"]:
+        items_out.append(db.add_item(tenant_id, row["id"], item))
 
     return {
-        "itinerary_id": saved["id"] if saved else None,
-        "start_time": start.isoformat(),
-        "end_time": end.isoformat(),
-        "itinerary": items,
-        "skipped_no_time": skipped,
-        "feedback_and_weather_alerts_enabled": req.user_id is not None,
+        "success": True,
+        "data": {
+            **plan,
+            "itinerary_id": row["id"],
+            "items": items_out,
+        },
     }
+
+
+@app.post("/itineraries/{itinerary_id}/refine")
+async def refine_plan(
+    itinerary_id: int,
+    body: RefineRequest,
+    tenant_id: str = Depends(require_tenant),
+):
+    existing = db.get_itinerary(tenant_id, itinerary_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="itinerary not found")
+
+    items = db.list_items(tenant_id, itinerary_id)
+    place_ids = [i["place_id"] for i in items]
+    places = await _fetch_places(tenant_id, place_ids)
+    pool = await _fetch_places(tenant_id, None)
+
+    occasion = body.occasion or existing.get("occasion")
+    duration = body.duration or existing.get("duration") or "4-6 hours"
+    budget = body.budget or "medium"
+
+    # Lightweight feedback heuristics — still config-backed via occasion swap
+    fb = (body.feedback or "").lower()
+    if "brewery" in fb or "beer" in fb:
+        occasion = "brewery_tour"
+    elif "romantic" in fb or "intimate" in fb:
+        occasion = "romantic"
+    elif "adventure" in fb or "trek" in fb:
+        occasion = "adventure"
+    elif "cultural" in fb or "heritage" in fb:
+        occasion = "cultural"
+    elif "cheap" in fb or "budget" in fb:
+        budget = "low"
+    elif "premium" in fb or "luxury" in fb:
+        budget = "high"
+
+    start = existing.get("start_time")
+    if isinstance(start, str):
+        start = datetime.fromisoformat(start.replace("Z", "+00:00"))
+
+    plan = generate_plan(
+        places=places or pool[:6],
+        candidate_pool=pool,
+        occasion=occasion,
+        duration=duration,
+        budget=budget,
+        start_time=start if isinstance(start, datetime) else None,
+        lat=float(items[0]["lat"]) if items else 28.6139,
+        lng=float(items[0]["lng"]) if items else 77.2090,
+        area_label="your area",
+    )
+    plan["title"] = f"Refined: {plan['title']}"
+    plan["description"] = f"Improved based on your feedback: \"{body.feedback}\""
+
+    updated = db.update_plan_fields(
+        tenant_id,
+        itinerary_id,
+        {
+            "title": plan["title"],
+            "description": plan["description"],
+            "budget_estimate": plan["budget_estimate"],
+            "romantic_tips": plan["romantic_tips"],
+            "backup_plan": plan["backup_plan"],
+            "timeline_meta": plan["timeline_meta"],
+            "includes_breweries": plan["includes_breweries"],
+            "occasion": plan["occasion"],
+            "duration": plan["duration"],
+        },
+    )
+    return {"success": True, "data": {**plan, "itinerary_id": itinerary_id, "record": updated}}
+
+
+@app.get("/itineraries")
+def list_itineraries(
+    user_id: int | None = None,
+    limit: int = 50,
+    tenant_id: str = Depends(require_tenant),
+):
+    return db.list_itineraries(tenant_id, user_id, limit)
+
+
+@app.get("/itineraries/{itinerary_id}")
+def get_itinerary(itinerary_id: int, tenant_id: str = Depends(require_tenant)):
+    row = db.get_itinerary(tenant_id, itinerary_id)
+    if not row:
+        raise HTTPException(status_code=404, detail="not found")
+    items = db.list_items(tenant_id, itinerary_id)
+    return {**row, "items": items}

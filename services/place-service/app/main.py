@@ -1,51 +1,58 @@
+"""Place catalog service — CRUD + surprise sampling."""
+from __future__ import annotations
+
 import sys
-from datetime import datetime
+from typing import Any
 
 from fastapi import Depends, FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
 sys.path.insert(0, "/shared")
-from eventbus import publish  # noqa: E402
+from config_loader import (  # noqa: E402
+    default_search_radius_km,
+    list_cities,
+    list_occasions_public,
+    list_states,
+    occasion_by_id,
+    resolve_city,
+)
 from tenant import require_tenant  # noqa: E402
 
-from app import db, geo
+from . import db
 
-app = FastAPI(title="Place Catalog Service")
+app = FastAPI(title="Place Service")
 
 
 class PlaceCreate(BaseModel):
     name: str
     category: str
     subcategory: str | None = None
-    price_range: int = Field(2, ge=1, le=4)
+    price_range: int = 2
     average_cost: float | None = None
-    rating: float | None = Field(None, ge=0, le=5)
+    rating: float | None = None
     review_count: int = 0
     lat: float
     lng: float
-    indoor_outdoor: str = Field("indoor", pattern="^(indoor|outdoor|both)$")
-    ambience: list[str] = []
-    tags: list[str] = []
+    city: str | None = None
+    state: str | None = None
+    indoor_outdoor: str = "indoor"
+    ambience: list[str] = Field(default_factory=list)
+    tags: list[str] = Field(default_factory=list)
     description: str = ""
     family_friendly: bool = False
     couple_friendly: bool = False
     friends_friendly: bool = False
-    opening_hours: dict = {}  # e.g. {"mon": ["09:00","22:00"], ...}
+    opening_hours: dict[str, Any] = Field(default_factory=dict)
 
 
-class SentimentUpdate(BaseModel):
-    sentiment_score: float = Field(..., ge=0.0, le=1.0)
-
-
-def _is_open_now(opening_hours: dict) -> bool:
-    if not opening_hours:
-        return True
-    day_key = datetime.now().strftime("%a").lower()[:3]
-    window = opening_hours.get(day_key)
-    if not window or len(window) != 2:
-        return True
-    now = datetime.now().strftime("%H:%M")
-    return window[0] <= now <= window[1]
+class SurpriseBody(BaseModel):
+    keyword: str | None = None
+    category: str | None = None
+    occasion: str | None = None
+    lat: float | None = None
+    lng: float | None = None
+    radius_km: float | None = None
+    exclude_ids: list[int] = Field(default_factory=list)
 
 
 @app.get("/health")
@@ -53,70 +60,169 @@ def health():
     return {"status": "ok", "service": "place-service"}
 
 
-@app.get("/ready")
-def ready(tenant_id: str = Depends(require_tenant)):
-    try:
-        db.list_places(tenant_id, limit=1)
-        return {"status": "ready", "database": "ok"}
-    except Exception as e:  # noqa: BLE001
-        raise HTTPException(status_code=503, detail=f"database not ready: {e}")
+@app.get("/occasions")
+def occasions():
+    """Expose canonical occasion list from config (for clients)."""
+    return {"occasions": list_occasions_public()}
 
+
+
+@app.get("/locations")
+def locations(state: str | None = None):
+    """Pan-India state/city list for the location picker (config-driven)."""
+    return {
+        "states": list_states(),
+        "cities": list_cities(state),
+        "default_radius_km": default_search_radius_km(),
+    }
+
+
+@app.get("/locations/resolve")
+def resolve_location(city: str, state: str | None = None):
+    hit = resolve_city(city, state)
+    if not hit:
+        raise HTTPException(status_code=404, detail="city not found in location index")
+    return hit
+
+
+@app.get("/search")
+def search_places(
+    lat: float | None = None,
+    lng: float | None = None,
+    radius_km: float | None = None,
+    city: str | None = None,
+    state: str | None = None,
+    category: str | None = None,
+    q: str | None = None,
+    limit: int = Query(50, ge=1, le=200),
+    tenant_id: str = Depends(require_tenant),
+):
+    """Find places near a chosen location — no hard-coded recommendation set."""
+    if city and (lat is None or lng is None):
+        hit = resolve_city(city, state)
+        if hit:
+            lat = float(hit["lat"])
+            lng = float(hit["lng"])
+    if radius_km is None and lat is not None:
+        radius_km = default_search_radius_km()
+    rows = db.search_places(
+        tenant_id,
+        lat=lat,
+        lng=lng,
+        radius_km=radius_km,
+        city=city,
+        state=state,
+        category=category,
+        q=q,
+        limit=limit,
+    )
+    return {"count": len(rows), "places": rows, "query": {
+        "lat": lat, "lng": lng, "radius_km": radius_km,
+        "city": city, "state": state, "category": category, "q": q,
+    }}
 
 @app.post("/places", status_code=201)
 def create_place(payload: PlaceCreate, tenant_id: str = Depends(require_tenant)):
-    place = db.create_place(tenant_id, payload.model_dump())
-    publish("place.updated", {"tenant_id": tenant_id, "place_id": place["id"], "reason": "created"})
-    return place
+    return db.create_place(tenant_id, payload.model_dump())
+
+
+@app.get("/places")
+def list_places(
+    limit: int = Query(200, ge=1, le=1000),
+    tenant_id: str = Depends(require_tenant),
+):
+    return db.list_places(tenant_id, limit)
 
 
 @app.get("/places/{place_id}")
 def get_place(place_id: int, tenant_id: str = Depends(require_tenant)):
-    place = db.get_place(tenant_id, place_id)
-    if not place:
+    row = db.get_place(tenant_id, place_id)
+    if not row:
         raise HTTPException(status_code=404, detail="place not found")
-    return place
+    return row
 
 
-@app.patch("/places/{place_id}/sentiment")
-def patch_sentiment(place_id: int, payload: SentimentUpdate, tenant_id: str = Depends(require_tenant)):
-    place = db.update_sentiment(tenant_id, place_id, payload.sentiment_score)
-    if not place:
-        raise HTTPException(status_code=404, detail="place not found")
-    publish("place.updated", {"tenant_id": tenant_id, "place_id": place_id, "reason": "sentiment_updated"})
-    return place
+def _surprise_impl(
+    tenant_id: str,
+    *,
+    category: str | None,
+    keyword: str | None,
+    occasion: str | None,
+    lat: float | None,
+    lng: float | None,
+    radius_km: float | None,
+    exclude_ids: list[int] | None,
+) -> dict:
+    occasion_tags = None
+    if occasion:
+        meta = occasion_by_id(occasion)
+        if meta:
+            occasion_tags = list(meta.get("preferred_tags") or [])
+
+    row = db.surprise_place(
+        tenant_id,
+        category=category,
+        keyword=keyword,
+        occasion_tags=occasion_tags,
+        lat=lat,
+        lng=lng,
+        radius_km=radius_km,
+        exclude_ids=exclude_ids or None,
+    )
+    if not row:
+        # Fallback: relax filters progressively
+        row = db.surprise_place(tenant_id, category=category, keyword=keyword)
+    if not row:
+        row = db.surprise_place(tenant_id)
+    if not row:
+        raise HTTPException(status_code=404, detail="no places available")
+
+    result = dict(row)
+    result["surprise"] = True
+    note_parts = []
+    if keyword:
+        note_parts.append(f'matched "{keyword}"')
+    if occasion:
+        note_parts.append(f"occasion={occasion}")
+    if category:
+        note_parts.append(f"category={category}")
+    result["note"] = (
+        "Surprise pick" + (f" ({', '.join(note_parts)})" if note_parts else "")
+    )
+    return result
 
 
-@app.get("/places")
-def list_places(category: str | None = None, min_price: int | None = None, max_price: int | None = None,
-                 tenant_id: str = Depends(require_tenant)):
-    return db.list_places(tenant_id, category=category, min_price=min_price, max_price=max_price)
-
-
-@app.get("/places/nearby")
-def nearby(
-    lat: float,
-    lng: float,
-    radius_km: float = Query(5.0, gt=0, le=50),
+@app.get("/surprise")
+def surprise_get(
     category: str | None = None,
-    min_price: int | None = None,
-    max_price: int | None = None,
-    open_now: bool = False,
-    limit: int = 50,
+    keyword: str | None = None,
+    occasion: str | None = None,
+    lat: float | None = None,
+    lng: float | None = None,
+    radius_km: float | None = None,
     tenant_id: str = Depends(require_tenant),
 ):
-    lat_r1, lat_r2, lng_r1, lng_r2 = geo.bounding_box(lat, lng, radius_km)
-    candidates = db.list_places(
-        tenant_id, category=category, min_price=min_price, max_price=max_price,
-        lat_range=(lat_r1, lat_r2), lng_range=(lng_r1, lng_r2), limit=1000,
+    return _surprise_impl(
+        tenant_id,
+        category=category,
+        keyword=keyword,
+        occasion=occasion,
+        lat=lat,
+        lng=lng,
+        radius_km=radius_km,
+        exclude_ids=None,
     )
-    results = []
-    for place in candidates:
-        dist = geo.haversine_km(lat, lng, place["lat"], place["lng"])
-        if dist > radius_km:
-            continue
-        if open_now and not _is_open_now(place["opening_hours"]):
-            continue
-        place = {**place, "distance_km": round(dist, 3)}
-        results.append(place)
-    results.sort(key=lambda p: p["distance_km"])
-    return results[:limit]
+
+
+@app.post("/surprise")
+def surprise_post(body: SurpriseBody, tenant_id: str = Depends(require_tenant)):
+    return _surprise_impl(
+        tenant_id,
+        category=body.category,
+        keyword=body.keyword,
+        occasion=body.occasion,
+        lat=body.lat,
+        lng=body.lng,
+        radius_km=body.radius_km,
+        exclude_ids=body.exclude_ids,
+    )

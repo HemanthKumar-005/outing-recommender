@@ -1,0 +1,97 @@
+# Canonical occasion vocabulary and scoring rules.
+# Loaded at service startup; change weights without redeploying business logic.
+
+occasions:
+  - id: first_date
+    label: First Date
+    description: Light, low-pressure spots that help conversation flow
+    preferred_categories: [cafe, park, museum, restaurant]
+    preferred_tags: [first_date_friendly, quiet, cozy, conversation]
+    preferred_ambience: [quiet, cozy, romantic]
+    boost_couple_friendly: true
+    demote_categories: [bar, cinema]
+  - id: romantic
+    label: Romantic
+    description: Intimate ambiance, scenic views, couple-friendly venues
+    preferred_categories: [restaurant, park, attraction, cafe]
+    preferred_tags: [romantic, scenic, intimate, viewpoint]
+    preferred_ambience: [romantic, quiet, cozy]
+    boost_couple_friendly: true
+    demote_categories: []
+  - id: anniversary
+    label: Anniversary
+    description: Memorable, premium or meaningful locations
+    preferred_categories: [restaurant, attraction, museum]
+    preferred_tags: [romantic, premium, scenic, intimate]
+    preferred_ambience: [romantic, quiet]
+    boost_couple_friendly: true
+    demote_categories: []
+  - id: brewery_tour
+    label: Brewery Tour
+    description: Craft beer and brewpub crawl
+    preferred_categories: [bar]
+    preferred_tags: [brewery, nightlife, craft_beer, beer_garden]
+    preferred_ambience: [lively, trendy, casual]
+    boost_couple_friendly: false
+    demote_categories: [museum, park]
+  - id: adventure
+    label: Adventure
+    description: Outdoors, hills, waterfalls, active experiences
+    preferred_categories: [attraction, park]
+    preferred_tags: [adventure, outdoor, trek, viewpoint, waterfall]
+    preferred_ambience: [outdoor, lively]
+    boost_couple_friendly: false
+    demote_categories: [cinema, shopping]
+  - id: cultural
+    label: Cultural
+    description: Heritage, temples, museums, local history
+    preferred_categories: [museum, attraction]
+    preferred_tags: [heritage, temple, historic, culture]
+    preferred_ambience: [quiet, casual]
+    boost_couple_friendly: false
+    demote_categories: [bar]
+  - id: casual
+    label: Casual
+    description: Easygoing hangouts — cafes, shopping, parks
+    preferred_categories: [cafe, shopping, park, restaurant]
+    preferred_tags: [casual, wifi, outdoor-seating]
+    preferred_ambience: [casual, trendy, lively]
+    boost_couple_friendly: false
+    demote_categories: []
+
+# Scoring knobs used by recommendation-engine (fused into ranking.yaml weights)
+scoring:
+  tag_match_boost: 0.25          # per overlapping preferred tag (capped)
+  tag_match_cap: 0.50
+  category_match_boost: 0.20
+  couple_friendly_boost: 0.15
+  demote_penalty: 0.18
+  ambience_match_boost: 0.10
+
+durations:
+  - id: "2-3 hours"
+    label: "2–3 hours"
+    default_stops: 2
+  - id: "4-6 hours"
+    label: "4–6 hours"
+    default_stops: 3
+  - id: "full day"
+    label: "Full day"
+    default_stops: 4
+  - id: "weekend"
+    label: "Weekend"
+    default_stops: 5
+
+budget_bands:
+  low:
+    label: Budget
+    inr_label: "₹500–1500"
+    price_range_max: 2
+  medium:
+    label: Standard
+    inr_label: "₹1500–4000"
+    price_range_max: 3
+  high:
+    label: Premium
+    inr_label: "₹4000+"
+    price_range_max: 4

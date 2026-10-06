@@ -65,6 +65,9 @@ CREATE TABLE users.users (
     ambience_preferences    JSONB NOT NULL DEFAULT '[]',
     preferred_distance_km   REAL NOT NULL DEFAULT 10,
     preferred_outing_type   TEXT NOT NULL DEFAULT 'friends',
+    -- Occasion prefs (ids from configs/occasions.yaml); duration from same config
+    preferred_occasions     JSONB NOT NULL DEFAULT '[]',
+    preferred_duration      TEXT NOT NULL DEFAULT '4-6 hours',
     home_lat                DOUBLE PRECISION,
     home_lng                DOUBLE PRECISION,
     created_at              TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -98,6 +101,8 @@ CREATE TABLE places.places (
     review_count        INT NOT NULL DEFAULT 0,
     lat                 DOUBLE PRECISION NOT NULL,
     lng                 DOUBLE PRECISION NOT NULL,
+    city                TEXT,
+    state               TEXT,
     indoor_outdoor      TEXT NOT NULL DEFAULT 'indoor',
     ambience            JSONB NOT NULL DEFAULT '[]',
     tags                JSONB NOT NULL DEFAULT '[]',
@@ -114,6 +119,8 @@ CREATE TABLE places.places (
 CREATE INDEX idx_places_tenant_category ON places.places (tenant_id, category);
 CREATE INDEX idx_places_tenant_lat ON places.places (tenant_id, lat);
 CREATE INDEX idx_places_tenant_lng ON places.places (tenant_id, lng);
+CREATE INDEX idx_places_tenant_city ON places.places (tenant_id, city);
+CREATE INDEX idx_places_tenant_state ON places.places (tenant_id, state);
 
 ALTER TABLE places.places ENABLE ROW LEVEL SECURITY;
 ALTER TABLE places.places FORCE ROW LEVEL SECURITY;
@@ -188,12 +195,21 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA notifications TO app_role;
 CREATE SCHEMA itineraries;
 
 CREATE TABLE itineraries.itineraries (
-    id          BIGSERIAL PRIMARY KEY,
-    tenant_id   UUID NOT NULL REFERENCES platform.tenants(id),
-    user_id     BIGINT,
-    start_time  TIMESTAMPTZ NOT NULL,
-    end_time    TIMESTAMPTZ NOT NULL,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+    id                  BIGSERIAL PRIMARY KEY,
+    tenant_id           UUID NOT NULL REFERENCES platform.tenants(id),
+    user_id             BIGINT,
+    start_time          TIMESTAMPTZ NOT NULL,
+    end_time            TIMESTAMPTZ NOT NULL,
+    occasion            TEXT,
+    duration            TEXT,
+    title               TEXT,
+    description         TEXT,
+    budget_estimate     TEXT,
+    romantic_tips       JSONB NOT NULL DEFAULT '[]',
+    backup_plan         TEXT,
+    timeline_meta       JSONB NOT NULL DEFAULT '[]',
+    includes_breweries  BOOLEAN NOT NULL DEFAULT false,
+    created_at          TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE itineraries.itinerary_items (

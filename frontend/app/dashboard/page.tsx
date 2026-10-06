@@ -46,7 +46,7 @@ export default function DashboardHome() {
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div className="card">
             <p className="eyebrow">Context</p>
-            <h3 style={{ marginBottom: 8 }}>Bengaluru · Evening</h3>
+            <h3 style={{ marginBottom: 8 }}>Evening picks</h3>
             <p style={{ color: "var(--slate)", fontSize: "0.9rem", margin: 0 }}>
               Partly cloudy · 27°C · Great for indoor or covered outdoor spots.
             </p>

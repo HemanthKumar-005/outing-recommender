@@ -14,8 +14,8 @@ export default function WeatherDemo() {
         </h3>
         <p style={{ color: "var(--slate)", margin: "0 0 16px", maxWidth: 320 }}>
           {rainy
-            ? "Cubbon Park walk swapped for National Gallery of Modern Art. Same vibe, dry shoes."
-            : "Cubbon Park Walk — 2.4 km away, free entry, perfect for a group stroll."}
+            ? "Central Green Park walk swapped for City Modern Art Gallery. Same vibe, dry shoes."
+            : "Central Green Park — 2.4 km away, free entry, perfect for a group stroll."}
         </p>
         <div
           style={{
@@ -29,7 +29,7 @@ export default function WeatherDemo() {
           }}
         >
           <div style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", marginBottom: 4 }}>
-            {rainy ? "National Gallery of Modern Art" : "Cubbon Park Walk"}
+            {rainy ? "City Modern Art Gallery" : "Central Green Park"}
           </div>
           <div style={{ fontSize: "0.8rem", color: "var(--on-paper-muted)" }}>
             {rainy ? "museum · indoor · 4.0 km" : "park · outdoor · 2.4 km"}

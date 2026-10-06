@@ -1,9 +1,9 @@
 "use client";
 
 const EVENTS = [
-  { t: "Today", text: "Liked Lotus & Loom Café" },
-  { t: "Today", text: "Skipped Toit Brewpub" },
-  { t: "Yesterday", text: "Viewed Cubbon Park Walk" },
+  { t: "Today", text: "Liked Loom & Leaf Café" },
+  { t: "Today", text: "Skipped Hopworks Brewpub" },
+  { t: "Yesterday", text: "Viewed Central Green Park" },
   { t: "Yesterday", text: "Created evening itinerary" },
   { t: "2 days ago", text: "Updated preferences" },
 ];

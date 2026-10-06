@@ -15,6 +15,15 @@ const CATEGORIES = [
 ];
 
 const EXPERIENCES = ["Solo", "Couple", "Friends", "Family"];
+const OCCASIONS = [
+  { id: "first_date", label: "First Date" },
+  { id: "romantic", label: "Romantic" },
+  { id: "anniversary", label: "Anniversary" },
+  { id: "brewery_tour", label: "Brewery Tour" },
+  { id: "adventure", label: "Adventure" },
+  { id: "cultural", label: "Cultural" },
+  { id: "casual", label: "Casual" },
+];
 const PRIORITIES = ["Budget", "Distance", "Rating", "Ambience", "Weather", "Popularity"];
 
 export default function OnboardingPage() {
@@ -23,6 +32,7 @@ export default function OnboardingPage() {
   const [cats, setCats] = useState<Set<string>>(new Set());
   const [exp, setExp] = useState<Set<string>>(new Set());
   const [pri, setPri] = useState<Set<string>>(new Set());
+  const [occ, setOcc] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!isAuthenticated()) router.replace("/signup");
@@ -42,6 +52,7 @@ export default function OnboardingPage() {
         categories: Array.from(cats),
         experiences: Array.from(exp),
         priorities: Array.from(pri),
+        occasions: Array.from(occ),
       })
     );
     localStorage.setItem("nearby_onboarded", "true");
@@ -68,6 +79,18 @@ export default function OnboardingPage() {
           {EXPERIENCES.map((e) => (
             <button key={e} type="button" className={`chip ${exp.has(e) ? "active" : ""}`} onClick={() => toggle(exp, e, setExp)}>
               {e}
+            </button>
+          ))}
+        </div>
+      ),
+    },
+    {
+      title: "Any special occasions you plan for?",
+      body: (
+        <div className="onboard-options">
+          {OCCASIONS.map((o) => (
+            <button key={o.id} type="button" className={`chip ${occ.has(o.id) ? "active" : ""}`} onClick={() => toggle(occ, o.id, setOcc)}>
+              {o.label}
             </button>
           ))}
         </div>

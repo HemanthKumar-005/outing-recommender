@@ -1,0 +1,251 @@
+default_radius_km: 25
+states:
+- name: Andhra Pradesh
+  cities:
+  - name: Visakhapatnam
+    lat: 17.6868
+    lng: 83.2185
+  - name: Vijayawada
+    lat: 16.5062
+    lng: 80.648
+- name: Arunachal Pradesh
+  cities:
+  - name: Itanagar
+    lat: 27.0844
+    lng: 93.6053
+- name: Assam
+  cities:
+  - name: Guwahati
+    lat: 26.1445
+    lng: 91.7362
+- name: Bihar
+  cities:
+  - name: Patna
+    lat: 25.5941
+    lng: 85.1376
+- name: Chhattisgarh
+  cities:
+  - name: Raipur
+    lat: 21.2514
+    lng: 81.6296
+- name: Goa
+  cities:
+  - name: Panaji
+    lat: 15.4909
+    lng: 73.8278
+  - name: Margao
+    lat: 15.2832
+    lng: 73.9862
+- name: Gujarat
+  cities:
+  - name: Ahmedabad
+    lat: 23.0225
+    lng: 72.5714
+  - name: Surat
+    lat: 21.1702
+    lng: 72.8311
+  - name: Vadodara
+    lat: 22.3072
+    lng: 73.1812
+  - name: Rajkot
+    lat: 22.3039
+    lng: 70.8022
+- name: Haryana
+  cities:
+  - name: Gurugram
+    lat: 28.4595
+    lng: 77.0266
+  - name: Chandigarh
+    lat: 30.7333
+    lng: 76.7794
+- name: Himachal Pradesh
+  cities:
+  - name: Shimla
+    lat: 31.1048
+    lng: 77.1734
+  - name: Manali
+    lat: 32.2396
+    lng: 77.1887
+- name: Jharkhand
+  cities:
+  - name: Ranchi
+    lat: 23.3441
+    lng: 85.3096
+- name: Karnataka
+  cities:
+  - name: Bengaluru
+    lat: 12.9716
+    lng: 77.5946
+  - name: Mysuru
+    lat: 12.2958
+    lng: 76.6394
+  - name: Mangaluru
+    lat: 12.9141
+    lng: 74.856
+- name: Kerala
+  cities:
+  - name: Kochi
+    lat: 9.9312
+    lng: 76.2673
+  - name: Thiruvananthapuram
+    lat: 8.5241
+    lng: 76.9366
+  - name: Kozhikode
+    lat: 11.2588
+    lng: 75.7804
+  - name: Alappuzha
+    lat: 9.4981
+    lng: 76.3388
+- name: Madhya Pradesh
+  cities:
+  - name: Bhopal
+    lat: 23.2599
+    lng: 77.4126
+  - name: Indore
+    lat: 22.7196
+    lng: 75.8577
+- name: Maharashtra
+  cities:
+  - name: Mumbai
+    lat: 19.076
+    lng: 72.8777
+  - name: Pune
+    lat: 18.5204
+    lng: 73.8567
+  - name: Nagpur
+    lat: 21.1458
+    lng: 79.0882
+  - name: Nashik
+    lat: 19.9975
+    lng: 73.7898
+- name: Manipur
+  cities:
+  - name: Imphal
+    lat: 24.817
+    lng: 93.9368
+- name: Meghalaya
+  cities:
+  - name: Shillong
+    lat: 25.5788
+    lng: 91.8933
+- name: Mizoram
+  cities:
+  - name: Aizawl
+    lat: 23.7271
+    lng: 92.7176
+- name: Nagaland
+  cities:
+  - name: Kohima
+    lat: 25.6751
+    lng: 94.1026
+- name: Odisha
+  cities:
+  - name: Bhubaneswar
+    lat: 20.2961
+    lng: 85.8245
+  - name: Puri
+    lat: 19.8135
+    lng: 85.8312
+- name: Punjab
+  cities:
+  - name: Amritsar
+    lat: 31.634
+    lng: 74.8723
+  - name: Ludhiana
+    lat: 30.901
+    lng: 75.8573
+- name: Rajasthan
+  cities:
+  - name: Jaipur
+    lat: 26.9124
+    lng: 75.7873
+  - name: Udaipur
+    lat: 24.5854
+    lng: 73.7125
+  - name: Jodhpur
+    lat: 26.2389
+    lng: 73.0243
+- name: Sikkim
+  cities:
+  - name: Gangtok
+    lat: 27.3389
+    lng: 88.6065
+- name: Tamil Nadu
+  cities:
+  - name: Chennai
+    lat: 13.0827
+    lng: 80.2707
+  - name: Coimbatore
+    lat: 11.0168
+    lng: 76.9558
+  - name: Madurai
+    lat: 9.9252
+    lng: 78.1198
+- name: Telangana
+  cities:
+  - name: Hyderabad
+    lat: 17.385
+    lng: 78.4867
+- name: Tripura
+  cities:
+  - name: Agartala
+    lat: 23.8315
+    lng: 91.2868
+- name: Uttar Pradesh
+  cities:
+  - name: Lucknow
+    lat: 26.8467
+    lng: 80.9462
+  - name: Varanasi
+    lat: 25.3176
+    lng: 82.9739
+  - name: Agra
+    lat: 27.1767
+    lng: 78.0081
+  - name: Noida
+    lat: 28.5355
+    lng: 77.391
+- name: Uttarakhand
+  cities:
+  - name: Dehradun
+    lat: 30.3165
+    lng: 78.0322
+  - name: Rishikesh
+    lat: 30.0869
+    lng: 78.2676
+- name: West Bengal
+  cities:
+  - name: Kolkata
+    lat: 22.5726
+    lng: 88.3639
+  - name: Darjeeling
+    lat: 27.036
+    lng: 88.2627
+- name: Delhi
+  cities:
+  - name: New Delhi
+    lat: 28.6139
+    lng: 77.209
+- name: Jammu and Kashmir
+  cities:
+  - name: Srinagar
+    lat: 34.0837
+    lng: 74.7973
+  - name: Jammu
+    lat: 32.7266
+    lng: 74.857
+- name: Ladakh
+  cities:
+  - name: Leh
+    lat: 34.1526
+    lng: 77.5771
+- name: Puducherry
+  cities:
+  - name: Puducherry
+    lat: 11.9416
+    lng: 79.8083
+- name: Andaman and Nicobar Islands
+  cities:
+  - name: Port Blair
+    lat: 11.6234
+    lng: 92.7265

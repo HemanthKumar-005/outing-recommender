@@ -118,23 +118,34 @@ def train() -> tuple:
 
 
 def main():
-    version = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    path, metrics = train()
+    while True:
+        version = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        try:
+            path, metrics = train()
+            
+            metadata = {
+                "model_name": MODEL_NAME,
+                "version": version,
+                "training_date": datetime.now(timezone.utc).isoformat(),
+                "dataset_version": DATASET_VERSION,
+                "feature_version": FEATURE_VERSION,
+                "feature_names": FEATURE_NAMES,
+                "metrics": metrics,
+            }
+            with open(MODEL_METADATA_PATH, "w") as f:
+                json.dump(metadata, f, indent=2)
+            print(f"[model-training-worker] saved metadata to {MODEL_METADATA_PATH}")
 
-    metadata = {
-        "model_name": MODEL_NAME,
-        "version": version,
-        "training_date": datetime.now(timezone.utc).isoformat(),
-        "dataset_version": DATASET_VERSION,
-        "feature_version": FEATURE_VERSION,
-        "feature_names": FEATURE_NAMES,
-        "metrics": metrics,
-    }
-    with open(MODEL_METADATA_PATH, "w") as f:
-        json.dump(metadata, f, indent=2)
-    print(f"[model-training-worker] saved metadata to {MODEL_METADATA_PATH}")
-
-    publish("model.updated", {"version": version, "path": path, "metrics": metrics})
+            publish("model.updated", {"version": version, "path": path, "metrics": metrics})
+        except Exception as e:
+            print(f"[model-training-worker] training failed: {e}")
+            
+        daemon_mode = os.environ.get("DAEMON_MODE", "false").lower() == "true"
+        if not daemon_mode:
+            break
+            
+        print("[model-training-worker] sleeping for 24 hours...")
+        time.sleep(86400)
 
 
 if __name__ == "__main__":

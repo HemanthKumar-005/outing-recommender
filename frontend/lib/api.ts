@@ -131,3 +131,165 @@ export type RecommendResponse = {
   diversity: number;
   recommendations: Recommendation[];
 };
+/** Canonical occasions — prefer live API; fall back to static list matching configs/occasions.yaml */
+export const FALLBACK_OCCASIONS = [
+  { id: "first_date", label: "First Date", description: "Low-pressure conversation-friendly spots" },
+  { id: "romantic", label: "Romantic", description: "Intimate and scenic" },
+  { id: "anniversary", label: "Anniversary", description: "Memorable celebration" },
+  { id: "brewery_tour", label: "Brewery Tour", description: "Craft beer crawl" },
+  { id: "adventure", label: "Adventure", description: "Outdoors and active" },
+  { id: "cultural", label: "Cultural", description: "Heritage and museums" },
+  { id: "casual", label: "Casual", description: "Easygoing hangouts" },
+];
+
+export const DURATIONS = ["2-3 hours", "4-6 hours", "full day", "weekend"];
+export const BUDGET_BANDS = [
+  { id: "low", label: "Budget", range: "₹500–1500" },
+  { id: "medium", label: "Standard", range: "₹1500–4000" },
+  { id: "high", label: "Premium", range: "₹4000+" },
+];
+
+export async function fetchOccasions() {
+  try {
+    const res = await apiFetch("places/occasions");
+    if (res.ok) {
+      const data = await res.json();
+      if (data.occasions?.length) return data.occasions as typeof FALLBACK_OCCASIONS;
+    }
+  } catch {
+    /* use fallback */
+  }
+  return FALLBACK_OCCASIONS;
+}
+
+export async function getSurprisePlace(params: {
+  keyword?: string;
+  category?: string;
+  occasion?: string;
+  lat?: number;
+  lng?: number;
+  radius_km?: number;
+}) {
+  const q = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== undefined && v !== null && v !== "") q.set(k, String(v));
+  });
+  const res = await apiFetch(`places/surprise?${q.toString()}`);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function generatePlan(body: {
+  user_id?: number;
+  place_ids?: number[];
+  occasion?: string;
+  duration?: string;
+  budget?: string;
+  start_time?: string;
+  lat?: number;
+  lng?: number;
+  area_label?: string;
+  persist?: boolean;
+}) {
+  const res = await apiFetch("itinerary/generate-plan", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json() as Promise<{ success: boolean; data: DatePlan }>;
+}
+
+export async function refinePlan(itineraryId: number, feedback: string) {
+  const res = await apiFetch(`itinerary/itineraries/${itineraryId}/refine`, {
+    method: "POST",
+    body: JSON.stringify({ feedback }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function getRecommendations(body: {
+  user_id?: number;
+  lat?: number;
+  lng?: number;
+  radius_km?: number;
+  category?: string;
+  outing_type?: string;
+  occasion?: string;
+  duration?: string;
+  city?: string;
+  state?: string;
+  limit?: number;
+}) {
+  const res = await apiFetch("recommendations/recommendations", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export type DatePlan = {
+  itinerary_id?: number;
+  title: string;
+  description: string;
+  occasion?: string;
+  duration?: string;
+  budget_estimate?: string;
+  romantic_tips?: string[];
+  backup_plan?: string | null;
+  timeline_meta?: Array<{
+    time: string;
+    activity: string;
+    place_name?: string;
+    place_id?: number;
+    category?: string;
+  }>;
+  includes_breweries?: boolean;
+  items?: unknown[];
+  places?: Array<{ id: number; name: string; category: string }>;
+};
+
+
+export async function fetchLocations(state?: string) {
+  const q = state ? `?state=${encodeURIComponent(state)}` : "";
+  const res = await apiFetch(`places/locations${q}`);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json() as Promise<{
+    states: string[];
+    cities: Array<{ state: string; name: string; lat: number; lng: number }>;
+    default_radius_km: number;
+  }>;
+}
+
+export async function searchPlacesNear(params: {
+  lat?: number;
+  lng?: number;
+  radius_km?: number;
+  city?: string;
+  state?: string;
+  category?: string;
+  q?: string;
+  limit?: number;
+}) {
+  const q = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== undefined && v !== null && v !== "") q.set(k, String(v));
+  });
+  const res = await apiFetch(`places/search?${q.toString()}`);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function fetchInteractions(userId: number) {
+  const res = await apiFetch(`interactions/users/${userId}/interactions`);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export async function fetchItineraries(userId?: number) {
+  const q = userId ? `?user_id=${userId}` : "";
+  const res = await apiFetch(`itinerary/itineraries${q}`);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}

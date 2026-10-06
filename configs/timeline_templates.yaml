@@ -1,0 +1,122 @@
+# Timeline templates keyed by duration then occasion.
+# offset_min = minutes from plan start. activity is a role label; place names
+# are filled in at generation time from the scheduled stops.
+
+templates:
+  "2-3 hours":
+    default:
+      - { offset_min: 0,  role: meetup,   activity: "Meet and settle in" }
+      - { offset_min: 45, role: main,     activity: "Main activity" }
+      - { offset_min: 120, role: winddown, activity: "Wind-down and goodbye" }
+    first_date:
+      - { offset_min: 0,  role: meetup,   activity: "Casual meetup over coffee or a short walk" }
+      - { offset_min: 60, role: main,     activity: "Shared activity or light meal" }
+      - { offset_min: 120, role: winddown, activity: "Easy goodbye at a nearby spot" }
+    romantic:
+      - { offset_min: 0,  role: meetup,   activity: "Scenic meetup" }
+      - { offset_min: 50, role: main,     activity: "Intimate main experience" }
+      - { offset_min: 110, role: winddown, activity: "Quiet wind-down" }
+
+  "4-6 hours":
+    default:
+      - { offset_min: 0,   role: meetup,  activity: "Arrive and settle" }
+      - { offset_min: 90,  role: main,    activity: "Primary experience" }
+      - { offset_min: 180, role: meal,    activity: "Meal or cafe break" }
+      - { offset_min: 270, role: winddown, activity: "Evening wind-down" }
+    romantic:
+      - { offset_min: 0,   role: meetup,  activity: "Scenic meetup or viewpoint" }
+      - { offset_min: 90,  role: main,    activity: "Shared romantic experience" }
+      - { offset_min: 180, role: meal,    activity: "Intimate dinner" }
+      - { offset_min: 270, role: winddown, activity: "Evening stroll" }
+    first_date:
+      - { offset_min: 0,   role: meetup,  activity: "Low-pressure coffee or park walk" }
+      - { offset_min: 75,  role: main,    activity: "Light activity or gallery" }
+      - { offset_min: 165, role: meal,    activity: "Casual meal" }
+      - { offset_min: 240, role: winddown, activity: "Relaxed goodbye" }
+    brewery_tour:
+      - { offset_min: 0,   role: tasting, activity: "First brewery tasting" }
+      - { offset_min: 90,  role: tasting, activity: "Second brewery for different styles" }
+      - { offset_min: 180, role: meal,    activity: "Dinner at brewpub with pairing" }
+      - { offset_min: 270, role: optional, activity: "Optional nightcap or cafe" }
+    adventure:
+      - { offset_min: 0,   role: start,   activity: "Gear up and start outdoor activity" }
+      - { offset_min: 120, role: main,    activity: "Peak experience or viewpoint" }
+      - { offset_min: 210, role: meal,    activity: "Refuel with local food" }
+      - { offset_min: 300, role: winddown, activity: "Cool-down and return" }
+    cultural:
+      - { offset_min: 0,   role: heritage, activity: "Heritage or temple visit" }
+      - { offset_min: 90,  role: explore, activity: "Museum or cultural site" }
+      - { offset_min: 180, role: meal,    activity: "Traditional lunch or snacks" }
+      - { offset_min: 270, role: market,  activity: "Local market or crafts" }
+    casual:
+      - { offset_min: 0,   role: meetup,  activity: "Cafe or park meetup" }
+      - { offset_min: 90,  role: explore, activity: "Shopping or neighbourhood stroll" }
+      - { offset_min: 180, role: meal,    activity: "Local food stop" }
+      - { offset_min: 270, role: winddown, activity: "Relaxed evening spot" }
+    anniversary:
+      - { offset_min: 0,   role: meetup,  activity: "Special meetup or scenic start" }
+      - { offset_min: 90,  role: main,    activity: "Meaningful shared experience" }
+      - { offset_min: 180, role: meal,    activity: "Celebration meal" }
+      - { offset_min: 270, role: winddown, activity: "Quiet close to the day" }
+
+  "full day":
+    default:
+      - { offset_min: 0,   role: start,   activity: "Morning meetup and day planning" }
+      - { offset_min: 90,  role: main,    activity: "Main attraction" }
+      - { offset_min: 180, role: meal,    activity: "Lunch" }
+      - { offset_min: 270, role: secondary, activity: "Secondary activities" }
+      - { offset_min: 360, role: meal,    activity: "Dinner" }
+      - { offset_min: 450, role: winddown, activity: "Evening wind-down" }
+
+  "weekend":
+    default:
+      - { offset_min: 0,    role: arrive,  activity: "Arrival and settle in" }
+      - { offset_min: 180,  role: explore, activity: "Local exploration and lunch" }
+      - { offset_min: 480,  role: scenic,  activity: "Sunset views and relaxation" }
+      - { offset_min: 600,  role: meal,    activity: "Romantic or group dinner" }
+      - { offset_min: 1440, role: morning, activity: "Breakfast and day activities" }
+      - { offset_min: 1680, role: close,   activity: "Lunch and final experiences" }
+
+# Scheduling constraints per occasion (used by itinerary-service)
+constraints:
+  brewery_tour:
+    max_stops: 3
+    preferred_start_hour: 16
+    min_gap_minutes: 75
+    backup_strategy: indoor_bar_or_cafe
+  romantic:
+    max_stops: 3
+    preferred_start_hour: 16
+    min_gap_minutes: 60
+    backup_strategy: indoor_quiet
+  first_date:
+    max_stops: 3
+    preferred_start_hour: 16
+    min_gap_minutes: 60
+    backup_strategy: cafe_or_park
+  adventure:
+    max_stops: 4
+    preferred_start_hour: 8
+    min_gap_minutes: 90
+    backup_strategy: indoor_attraction
+  default:
+    max_stops: 4
+    preferred_start_hour: 10
+    min_gap_minutes: 60
+    backup_strategy: alternate_category
+
+title_templates:
+  romantic: "Romantic outing around {area}"
+  first_date: "Easy first-date plan near {area}"
+  anniversary: "Anniversary plan in {area}"
+  brewery_tour: "Brewery crawl in {area}"
+  adventure: "Adventure day near {area}"
+  cultural: "Cultural trail through {area}"
+  casual: "Casual outing around {area}"
+  default: "Outing plan for {area}"
+
+description_templates:
+  romantic: "A paced, intimate itinerary tailored for a romantic {duration} together."
+  first_date: "Low-pressure stops designed to keep conversation flowing for a {duration} first date."
+  brewery_tour: "A carefully paced craft-beer route with tasting gaps and a food stop."
+  default: "A {duration} plan built around your selected spots and preferences."

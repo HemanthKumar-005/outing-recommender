@@ -7,6 +7,7 @@ import { getUserInfo, clearSession } from "../lib/api";
 const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: "⌂" },
   { href: "/dashboard/discover", label: "Discover", icon: "◎" },
+  { href: "/dashboard/date-planner", label: "Date Planner", icon: "♥" },
   { href: "/dashboard/recommendations", label: "Recommendations", icon: "★" },
   { href: "/dashboard/saved", label: "Saved Places", icon: "♡" },
   { href: "/dashboard/itineraries", label: "Itineraries", icon: "☰" },

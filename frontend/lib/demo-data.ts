@@ -15,7 +15,7 @@ export type DemoPlace = {
 export const DEMO_PLACES: DemoPlace[] = [
   {
     id: 1,
-    name: "Lotus & Loom Café",
+    name: "Loom & Leaf Café",
     category: "cafe",
     rating: 4.7,
     distance_km: 1.2,
@@ -28,7 +28,7 @@ export const DEMO_PLACES: DemoPlace[] = [
   },
   {
     id: 2,
-    name: "Cubbon Park Walk",
+    name: "Central Green Park",
     category: "park",
     rating: 4.8,
     distance_km: 2.4,
@@ -41,7 +41,7 @@ export const DEMO_PLACES: DemoPlace[] = [
   },
   {
     id: 3,
-    name: "PVR Orion Mall",
+    name: "Orion Cinema Hall",
     category: "cinema",
     rating: 4.5,
     distance_km: 3.1,
@@ -54,7 +54,7 @@ export const DEMO_PLACES: DemoPlace[] = [
   },
   {
     id: 4,
-    name: "Toit Brewpub",
+    name: "Hopworks Brewpub",
     category: "bar",
     rating: 4.6,
     distance_km: 1.8,
@@ -67,7 +67,7 @@ export const DEMO_PLACES: DemoPlace[] = [
   },
   {
     id: 5,
-    name: "National Gallery of Modern Art",
+    name: "City Modern Art Gallery",
     category: "museum",
     rating: 4.4,
     distance_km: 4.0,
@@ -80,7 +80,7 @@ export const DEMO_PLACES: DemoPlace[] = [
   },
   {
     id: 6,
-    name: "Truffles Koramangala",
+    name: "Truffles downtown",
     category: "restaurant",
     rating: 4.5,
     distance_km: 2.7,
@@ -100,19 +100,19 @@ export const GROUP_PERSONAS = [
 ];
 
 export const GROUP_RESULT = {
-  name: "Lalbagh Botanical Garden + Café nearby",
+  name: "Botanical Gardens Botanical Garden + Café nearby",
   match: 87,
   reason: "Balances outdoor preference with café stop · Fits medium budgets · Walking distance between stops",
   stops: [
-    { time: "4:00 PM", place: "Lalbagh Botanical Garden", type: "park" },
+    { time: "4:00 PM", place: "Botanical Gardens Botanical Garden", type: "park" },
     { time: "6:00 PM", place: "The Coffee Bean (nearby)", type: "cafe" },
   ],
 };
 
 export const ITINERARY_DEMO = [
-  { time: "6:00 PM", place: "Lotus & Loom Café", category: "cafe", distance: "1.2 km", note: "Settle in before the evening" },
-  { time: "7:30 PM", place: "PVR Orion Mall", category: "cinema", distance: "2.1 km from café", note: "Show starts 7:45" },
-  { time: "9:45 PM", place: "Truffles Koramangala", category: "restaurant", distance: "1.8 km from cinema", note: "Dinner reservation held" },
+  { time: "6:00 PM", place: "Loom & Leaf Café", category: "cafe", distance: "1.2 km", note: "Settle in before the evening" },
+  { time: "7:30 PM", place: "Orion Cinema Hall", category: "cinema", distance: "2.1 km from café", note: "Show starts 7:45" },
+  { time: "9:45 PM", place: "Truffles downtown", category: "restaurant", distance: "1.8 km from cinema", note: "Dinner reservation held" },
 ];
 
 export const TESTIMONIALS = [
