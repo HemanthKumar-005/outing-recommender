@@ -112,7 +112,7 @@ export default function HomePage() {
               </div>
               <div className="hero-trust">
                 <span>✓ Explainable by design</span>
-                <span>✓ Tenant-isolated</span>
+                <span>✓ Your data stays private</span>
                 <span>✓ Public model card</span>
               </div>
             </div>

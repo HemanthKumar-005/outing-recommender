@@ -55,7 +55,7 @@ export default function SignupPage() {
       <div className="auth-card fade-up">
         <Link href="/" className="logo" style={{ marginBottom: 28, display: "inline-flex" }}>
           <span className="logo-mark">N</span>
-          Nearby & Co.
+          Nearby &amp; Co.
         </Link>
         <h1>Create your workspace</h1>
         <p className="lead">Sign up free. Your data stays isolated with tenant-level security.</p>
