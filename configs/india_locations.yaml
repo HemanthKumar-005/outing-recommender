@@ -8,21 +8,33 @@ states:
   - name: Vijayawada
     lat: 16.5062
     lng: 80.648
+  - name: Tirupati
+    lat: 13.6288
+    lng: 79.4192
 - name: Arunachal Pradesh
   cities:
   - name: Itanagar
     lat: 27.0844
     lng: 93.6053
+  - name: Tawang
+    lat: 27.5861
+    lng: 91.8594
 - name: Assam
   cities:
   - name: Guwahati
     lat: 26.1445
     lng: 91.7362
+  - name: Kaziranga
+    lat: 26.5775
+    lng: 93.1711
 - name: Bihar
   cities:
   - name: Patna
     lat: 25.5941
     lng: 85.1376
+  - name: Bodh Gaya
+    lat: 24.6961
+    lng: 84.9869
 - name: Chhattisgarh
   cities:
   - name: Raipur
@@ -66,11 +78,17 @@ states:
   - name: Manali
     lat: 32.2396
     lng: 77.1887
+  - name: Dharamshala
+    lat: 32.219
+    lng: 76.3234
 - name: Jharkhand
   cities:
   - name: Ranchi
     lat: 23.3441
     lng: 85.3096
+  - name: Jamshedpur
+    lat: 22.8046
+    lng: 86.2029
 - name: Karnataka
   cities:
   - name: Bengaluru
@@ -123,6 +141,12 @@ states:
   - name: Alappuzha
     lat: 9.4981
     lng: 76.3388
+  - name: Munnar
+    lat: 10.0889
+    lng: 77.0595
+  - name: Wayanad
+    lat: 11.6854
+    lng: 76.132
 - name: Madhya Pradesh
   cities:
   - name: Bhopal
@@ -131,6 +155,12 @@ states:
   - name: Indore
     lat: 22.7196
     lng: 75.8577
+  - name: Gwalior
+    lat: 26.2183
+    lng: 78.1828
+  - name: Jabalpur
+    lat: 23.1815
+    lng: 79.9864
 - name: Maharashtra
   cities:
   - name: Mumbai
@@ -145,6 +175,12 @@ states:
   - name: Nashik
     lat: 19.9975
     lng: 73.7898
+  - name: Lonavala
+    lat: 18.7557
+    lng: 73.4091
+  - name: Chhatrapati Sambhajinagar
+    lat: 19.8762
+    lng: 75.3433
 - name: Manipur
   cities:
   - name: Imphal
@@ -155,6 +191,9 @@ states:
   - name: Shillong
     lat: 25.5788
     lng: 91.8933
+  - name: Cherrapunji
+    lat: 25.2986
+    lng: 91.7314
 - name: Mizoram
   cities:
   - name: Aizawl
@@ -192,6 +231,12 @@ states:
   - name: Jodhpur
     lat: 26.2389
     lng: 73.0243
+  - name: Jaisalmer
+    lat: 26.9157
+    lng: 70.9083
+  - name: Pushkar
+    lat: 26.4897
+    lng: 74.5511
 - name: Sikkim
   cities:
   - name: Gangtok
@@ -208,11 +253,20 @@ states:
   - name: Madurai
     lat: 9.9252
     lng: 78.1198
+  - name: Ooty
+    lat: 11.4102
+    lng: 76.695
+  - name: Kodaikanal
+    lat: 10.2381
+    lng: 77.4892
 - name: Telangana
   cities:
   - name: Hyderabad
     lat: 17.385
     lng: 78.4867
+  - name: Warangal
+    lat: 17.9689
+    lng: 79.5941
 - name: Tripura
   cities:
   - name: Agartala
@@ -232,6 +286,9 @@ states:
   - name: Noida
     lat: 28.5355
     lng: 77.391
+  - name: Prayagraj
+    lat: 25.4358
+    lng: 81.8463
 - name: Uttarakhand
   cities:
   - name: Dehradun
@@ -240,6 +297,12 @@ states:
   - name: Rishikesh
     lat: 30.0869
     lng: 78.2676
+  - name: Mussoorie
+    lat: 30.4598
+    lng: 78.0644
+  - name: Nainital
+    lat: 29.3919
+    lng: 79.4542
 - name: West Bengal
   cities:
   - name: Kolkata
@@ -261,6 +324,9 @@ states:
   - name: Jammu
     lat: 32.7266
     lng: 74.857
+  - name: Gulmarg
+    lat: 34.0484
+    lng: 74.3805
 - name: Ladakh
   cities:
   - name: Leh
@@ -276,3 +342,6 @@ states:
   - name: Port Blair
     lat: 11.6234
     lng: 92.7265
+  - name: Havelock Island
+    lat: 12.0
+    lng: 92.98

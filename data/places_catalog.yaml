@@ -1,4 +1,7 @@
 places:
+# =============================================================================
+# DELHI & NCR
+# =============================================================================
 - name: Lodhi Garden
   city: New Delhi
   state: Delhi
@@ -9,18 +12,13 @@ places:
   price_range: 1
   average_cost: 0
   indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - quiet
-  - romantic
-  tags:
-  - romantic
-  - first_date_friendly
-  - scenic
+  ambience: [outdoor, quiet, romantic]
+  tags: [romantic, first_date_friendly, scenic, nature]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Historic park with tombs and walking paths.
+  description: Historic 90-acre park with 15th-century Sayyid and Lodi tombs, walking paths, and peaceful lawns.
+
 - name: India Gate Lawns
   city: New Delhi
   state: Delhi
@@ -31,18 +29,13 @@ places:
   price_range: 1
   average_cost: 0
   indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - casual
-  - lively
-  tags:
-  - casual
-  - scenic
-  - heritage
+  ambience: [outdoor, casual, lively]
+  tags: [casual, scenic, heritage, family]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Iconic monument and evening picnic lawns.
+  description: Iconic war memorial arch surrounded by sprawling lawns, evening lights, and street food.
+
 - name: Khan Market Cafes
   city: New Delhi
   state: Delhi
@@ -53,455 +46,260 @@ places:
   price_range: 3
   average_cost: 800
   indoor_outdoor: indoor
-  ambience:
-  - trendy
-  - cozy
-  tags:
-  - first_date_friendly
-  - casual
-  - wifi
+  ambience: [trendy, cozy, casual]
+  tags: [first_date_friendly, casual, wifi, cozy, conversation]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Upscale market with cafes and bookshops.
-- name: Marine Drive
-  city: Mumbai
-  state: Maharashtra
-  category: attraction
-  subcategory: promenade
-  lat: 18.9432
-  lng: 72.8235
-  price_range: 1
-  average_cost: 0
-  indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - romantic
-  - casual
-  tags:
-  - romantic
-  - scenic
-  - casual
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: true
-  description: Sea-facing promenade for evening walks.
-- name: Bandra Fort
-  city: Mumbai
-  state: Maharashtra
-  category: attraction
-  subcategory: fort
-  lat: 19.0422
-  lng: 72.8186
-  price_range: 1
-  average_cost: 0
-  indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - romantic
-  - quiet
-  tags:
-  - romantic
-  - scenic
-  - viewpoint
-  - heritage
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: true
-  description: Sea-facing fort ruins and sunset point.
-- name: Todi Mill Social
-  city: Mumbai
-  state: Maharashtra
+  description: Upscale leafy lifestyle market with artisanal coffee roasters, independent bookshops, and boutique cafes.
+
+- name: Hauz Khas Social & Deer Park
+  city: New Delhi
+  state: Delhi
   category: bar
   subcategory: brewery
-  lat: 19.0176
-  lng: 72.8561
+  lat: 28.5539
+  lng: 77.1944
   price_range: 3
-  average_cost: 1400
-  indoor_outdoor: indoor
-  ambience:
-  - lively
-  - trendy
-  tags:
-  - brewery
-  - nightlife
-  - craft_beer
+  average_cost: 1500
+  indoor_outdoor: both
+  ambience: [lively, trendy, scenic]
+  tags: [nightlife, craft_beer, scenic, date_spot, lake]
   couple_friendly: true
   friends_friendly: true
   family_friendly: false
-  description: Popular Lower Parel hangout with drinks and food.
-- name: Amber Fort
-  city: Jaipur
-  state: Rajasthan
-  category: attraction
-  subcategory: fort
-  lat: 26.9855
-  lng: 75.8513
-  price_range: 2
-  average_cost: 200
-  indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - quiet
-  tags:
-  - heritage
-  - culture
-  - historic
-  - romantic
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: true
-  description: Hilltop fort with courtyards and views.
-- name: City Palace Jaipur
-  city: Jaipur
-  state: Rajasthan
-  category: attraction
-  subcategory: palace
-  lat: 26.9258
-  lng: 75.8236
-  price_range: 2
-  average_cost: 300
-  indoor_outdoor: both
-  ambience:
-  - quiet
-  - casual
-  tags:
-  - heritage
-  - culture
-  - historic
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: true
-  description: Royal complex in the old city.
-- name: Palolem Beach
-  city: Margao
-  state: Goa
-  category: attraction
-  subcategory: beach
-  lat: 15.01
-  lng: 74.0232
-  price_range: 1
-  average_cost: 0
-  indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - casual
-  - romantic
-  tags:
-  - romantic
-  - scenic
-  - casual
-  - adventure
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: true
-  description: Crescent beach in South Goa.
-- name: Fontainhas Walk
-  city: Panaji
-  state: Goa
-  category: attraction
-  subcategory: heritage
-  lat: 15.4989
-  lng: 73.8278
-  price_range: 1
-  average_cost: 0
-  indoor_outdoor: outdoor
-  ambience:
-  - casual
-  - quiet
-  tags:
-  - heritage
-  - culture
-  - casual
-  - first_date_friendly
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: true
-  description: Latin Quarter lanes with colourful houses.
-- name: Charminar Area
-  city: Hyderabad
-  state: Telangana
+  description: Multi-level lakeview gastrobar overlooking medieval reservoir ruins and the lush Deer Park trail.
+
+- name: Qutub Minar Complex
+  city: New Delhi
+  state: Delhi
   category: attraction
   subcategory: monument
-  lat: 17.3616
-  lng: 78.4747
+  lat: 28.5245
+  lng: 77.1855
   price_range: 1
   average_cost: 50
   indoor_outdoor: outdoor
-  ambience:
-  - lively
-  - casual
-  tags:
-  - heritage
-  - culture
-  - casual
+  ambience: [heritage, scenic, quiet]
+  tags: [heritage, historic, culture, architecture]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Historic monument and old-city street food.
-- name: Hussain Sagar Lake
-  city: Hyderabad
-  state: Telangana
-  category: park
-  subcategory: lake
-  lat: 17.4239
-  lng: 78.4738
-  price_range: 1
-  average_cost: 0
-  indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - romantic
-  - casual
-  tags:
-  - romantic
-  - scenic
-  - casual
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: true
-  description: Lakeside promenade and boat rides.
-- name: Marina Beach
-  city: Chennai
-  state: Tamil Nadu
-  category: attraction
-  subcategory: beach
-  lat: 13.05
-  lng: 80.2824
-  price_range: 1
-  average_cost: 0
-  indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - casual
-  - lively
-  tags:
-  - casual
-  - scenic
-  - family
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: true
-  description: Long urban beach promenade.
-- name: Kapaleeshwarar Temple
-  city: Chennai
-  state: Tamil Nadu
-  category: attraction
-  subcategory: temple
-  lat: 13.0339
-  lng: 80.2695
-  price_range: 1
-  average_cost: 0
-  indoor_outdoor: outdoor
-  ambience:
-  - quiet
-  - casual
-  tags:
-  - heritage
-  - temple
-  - culture
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: true
-  description: Dravidian-style temple in Mylapore.
-- name: Victoria Memorial
-  city: Kolkata
-  state: West Bengal
-  category: attraction
-  subcategory: museum
-  lat: 22.5448
-  lng: 88.3426
-  price_range: 1
-  average_cost: 30
+  description: UNESCO World Heritage 73-meter victory minaret surrounded by intricate 12th-century Afghan-Hindu stone carving ruins.
+
+- name: Olive Bar & Kitchen Mehrauli
+  city: New Delhi
+  state: Delhi
+  category: restaurant
+  subcategory: fine_dining
+  lat: 28.5255
+  lng: 77.183
+  price_range: 4
+  average_cost: 3500
   indoor_outdoor: both
-  ambience:
-  - quiet
-  - casual
-  tags:
-  - heritage
-  - culture
-  - historic
-  - first_date_friendly
+  ambience: [romantic, cozy, quiet]
+  tags: [romantic, premium, intimate, first_date_friendly]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Marble museum and gardens.
-- name: Princep Ghat
-  city: Kolkata
-  state: West Bengal
-  category: attraction
-  subcategory: riverside
-  lat: 22.555
-  lng: 88.331
+  description: White-walled Mediterranean courtyard restaurant under a banyan tree with candlelit al-fresco dining.
+
+- name: National Gallery of Modern Art
+  city: New Delhi
+  state: Delhi
+  category: museum
+  subcategory: gallery
+  lat: 28.6105
+  lng: 77.2345
   price_range: 1
-  average_cost: 0
-  indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - romantic
-  - quiet
-  tags:
-  - romantic
-  - scenic
-  - casual
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: true
-  description: Hooghly riverside ghat for evenings.
-- name: Cubbon Park
-  city: Bengaluru
-  state: Karnataka
-  category: park
-  subcategory: garden
-  lat: 12.9763
-  lng: 77.5929
-  price_range: 1
-  average_cost: 0
-  indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - quiet
-  - casual
-  tags:
-  - first_date_friendly
-  - casual
-  - scenic
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: true
-  description: Central city park for walks.
-- name: Toit Brewpub
-  city: Bengaluru
-  state: Karnataka
-  category: bar
-  subcategory: brewery
-  lat: 12.9784
-  lng: 77.6408
-  price_range: 3
-  average_cost: 1200
+  average_cost: 20
   indoor_outdoor: indoor
-  ambience:
-  - lively
-  - trendy
-  - casual
-  tags:
-  - brewery
-  - nightlife
-  - craft_beer
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: false
-  description: Craft brewery with food and lively floor.
-- name: Shaniwar Wada
-  city: Pune
-  state: Maharashtra
-  category: attraction
-  subcategory: fort
-  lat: 18.5195
-  lng: 73.8553
-  price_range: 1
-  average_cost: 50
-  indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - quiet
-  tags:
-  - heritage
-  - historic
-  - culture
+  ambience: [quiet, casual, heritage]
+  tags: [culture, first_date_friendly, quiet, historic]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Historic fortification in the old city.
-- name: Lake Pichola
-  city: Udaipur
-  state: Rajasthan
+  description: Former Jaipur House palace displaying landmark modern Indian artwork, sculpture gardens, and calm exhibition halls.
+
+- name: Dilli Haat INA
+  city: New Delhi
+  state: Delhi
   category: attraction
-  subcategory: lake
-  lat: 24.576
-  lng: 73.68
+  subcategory: market
+  lat: 28.5732
+  lng: 77.2075
   price_range: 2
   average_cost: 400
   indoor_outdoor: outdoor
-  ambience:
-  - romantic
-  - outdoor
-  - quiet
-  tags:
-  - romantic
-  - scenic
-  - premium
+  ambience: [lively, casual, outdoor]
+  tags: [casual, culture, food, family]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Boat rides and lake views in the city of lakes.
-- name: Dashashwamedh Ghat
-  city: Varanasi
+  description: Open-air rural craft bazaar with regional handicrafts and authentic state-by-state food stalls across India.
+
+# =============================================================================
+# HARYANA (GURUGRAM)
+# =============================================================================
+- name: Cyber Hub & Social
+  city: Gurugram
+  state: Haryana
+  category: bar
+  subcategory: brewery
+  lat: 28.4952
+  lng: 77.0891
+  price_range: 3
+  average_cost: 1600
+  indoor_outdoor: both
+  ambience: [lively, trendy, casual]
+  tags: [nightlife, craft_beer, lively, casual]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: false
+  description: Premier open-air corporate dining and brewery boulevard featuring artisanal pubs, gourmet diners, and live music.
+
+- name: Open Tap Sector 29
+  city: Gurugram
+  state: Haryana
+  category: bar
+  subcategory: brewery
+  lat: 28.4682
+  lng: 77.0632
+  price_range: 3
+  average_cost: 1400
+  indoor_outdoor: indoor
+  ambience: [lively, trendy, casual]
+  tags: [brewery, craft_beer, nightlife]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: false
+  description: Popular microbrewery hub with fresh wheat beers, IPA taps, finger food, and vibrant weekend DJ sets.
+
+- name: Roots - Cafe in the Park
+  city: Gurugram
+  state: Haryana
+  category: cafe
+  subcategory: cafe
+  lat: 28.4691
+  lng: 77.065
+  price_range: 2
+  average_cost: 600
+  indoor_outdoor: both
+  ambience: [outdoor, quiet, cozy]
+  tags: [first_date_friendly, casual, nature, breakfast]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Solar-powered rustic breakfast cafe tucked inside Rajiv Gandhi Renewal Energy Park with breezy outdoor wooden benches.
+
+- name: Aravali Biodiversity Park
+  city: Gurugram
+  state: Haryana
+  category: park
+  subcategory: nature
+  lat: 28.4883
+  lng: 77.108
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, quiet, scenic]
+  tags: [nature, scenic, outdoor, trail]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Restored 380-acre wilderness forest featuring seasonal native scrubland trails, bird watching, and cycling.
+
+# =============================================================================
+# CHANDIGARH
+# =============================================================================
+- name: Rock Garden of Chandigarh
+  city: Chandigarh
+  state: Haryana
+  category: attraction
+  subcategory: monument
+  lat: 30.7525
+  lng: 76.8069
+  price_range: 1
+  average_cost: 30
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, casual]
+  tags: [heritage, culture, scenic, first_date_friendly]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Nek Chand's world-famous 40-acre sculpture garden created entirely from industrial waste, discarded ceramic, and scrap rocks.
+
+- name: Sukhna Lake Promenade
+  city: Chandigarh
+  state: Haryana
+  category: park
+  subcategory: lake
+  lat: 30.7421
+  lng: 76.8188
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, quiet]
+  tags: [romantic, scenic, lake, casual]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Serene Himalayan foothills reservoir featuring sunrise jogging paths, paddle boating, and shaded sunset viewpoints.
+
+- name: Backpackers Cafe Sector 9
+  city: Chandigarh
+  state: Haryana
+  category: cafe
+  subcategory: cafe
+  lat: 30.7445
+  lng: 76.7932
+  price_range: 2
+  average_cost: 800
+  indoor_outdoor: indoor
+  ambience: [cozy, trendy, casual]
+  tags: [first_date_friendly, cozy, casual, breakfast]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Cult favorite cozy all-day brunch hangout renowned for skillet eggs, handmade pancakes, and traveler memorabilia.
+
+# =============================================================================
+# UTTAR PRADESH (NOIDA, AGRA, LUCKNOW, VARANASI, PRAYAGRAJ)
+# =============================================================================
+- name: The Big Chill Cafe DLF Mall
+  city: Noida
   state: Uttar Pradesh
-  category: attraction
-  subcategory: ghat
-  lat: 25.3069
-  lng: 83.0107
-  price_range: 1
-  average_cost: 0
-  indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - lively
-  tags:
-  - heritage
-  - culture
-  - scenic
+  category: cafe
+  subcategory: cafe
+  lat: 28.5672
+  lng: 77.3211
+  price_range: 3
+  average_cost: 1200
+  indoor_outdoor: indoor
+  ambience: [cozy, lively, trendy]
+  tags: [first_date_friendly, casual, food, cozy]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Famous ghat for evening aarti.
-- name: Fort Kochi Beach
-  city: Kochi
-  state: Kerala
-  category: attraction
-  subcategory: beach
-  lat: 9.965
-  lng: 76.242
+  description: Vintage retro-hollywood cafe famed for decadent baked cheesecakes, artisanal pastas, and nostalgic wall posters.
+
+- name: Okhla Bird Sanctuary
+  city: Noida
+  state: Uttar Pradesh
+  category: park
+  subcategory: nature
+  lat: 28.56
+  lng: 77.3115
   price_range: 1
-  average_cost: 0
+  average_cost: 30
   indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - casual
-  - romantic
-  tags:
-  - romantic
-  - scenic
-  - casual
-  - heritage
+  ambience: [outdoor, quiet, scenic]
+  tags: [nature, scenic, outdoor, romantic]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Chinese fishing nets and sea breeze walks.
-- name: The Ridge Shimla
-  city: Shimla
-  state: Himachal Pradesh
-  category: attraction
-  subcategory: viewpoint
-  lat: 31.1048
-  lng: 77.1734
-  price_range: 1
-  average_cost: 0
-  indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - casual
-  - romantic
-  tags:
-  - romantic
-  - scenic
-  - casual
-  - viewpoint
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: true
-  description: Open plaza with Himalayan views.
+  description: Wetlands reserve along the Yamuna river hosting migratory birds, tranquil walking trails, and sunrise vistas.
+
 - name: Taj Mahal
   city: Agra
   state: Uttar Pradesh
@@ -512,119 +310,1281 @@ places:
   price_range: 2
   average_cost: 500
   indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - quiet
-  - romantic
-  tags:
-  - romantic
-  - heritage
-  - historic
-  - scenic
+  ambience: [outdoor, quiet, romantic, heritage]
+  tags: [romantic, heritage, historic, scenic, premium]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Iconic marble mausoleum at sunrise.
-- name: Ahmedabad Cafe 1
-  city: Ahmedabad
-  state: Gujarat
+  description: World Wonder white marble mausoleum built by Shah Jahan along the Yamuna River, renowned for sunrise and sunset glow.
+
+- name: Agra Fort
+  city: Agra
+  state: Uttar Pradesh
+  category: attraction
+  subcategory: fort
+  lat: 27.1795
+  lng: 78.0211
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: outdoor
+  ambience: [heritage, quiet, scenic]
+  tags: [heritage, historic, culture, architecture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Vast 16th-century Mughal red sandstone citadel with majestic imperial courtyards, Diwan-i-Khas, and Taj Mahal views.
+
+- name: Salt Cafe Rooftop
+  city: Agra
+  state: Uttar Pradesh
   category: cafe
   subcategory: cafe
-  lat: 20.0
-  lng: 77.0
-  price_range: 1
-  average_cost: 500
-  indoor_outdoor: indoor
-  ambience:
-  - casual
-  - trendy
-  tags:
-  - casual
-  - family
+  lat: 27.1611
+  lng: 78.0552
+  price_range: 2
+  average_cost: 900
+  indoor_outdoor: both
+  ambience: [romantic, trendy, scenic]
+  tags: [romantic, date_spot, viewpoint, drinks]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Generated place for Ahmedabad import.
-- name: Ahmedabad Dining 2
+  description: Chic Greek-inspired rooftop lounge with open breeze terraces, craft mocktails, and panoramic evening city skyline.
+
+- name: Bara Imambara & Bhul-Bhulaiya
+  city: Lucknow
+  state: Uttar Pradesh
+  category: attraction
+  subcategory: monument
+  lat: 26.8691
+  lng: 80.9131
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: both
+  ambience: [heritage, quiet, scenic]
+  tags: [heritage, historic, culture, architecture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Grand 18th-century Awadhi monument featuring an arched pillarless hall and an intricate three-dimensional labyrinth.
+
+- name: Hazratganj Heritage Stroll & Royal Cafe
+  city: Lucknow
+  state: Uttar Pradesh
+  category: cafe
+  subcategory: cafe
+  lat: 26.8522
+  lng: 80.9458
+  price_range: 2
+  average_cost: 600
+  indoor_outdoor: both
+  ambience: [casual, lively, heritage]
+  tags: [casual, food, culture, first_date_friendly]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Iconic Victorian boulevard with colonial lampposts, bookshops, and the birthplace of Lucknow's legendary Basket Chaat.
+
+- name: Janeshwar Mishra Park
+  city: Lucknow
+  state: Uttar Pradesh
+  category: park
+  subcategory: garden
+  lat: 26.8329
+  lng: 80.9857
+  price_range: 1
+  average_cost: 10
+  indoor_outdoor: outdoor
+  ambience: [outdoor, quiet, romantic]
+  tags: [romantic, casual, lake, scenic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Sprawling 376-acre eco-park with serene waterways, jogging boardwalks, musical fountains, and sunset boat rides.
+
+- name: Dashashwamedh Ghat
+  city: Varanasi
+  state: Uttar Pradesh
+  category: attraction
+  subcategory: ghat
+  lat: 25.3069
+  lng: 83.0107
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, lively, heritage]
+  tags: [heritage, culture, scenic, spiritual]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Ancient riverfront steps along the sacred Ganges celebrated for the hypnotic evening Ganga Aarti ceremony.
+
+- name: Assi Ghat Morning Stroll
+  city: Varanasi
+  state: Uttar Pradesh
+  category: attraction
+  subcategory: ghat
+  lat: 25.2896
+  lng: 83.0064
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, quiet, romantic]
+  tags: [romantic, sunrise, scenic, culture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Southernmost ghat popular for Subah-e-Banaras sunrise classical concerts, morning yoga, and peaceful boat rides.
+
+- name: Blue Lassi Shop
+  city: Varanasi
+  state: Uttar Pradesh
+  category: cafe
+  subcategory: cafe
+  lat: 25.3116
+  lng: 83.0125
+  price_range: 1
+  average_cost: 120
+  indoor_outdoor: indoor
+  ambience: [cozy, casual, lively]
+  tags: [casual, food, culture, iconic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Centuries-old cozy lane institution whipping hand-churned fruit and rabdi lassis served in clay kulhads.
+
+- name: Triveni Sangam Boat Ride
+  city: Prayagraj
+  state: Uttar Pradesh
+  category: attraction
+  subcategory: riverside
+  lat: 25.4246
+  lng: 81.8783
+  price_range: 1
+  average_cost: 100
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, quiet]
+  tags: [scenic, heritage, culture, nature]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Sacred confluence of the Ganga, Yamuna, and mythical Saraswati rivers with peaceful wooden rowboats and migratory gulls.
+
+# =============================================================================
+# PUNJAB (AMRITSAR, LUDHIANA)
+# =============================================================================
+- name: Golden Temple (Harmandir Sahib)
+  city: Amritsar
+  state: Punjab
+  category: attraction
+  subcategory: temple
+  lat: 31.62
+  lng: 74.8765
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: both
+  ambience: [quiet, scenic, heritage]
+  tags: [heritage, culture, spiritual, scenic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Revered Sikh shrine plated with 500kg gold foil, shimmering in the nectar tank Amrit Sarovar with 24/7 community langar.
+
+- name: Jallianwala Bagh Memorial
+  city: Amritsar
+  state: Punjab
+  category: attraction
+  subcategory: memorial
+  lat: 31.6206
+  lng: 74.88
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [quiet, heritage, scenic]
+  tags: [heritage, historic, culture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Historic national memorial park preserving bullet-marked brick walls and the martyrs' well from the 1919 uprising.
+
+- name: Kesar Da Dhaba
+  city: Amritsar
+  state: Punjab
+  category: restaurant
+  subcategory: dining
+  lat: 31.6247
+  lng: 74.877
+  price_range: 1
+  average_cost: 350
+  indoor_outdoor: indoor
+  ambience: [casual, lively, heritage]
+  tags: [food, iconic, casual, heritage]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Century-old rustic food institution famous for slow-simmered dal makhani, layered parathas, and rich firni.
+
+- name: Rakh Bagh Park
+  city: Ludhiana
+  state: Punjab
+  category: park
+  subcategory: garden
+  lat: 30.9085
+  lng: 75.845
+  price_range: 1
+  average_cost: 10
+  indoor_outdoor: outdoor
+  ambience: [outdoor, casual, lively]
+  tags: [casual, family, nature, outdoor]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: City center heritage park with a toy train ride, jogging trails, outdoor workout stations, and lush green canopies.
+
+# =============================================================================
+# HIMACHAL PRADESH (SHIMLA, MANALI, DHARAMSHALA)
+# =============================================================================
+- name: The Ridge Shimla
+  city: Shimla
+  state: Himachal Pradesh
+  category: attraction
+  subcategory: viewpoint
+  lat: 31.1048
+  lng: 77.1734
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, casual, romantic]
+  tags: [romantic, scenic, casual, viewpoint]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Grand open pedestrian promenade offering sweeping Himalayan panoramas, colonial Christ Church, and horse rides.
+
+- name: Cafe Simla Times
+  city: Shimla
+  state: Himachal Pradesh
+  category: cafe
+  subcategory: cafe
+  lat: 31.1039
+  lng: 77.1712
+  price_range: 2
+  average_cost: 900
+  indoor_outdoor: both
+  ambience: [romantic, cozy, scenic]
+  tags: [romantic, first_date_friendly, viewpoint, cozy]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Artsy rooftop cafe with painted ceilings, hand-stretched woodfired pizzas, and sunset cocktails over the valley.
+
+- name: Viceregal Lodge (Rashtrapati Niwas)
+  city: Shimla
+  state: Himachal Pradesh
+  category: attraction
+  subcategory: heritage
+  lat: 31.1043
+  lng: 77.1417
+  price_range: 1
+  average_cost: 100
+  indoor_outdoor: both
+  ambience: [heritage, quiet, scenic]
+  tags: [heritage, historic, architecture, scenic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Jacobethan-style summer capital fortress perched atop Observatory Hill, surrounded by English pine manicured lawns.
+
+- name: Old Manali & Cafe 1947
+  city: Manali
+  state: Himachal Pradesh
+  category: cafe
+  subcategory: cafe
+  lat: 32.2581
+  lng: 77.1855
+  price_range: 2
+  average_cost: 850
+  indoor_outdoor: both
+  ambience: [romantic, scenic, cozy]
+  tags: [romantic, riverside, first_date_friendly, live_music]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Legendary riverside Italian cafe on the gushing Manalsu stream with acoustic jam sessions and craft cider.
+
+- name: Hadimba Devi Temple & Cedar Woods
+  city: Manali
+  state: Himachal Pradesh
+  category: attraction
+  subcategory: temple
+  lat: 32.2483
+  lng: 77.1802
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: outdoor
+  ambience: [quiet, scenic, heritage]
+  tags: [heritage, nature, scenic, historic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 1553 AD pagoda-style wooden temple sheltered within towering deodar cedar trees and mossy forest footpaths.
+
+- name: Solang Valley Adventure
+  city: Manali
+  state: Himachal Pradesh
+  category: attraction
+  subcategory: mountain
+  lat: 32.316
+  lng: 77.1575
+  price_range: 2
+  average_cost: 1000
+  indoor_outdoor: outdoor
+  ambience: [outdoor, lively, adventure]
+  tags: [adventure, outdoor, scenic, mountain]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Alpine valley bowl renowned for tandem paragliding, ropeway cable car rides, zorbing, and winter snow fields.
+
+- name: Tsuglagkhang Complex (Dalai Lama Temple)
+  city: Dharamshala
+  state: Himachal Pradesh
+  category: attraction
+  subcategory: temple
+  lat: 32.232
+  lng: 76.324
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: both
+  ambience: [quiet, spiritual, scenic]
+  tags: [culture, heritage, quiet, scenic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Spiritual seat of the 14th Dalai Lama featuring spinning prayer wheels, gilded Buddhist idols, and monastic debate halls.
+
+- name: Illiterati Books & Coffee
+  city: Dharamshala
+  state: Himachal Pradesh
+  category: cafe
+  subcategory: cafe
+  lat: 32.2355
+  lng: 76.3265
+  price_range: 2
+  average_cost: 700
+  indoor_outdoor: both
+  ambience: [cozy, romantic, scenic]
+  tags: [first_date_friendly, scenic, cozy, viewpoint]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Bohemian balcony bookstore cafe with floor-to-ceiling books, gourmet European brunch, and snow-capped Dhauladhar views.
+
+# =============================================================================
+# UTTARAKHAND (DEHRADUN, RISHIKESH, MUSSOORIE, NAINITAL)
+# =============================================================================
+- name: Robber's Cave (Guchhupani)
+  city: Dehradun
+  state: Uttarakhand
+  category: attraction
+  subcategory: cave
+  lat: 30.3755
+  lng: 78.06
+  price_range: 1
+  average_cost: 35
+  indoor_outdoor: outdoor
+  ambience: [outdoor, adventure, scenic]
+  tags: [adventure, nature, scenic, outdoor]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Natural limestone river gorge where ankle-deep chilled mountain water flows between high vertical rock fissures.
+
+- name: Forest Research Institute (FRI)
+  city: Dehradun
+  state: Uttarakhand
+  category: museum
+  subcategory: heritage
+  lat: 30.3422
+  lng: 77.9989
+  price_range: 1
+  average_cost: 40
+  indoor_outdoor: both
+  ambience: [quiet, heritage, scenic]
+  tags: [heritage, architecture, culture, photo_spot]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Colossal Greco-Roman colonial brick campus with six forestry museums, lush botanical arboretums, and grand archways.
+
+- name: The Beatles Ashram (Chaurasi Kutia)
+  city: Rishikesh
+  state: Uttarakhand
+  category: attraction
+  subcategory: heritage
+  lat: 30.1118
+  lng: 78.3142
+  price_range: 1
+  average_cost: 150
+  indoor_outdoor: outdoor
+  ambience: [quiet, scenic, heritage]
+  tags: [heritage, culture, art, nature]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Forest hermitage where the Beatles composed the White Album in 1968, now covered in vibrant psychedelic murals and stone domes.
+
+- name: Little Buddha Cafe
+  city: Rishikesh
+  state: Uttarakhand
+  category: cafe
+  subcategory: cafe
+  lat: 30.1256
+  lng: 78.3241
+  price_range: 2
+  average_cost: 650
+  indoor_outdoor: both
+  ambience: [cozy, scenic, casual]
+  tags: [first_date_friendly, casual, scenic, river_view]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Treehouse-style bamboo rooftop cafe perched over the emerald Ganges River, serving falafel platters and iced mint teas.
+
+- name: Triveni Ghat Ganga Aarti
+  city: Rishikesh
+  state: Uttarakhand
+  category: attraction
+  subcategory: ghat
+  lat: 30.1039
+  lng: 78.2974
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [lively, outdoor, heritage]
+  tags: [culture, heritage, scenic, sunset]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Largest bathing ghat in Rishikesh where priests chant Vedic hymns and float hundreds of lit leaf-diyas onto the river at dusk.
+
+- name: Landour Bakehouse & Char Dukan
+  city: Mussoorie
+  state: Uttarakhand
+  category: cafe
+  subcategory: bakery
+  lat: 30.4608
+  lng: 78.0935
+  price_range: 2
+  average_cost: 600
+  indoor_outdoor: indoor
+  ambience: [cozy, romantic, quiet]
+  tags: [romantic, first_date_friendly, cozy, heritage]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 19th-century hill station bakery nestled amidst pine forests, famous for lemon curd tart, cinnamon rolls, and mountain tea.
+
+- name: Gun Hill Viewpoint & Cable Car
+  city: Mussoorie
+  state: Uttarakhand
+  category: attraction
+  subcategory: viewpoint
+  lat: 30.4598
+  lng: 78.0755
+  price_range: 1
+  average_cost: 150
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, casual]
+  tags: [scenic, viewpoint, romantic, adventure]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Mussoorie's second highest peak reached by aerial ropeway, with 360-degree vistas of the Bunderpunch Himalayan range.
+
+- name: Naini Lake Boating & Mall Road
+  city: Nainital
+  state: Uttarakhand
+  category: park
+  subcategory: lake
+  lat: 29.3919
+  lng: 79.4542
+  price_range: 1
+  average_cost: 200
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, scenic]
+  tags: [romantic, lake, scenic, casual]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Eye-shaped freshwater lake cradled by green mountains, with vintage colorful gondola boat rides and lakeside cafes.
+
+# =============================================================================
+# JAMMU & KASHMIR & LADAKH
+# =============================================================================
+- name: Dal Lake Shikara Ride
+  city: Srinagar
+  state: Jammu and Kashmir
+  category: attraction
+  subcategory: lake
+  lat: 34.0837
+  lng: 74.8375
+  price_range: 2
+  average_cost: 600
+  indoor_outdoor: outdoor
+  ambience: [romantic, quiet, scenic]
+  tags: [romantic, scenic, lake, photo_spot]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Iconic gondola-style wooden shikara cruise past floating vegetable markets, lotus gardens, and carved cedar houseboats.
+
+- name: Nishat Bagh Mughal Gardens
+  city: Srinagar
+  state: Jammu and Kashmir
+  category: park
+  subcategory: garden
+  lat: 34.1245
+  lng: 74.8805
+  price_range: 1
+  average_cost: 25
+  indoor_outdoor: outdoor
+  ambience: [outdoor, quiet, romantic]
+  tags: [romantic, scenic, heritage, garden]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 12-terraced garden of bliss built in 1633, framed by giant chinar trees, cascading water fountains, and Zabarwan peaks.
+
+- name: Chai Jaai Tea Room
+  city: Srinagar
+  state: Jammu and Kashmir
+  category: cafe
+  subcategory: cafe
+  lat: 34.0722
+  lng: 74.8145
+  price_range: 2
+  average_cost: 500
+  indoor_outdoor: indoor
+  ambience: [cozy, romantic, heritage]
+  tags: [first_date_friendly, cozy, heritage, tea]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Whimsical riverside Cotwolds-meets-Kashmir tea salon serving authentic pink noon chai, saffron kahwa, and walnut pastries.
+
+- name: Gulmarg Gondola & Apharwat Peak
+  city: Gulmarg
+  state: Jammu and Kashmir
+  category: attraction
+  subcategory: mountain
+  lat: 34.0535
+  lng: 74.382
+  price_range: 3
+  average_cost: 1800
+  indoor_outdoor: outdoor
+  ambience: [outdoor, adventure, scenic]
+  tags: [adventure, scenic, mountain, snow]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: One of the world's highest operating cable cars ascending to 13,780 feet for alpine skiing, pine meadows, and glacier bowls.
+
+- name: Bahu Fort & Bagh-e-Bahu
+  city: Jammu
+  state: Jammu and Kashmir
+  category: attraction
+  subcategory: fort
+  lat: 32.7302
+  lng: 74.877
+  price_range: 1
+  average_cost: 25
+  indoor_outdoor: outdoor
+  ambience: [heritage, quiet, scenic]
+  tags: [heritage, scenic, historic, garden]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Ancient fort overlooking the Tawi river featuring terraced flower gardens, musical fountains, and a subterranean aquarium.
+
+- name: Pangong Tso Lake
+  city: Leh
+  state: Ladakh
+  category: attraction
+  subcategory: lake
+  lat: 33.7595
+  lng: 78.6674
+  price_range: 2
+  average_cost: 800
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, quiet]
+  tags: [scenic, adventure, lake, photo_spot]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: World-famous high-altitude endorheic lake changing shades from turquoise to cobalt blue against arid Tibetan mountains.
+
+- name: Shanti Stupa
+  city: Leh
+  state: Ladakh
+  category: attraction
+  subcategory: monument
+  lat: 34.1645
+  lng: 77.575
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [quiet, scenic, spiritual]
+  tags: [scenic, viewpoint, sunset, culture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: White-domed Buddhist stupa perched on a Changspa hilltop offering breathtaking panoramic sunset vistas of Leh city.
+
+- name: Gesmo Restaurant & Bakery
+  city: Leh
+  state: Ladakh
+  category: cafe
+  subcategory: cafe
+  lat: 34.1632
+  lng: 77.5841
+  price_range: 2
+  average_cost: 450
+  indoor_outdoor: indoor
+  ambience: [cozy, casual, lively]
+  tags: [casual, food, cozy, breakfast]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Popular old-town hub dating back to 1989, renowned for fresh yak cheese pizza, apple pie, and hearty cinnamon rolls.
+
+# =============================================================================
+# MAHARASHTRA (MUMBAI, PUNE, NAGPUR, NASHIK, LONAVALA, SAMBHAJINAGAR)
+# =============================================================================
+- name: Marine Drive
+  city: Mumbai
+  state: Maharashtra
+  category: attraction
+  subcategory: promenade
+  lat: 18.9432
+  lng: 72.8235
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, casual]
+  tags: [romantic, scenic, casual, sunset]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Famous 3.6-kilometer Queen's Necklace sea-facing promenade for evening breeze walks and sunset skyline views.
+
+- name: Bandra Fort & Lands End
+  city: Mumbai
+  state: Maharashtra
+  category: attraction
+  subcategory: fort
+  lat: 19.0422
+  lng: 72.8186
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, quiet]
+  tags: [romantic, scenic, viewpoint, heritage]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 17th-century Portuguese fort ruins overlooking the Arabian Sea and the grand Bandra-Worli Sea Link.
+
+- name: Todi Mill Social
+  city: Mumbai
+  state: Maharashtra
+  category: bar
+  subcategory: brewery
+  lat: 19.0176
+  lng: 72.8561
+  price_range: 3
+  average_cost: 1400
+  indoor_outdoor: indoor
+  ambience: [lively, trendy, casual]
+  tags: [brewery, nightlife, craft_beer]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: false
+  description: Energetic Lower Parel industrial-chic warehouse pub serving craft cocktails, comfort fusion bites, and weekend sets.
+
+- name: Subko Coffee Bandra
+  city: Mumbai
+  state: Maharashtra
+  category: cafe
+  subcategory: cafe
+  lat: 19.0556
+  lng: 72.8318
+  price_range: 2
+  average_cost: 650
+  indoor_outdoor: indoor
+  ambience: [trendy, cozy, lively]
+  tags: [first_date_friendly, specialty_coffee, cozy]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Flagship specialty roastery and craft bakehouse in Ranwar Village highlighting subcontinent beans and artisanal sourdough.
+
+- name: Prithvi Cafe Juhu
+  city: Mumbai
+  state: Maharashtra
+  category: cafe
+  subcategory: cafe
+  lat: 19.1062
+  lng: 72.8258
+  price_range: 2
+  average_cost: 500
+  indoor_outdoor: outdoor
+  ambience: [outdoor, cozy, lively]
+  tags: [first_date_friendly, casual, culture, tea]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Iconic bamboo garden cafe adjoining Prithvi Theatre, loved for Irish coffee, cutting chai, parathas, and creative crowds.
+
+- name: Shaniwar Wada
+  city: Pune
+  state: Maharashtra
+  category: attraction
+  subcategory: fort
+  lat: 18.5195
+  lng: 73.8553
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: outdoor
+  ambience: [outdoor, quiet, heritage]
+  tags: [heritage, historic, culture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Historic 18th-century Maratha Peshwa fortified palace complex famous for teakwood gateways and fountain foundations.
+
+- name: Effingut Brewhouse Koregaon Park
+  city: Pune
+  state: Maharashtra
+  category: bar
+  subcategory: brewery
+  lat: 18.5362
+  lng: 73.8992
+  price_range: 3
+  average_cost: 1600
+  indoor_outdoor: indoor
+  ambience: [lively, trendy, casual]
+  tags: [brewery, craft_beer, nightlife]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: false
+  description: Craft brewery pioneer pouring handcrafted German Hefeweizen, apple ciders, stouts, and gastropub comfort plates.
+
+- name: Vohuman Cafe
+  city: Pune
+  state: Maharashtra
+  category: cafe
+  subcategory: cafe
+  lat: 18.5284
+  lng: 73.8745
+  price_range: 1
+  average_cost: 250
+  indoor_outdoor: indoor
+  ambience: [casual, lively, heritage]
+  tags: [casual, iconic, breakfast, chai]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Legendary Irani cafe institution near the railway station serving double cheese omelettes, maska pav, and steaming chai.
+
+- name: Futala Lake Promenade
+  city: Nagpur
+  state: Maharashtra
+  category: attraction
+  subcategory: lake
+  lat: 21.1558
+  lng: 79.0522
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, casual, lively]
+  tags: [casual, scenic, sunset, street_food]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 200-year-old Bhosle lake promenade known for evening illuminated musical fountains, chowpatty snacks, and sunset strolls.
+
+- name: Sula Vineyards & Tasting Room
+  city: Nashik
+  state: Maharashtra
+  category: bar
+  subcategory: brewery
+  lat: 20.0058
+  lng: 73.6885
+  price_range: 3
+  average_cost: 1500
+  indoor_outdoor: both
+  ambience: [romantic, scenic, outdoor]
+  tags: [romantic, craft_beer, wine, viewpoint]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: false
+  description: Rolling wine estate overlooking Gangapur Lake, featuring guided winery cellar tours, tasting balconies, and sun terraces.
+
+- name: Tiger's Leap & Sunset Point
+  city: Lonavala
+  state: Maharashtra
+  category: attraction
+  subcategory: viewpoint
+  lat: 18.7392
+  lng: 73.3768
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, adventure, scenic]
+  tags: [scenic, adventure, viewpoint, nature]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Cliff top with a sheer 650-meter drop resembling a leaping tiger, offering misty Western Ghats valley panoramas.
+
+- name: Bibi Ka Maqbara
+  city: Chhatrapati Sambhajinagar
+  state: Maharashtra
+  category: attraction
+  subcategory: monument
+  lat: 19.9015
+  lng: 75.3201
+  price_range: 1
+  average_cost: 25
+  indoor_outdoor: outdoor
+  ambience: [heritage, scenic, quiet]
+  tags: [heritage, historic, architecture, scenic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Known as the 'Taj of the Deccan', this 17th-century marble mausoleum was commissioned by Prince Azam Shah with landscaped charbagh.
+
+# =============================================================================
+# GUJARAT (AHMEDABAD, SURAT, VADODARA, RAJKOT)
+# =============================================================================
+- name: Sabarmati Riverfront Promenade
+  city: Ahmedabad
+  state: Gujarat
+  category: park
+  subcategory: promenade
+  lat: 23.0315
+  lng: 72.5714
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, casual]
+  tags: [romantic, scenic, casual, cycling]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Beautifully landscaped 11km two-tier waterfront promenade with flower parks, speedboats, and cycling plazas.
+
+- name: Sidi Saiyyed Mosque
+  city: Ahmedabad
+  state: Gujarat
+  category: attraction
+  subcategory: heritage
+  lat: 23.0267
+  lng: 72.5815
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: both
+  ambience: [quiet, heritage, scenic]
+  tags: [heritage, historic, culture, architecture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 1573 AD mosque celebrated worldwide for its ten intricately carved semi-circular stone lattice screens ('Tree of Life').
+
+- name: Manek Chowk Night Food Market
   city: Ahmedabad
   state: Gujarat
   category: restaurant
   subcategory: dining
-  lat: 20.01
-  lng: 77.01
-  price_range: 2
-  average_cost: 1200
-  indoor_outdoor: indoor
-  ambience:
-  - casual
-  - trendy
-  tags:
-  - casual
-  - family
+  lat: 23.0242
+  lng: 72.5898
+  price_range: 1
+  average_cost: 300
+  indoor_outdoor: outdoor
+  ambience: [lively, casual, outdoor]
+  tags: [food, iconic, casual, street_food]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Generated place for Ahmedabad import.
-- name: Ahmedabad Garden 3
+  description: Old-city square that transforms after dark into a buzzing culinary carnival for chocolate sandwiches, gwalbhog, and pav bhaji.
+
+- name: The Project Cafe Ambavadi
   city: Ahmedabad
   state: Gujarat
-  category: park
-  subcategory: garden
-  lat: 20.02
-  lng: 77.02
-  price_range: 3
-  average_cost: 0
-  indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - scenic
-  tags:
-  - casual
-  - family
+  category: cafe
+  subcategory: cafe
+  lat: 23.0205
+  lng: 72.5458
+  price_range: 2
+  average_cost: 750
+  indoor_outdoor: both
+  ambience: [trendy, cozy, artistic]
+  tags: [first_date_friendly, cozy, artistic, design]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Generated place for Ahmedabad import.
-- name: Ahmedabad Monument 4
-  city: Ahmedabad
+  description: Experiential art cafe in an old bungalow where furniture, art on the walls, cutlery, and gourmet dishes are curated design pieces.
+
+- name: Dumas Beach & Black Sand Sunset
+  city: Surat
   state: Gujarat
   category: attraction
-  subcategory: monument
-  lat: 20.03
-  lng: 77.03
+  subcategory: beach
+  lat: 21.0825
+  lng: 72.7125
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, casual, lively]
+  tags: [beach, sunset, casual, food]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Coastal Arabian Sea beach renowned for dark volcanic sands, evening sea breeze, and spicy lashkari tomato bhajiya stalls.
+
+- name: Laxmi Vilas Palace
+  city: Vadodara
+  state: Gujarat
+  category: attraction
+  subcategory: palace
+  lat: 22.2938
+  lng: 73.1915
+  price_range: 2
+  average_cost: 250
+  indoor_outdoor: both
+  ambience: [heritage, quiet, scenic]
+  tags: [heritage, royal, architecture, history]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Four times the size of Buckingham Palace, this Indo-Saracenic Gaekwad royal residence boasts Venetian stained glass and armory.
+
+- name: Watson Museum & Jubilee Garden
+  city: Rajkot
+  state: Gujarat
+  category: museum
+  subcategory: heritage
+  lat: 22.3015
+  lng: 70.801
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: indoor
+  ambience: [quiet, heritage, casual]
+  tags: [heritage, history, culture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Colonial-era museum in Jubilee Garden housing Saurashtra archaeological artifacts, Harappan pottery, and royal textiles.
+
+# =============================================================================
+# RAJASTHAN (JAIPUR, UDAIPUR, JODHPUR, JAISALMER, PUSHKAR)
+# =============================================================================
+- name: Amber Fort
+  city: Jaipur
+  state: Rajasthan
+  category: attraction
+  subcategory: fort
+  lat: 26.9855
+  lng: 75.8513
+  price_range: 2
+  average_cost: 200
+  indoor_outdoor: outdoor
+  ambience: [outdoor, quiet, romantic]
+  tags: [heritage, culture, historic, romantic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Majestic hilltop fort featuring mirror palace Sheesh Mahal, courtyard ramparts, and Maota Lake reflection.
+
+- name: City Palace Jaipur
+  city: Jaipur
+  state: Rajasthan
+  category: attraction
+  subcategory: palace
+  lat: 26.9258
+  lng: 75.8236
+  price_range: 2
+  average_cost: 300
+  indoor_outdoor: both
+  ambience: [quiet, casual, heritage]
+  tags: [heritage, culture, historic, royal]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Grand royal complex blending Rajasthani and Mughal architecture, with painted courtyards and textile museums.
+
+- name: Nahargarh Fort Sunset Point
+  city: Jaipur
+  state: Rajasthan
+  category: attraction
+  subcategory: viewpoint
+  lat: 26.9372
+  lng: 75.8156
   price_range: 1
   average_cost: 100
   indoor_outdoor: outdoor
-  ambience:
-  - outdoor
-  - scenic
-  tags:
-  - casual
-  - family
+  ambience: [scenic, romantic, outdoor]
+  tags: [romantic, viewpoint, sunset, scenic]
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Generated place for Ahmedabad import.
-- name: Ahmedabad Brewery 5
-  city: Ahmedabad
-  state: Gujarat
-  category: bar
-  subcategory: brewery
-  lat: 20.04
-  lng: 77.04
+  description: Ridge fort on the edge of the Aravalli hills famous for open-air rooftop sunsets overlooking the entire Pink City.
+
+- name: Tapri The Tea House
+  city: Jaipur
+  state: Rajasthan
+  category: cafe
+  subcategory: cafe
+  lat: 26.9068
+  lng: 75.8085
   price_range: 2
-  average_cost: 1500
-  indoor_outdoor: indoor
-  ambience:
-  - casual
-  - trendy
-  tags:
-  - nightlife
-  - drinks
+  average_cost: 600
+  indoor_outdoor: both
+  ambience: [cozy, trendy, scenic]
+  tags: [first_date_friendly, cozy, tea, viewpoint]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Beloved rooftop cafe overlooking Central Park with hand-beaten cold coffee, kulhad masala chai, and artisanal snacks.
+
+- name: Bar Palladio
+  city: Jaipur
+  state: Rajasthan
+  category: bar
+  subcategory: pub
+  lat: 26.9015
+  lng: 75.818
+  price_range: 3
+  average_cost: 2200
+  indoor_outdoor: both
+  ambience: [romantic, quiet, trendy]
+  tags: [romantic, premium, intimate, cocktails]
   couple_friendly: true
   friends_friendly: true
   family_friendly: false
-  description: Generated place for Ahmedabad import.
+  description: Exquisite royal blue Italian lounge in Narain Niwas Palace garden with tented daybeds, candelabras, and signature martinis.
+
+- name: Lake Pichola Boat Cruise
+  city: Udaipur
+  state: Rajasthan
+  category: attraction
+  subcategory: lake
+  lat: 24.576
+  lng: 73.68
+  price_range: 2
+  average_cost: 400
+  indoor_outdoor: outdoor
+  ambience: [romantic, outdoor, quiet]
+  tags: [romantic, scenic, premium, sunset]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Fairytale boat rides glinting past the floating Lake Palace, Jagmandir island, and the illuminated City Palace facade.
+
+- name: Ambrai Waterfront Restaurant
+  city: Udaipur
+  state: Rajasthan
+  category: restaurant
+  subcategory: fine_dining
+  lat: 24.5785
+  lng: 73.6822
+  price_range: 3
+  average_cost: 2400
+  indoor_outdoor: outdoor
+  ambience: [romantic, scenic, quiet]
+  tags: [romantic, premium, anniversary, lake_view]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Premier candlelit ghat restaurant on Amet Haveli shores directly facing the glowing arches of City Palace across water.
+
+- name: Mehrangarh Fort
+  city: Jodhpur
+  state: Rajasthan
+  category: attraction
+  subcategory: fort
+  lat: 26.2978
+  lng: 73.0185
+  price_range: 2
+  average_cost: 200
+  indoor_outdoor: outdoor
+  ambience: [heritage, scenic, outdoor]
+  tags: [heritage, historic, viewpoint, architecture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Colossal 15th-century cliff citadel rising 400 feet above the Blue City with opulent palatial galleries and zip-lining.
+
+- name: Stepwell Cafe (Toorji Ka Jhalra)
+  city: Jodhpur
+  state: Rajasthan
+  category: cafe
+  subcategory: cafe
+  lat: 26.2972
+  lng: 73.0235
+  price_range: 2
+  average_cost: 700
+  indoor_outdoor: both
+  ambience: [cozy, scenic, heritage]
+  tags: [first_date_friendly, heritage, viewpoint, coffee]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Multi-level terrace cafe built into the red sandstone rims of the restored 18th-century stepwell reservoir.
+
+- name: Jaisalmer Golden Fort (Sonar Qila)
+  city: Jaisalmer
+  state: Rajasthan
+  category: attraction
+  subcategory: fort
+  lat: 26.9125
+  lng: 70.9125
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: outdoor
+  ambience: [heritage, quiet, scenic]
+  tags: [heritage, historic, unesco, living_fort]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Massive golden sandstone living fort housing bustling alleys, intricately sculpted Jain temples, and rooftop eateries.
+
+- name: Sam Sand Dunes Camel Safari
+  city: Jaisalmer
+  state: Rajasthan
+  category: attraction
+  subcategory: adventure
+  lat: 26.83
+  lng: 70.51
+  price_range: 2
+  average_cost: 1200
+  indoor_outdoor: outdoor
+  ambience: [outdoor, adventure, scenic]
+  tags: [adventure, desert, sunset, nature]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Rolling golden dunes of the Thar Desert offering sunset camel rides, 4x4 dune bashing, and bonfire Rajasthani folk music.
+
+- name: Pushkar Sacred Lake & Ghats
+  city: Pushkar
+  state: Rajasthan
+  category: attraction
+  subcategory: lake
+  lat: 26.4885
+  lng: 74.552
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [quiet, spiritual, scenic]
+  tags: [culture, heritage, scenic, sunset]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Sacred desert lake encircled by 52 marble bathing ghats, whitewashed havelis, and sunset evening chants.
+
+# =============================================================================
+# GOA (PANAJI, MARGAO)
+# =============================================================================
+- name: Fontainhas Latin Quarter
+  city: Panaji
+  state: Goa
+  category: attraction
+  subcategory: heritage
+  lat: 15.4989
+  lng: 73.8278
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [casual, quiet, romantic]
+  tags: [heritage, culture, casual, first_date_friendly]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Picturesque heritage quarter with pastel-colored Portuguese villas, hanging wooden balconies, and tiny art galleries.
+
+- name: Joseph Bar Panaji
+  city: Panaji
+  state: Goa
+  category: bar
+  subcategory: pub
+  lat: 15.4998
+  lng: 73.8285
+  price_range: 2
+  average_cost: 700
+  indoor_outdoor: both
+  ambience: [cozy, lively, heritage]
+  tags: [craft_cocktails, nightlife, heritage, casual]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: false
+  description: Nostalgic heritage watering hole in Fontainhas pouring artisanal feni cocktails, craft beers, and Goan sausage rolls.
+
+- name: Palolem Beach
+  city: Margao
+  state: Goa
+  category: attraction
+  subcategory: beach
+  lat: 15.01
+  lng: 74.0232
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, casual, romantic]
+  tags: [romantic, scenic, casual, adventure]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Idyllic crescent-shaped bay lined with coconut palms, gentle shallow waters, kayaking, and beachfront wooden shacks.
+
+- name: Martin's Corner Betalbatim
+  city: Margao
+  state: Goa
+  category: restaurant
+  subcategory: dining
+  lat: 15.2952
+  lng: 73.9185
+  price_range: 3
+  average_cost: 1600
+  indoor_outdoor: indoor
+  ambience: [lively, casual, cozy]
+  tags: [food, iconic, seafood, live_music]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Legendary South Goa dining institution renowned for butter garlic crab, pork vindaloo, and vibrant live music.
+
+# =============================================================================
+# KARNATAKA (BENGALURU, MYSURU, COORG, GOKARNA, HAMPI, CHIKMAGALUR, UDUPI, ETC.)
+# =============================================================================
+- name: Cubbon Park
+  city: Bengaluru
+  state: Karnataka
+  category: park
+  subcategory: garden
+  lat: 12.9763
+  lng: 77.5929
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, quiet, casual]
+  tags: [first_date_friendly, casual, scenic, nature]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 300-acre green lung in central Bangalore with grand mahogany avenues, shaded picnic lawns, and heritage colonial libraries.
+
 - name: Lalbagh Botanical Garden
   city: Bengaluru
   state: Karnataka
@@ -640,23 +1600,25 @@ places:
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Iconic glasshouse, lotus ponds, and tree-lined strolling paths.
-- name: Nandi Hills
+  description: Historic 240-acre botanical haven with a Victorian glasshouse, lotus lake, and centuries-old tropical trees.
+
+- name: Toit Brewpub
   city: Bengaluru
   state: Karnataka
-  category: attraction
-  subcategory: viewpoint
-  lat: 13.3702
-  lng: 77.6835
-  price_range: 1
-  average_cost: 100
-  indoor_outdoor: outdoor
-  ambience: [outdoor, romantic, scenic]
-  tags: [romantic, scenic, viewpoint, sunrise]
+  category: bar
+  subcategory: brewery
+  lat: 12.9784
+  lng: 77.6408
+  price_range: 3
+  average_cost: 1400
+  indoor_outdoor: indoor
+  ambience: [lively, trendy, casual]
+  tags: [brewery, nightlife, craft_beer]
   couple_friendly: true
   friends_friendly: true
-  family_friendly: true
-  description: Ancient hill fortress famous for cloud views and sunrise dates.
+  family_friendly: false
+  description: The iconic Indiranagar craft microbrewery with freshly brewed ales, woodfired pizzas, and buzzing multi-floor vibes.
+
 - name: Arbor Brewing Company
   city: Bengaluru
   state: Karnataka
@@ -672,7 +1634,8 @@ places:
   couple_friendly: true
   friends_friendly: true
   family_friendly: false
-  description: Legendary craft brewery with cozy booths and artisanal ales.
+  description: Legendary craft brewery on Magrath Road with cozy wood booths, artisanal IPA taps, and beer bites.
+
 - name: Windmills Craftworks
   city: Bengaluru
   state: Karnataka
@@ -680,15 +1643,33 @@ places:
   subcategory: brewery
   lat: 12.9827
   lng: 77.7219
-  price_range: 3
-  average_cost: 2200
+  price_range: 4
+  average_cost: 2400
   indoor_outdoor: indoor
   ambience: [romantic, quiet, trendy]
-  tags: [brewery, craft_beer, live_music, romantic]
+  tags: [brewery, craft_beer, live_music, romantic, premium]
   couple_friendly: true
   friends_friendly: true
   family_friendly: false
-  description: Microbrewery and jazz theatre with books and intimate ambiance.
+  description: Sophisticated microbrewery, jazz theatre, and curated library in Whitefield offering an intimate date ambiance.
+
+- name: Nandi Hills Sunrise Fortress
+  city: Nandi Hills
+  state: Karnataka
+  category: attraction
+  subcategory: viewpoint
+  lat: 13.3702
+  lng: 77.6835
+  price_range: 1
+  average_cost: 100
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, scenic]
+  tags: [romantic, scenic, viewpoint, sunrise]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Ancient hill fortress at 4,800 feet famous for sea-of-clouds sunrise viewpoints and breezy morning drives.
+
 - name: Mysore Palace
   city: Mysuru
   state: Karnataka
@@ -704,7 +1685,8 @@ places:
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Magnificent Indo-Saracenic royal palace with weekend illumination.
+  description: Magnificent Indo-Saracenic royal palace illuminated by 100,000 bulbs on weekend nights.
+
 - name: Brindavan Gardens
   city: Mysuru
   state: Karnataka
@@ -720,7 +1702,8 @@ places:
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Terraced garden with illuminated musical fountains at KRS Dam.
+  description: Terraced gardens laid below the Krishnarajasagara dam featuring colorful illuminated musical water fountains.
+
 - name: Raja's Seat
   city: Coorg
   state: Karnataka
@@ -736,7 +1719,8 @@ places:
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Historic sunset viewpoint with misty valley panoramas and flowerbeds.
+  description: Historic seasonal retreat of the Kings of Kodagu overlooking undulating green valleys, misty clouds, and sunsets.
+
 - name: Abbey Falls
   city: Coorg
   state: Karnataka
@@ -752,7 +1736,8 @@ places:
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Cascading waterfall tucked within lush coffee plantations and spice estates.
+  description: Roaring waterfall tumbling 70 feet down volcanic rocks amidst lush coffee plantations and pepper vines.
+
 - name: Om Beach
   city: Gokarna
   state: Karnataka
@@ -768,7 +1753,25 @@ places:
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Crescent-shaped twin beach with seaside cafes and sunset walks.
+  description: Natural Om-shaped twin crescent beach where rugged black rock bluffs meet the sparkling Arabian Sea.
+
+- name: Vittala Temple & Stone Chariot
+  city: Hampi
+  state: Karnataka
+  category: attraction
+  subcategory: temple
+  lat: 15.335
+  lng: 76.46
+  price_range: 1
+  average_cost: 40
+  indoor_outdoor: outdoor
+  ambience: [heritage, quiet, scenic]
+  tags: [heritage, historic, architecture, unesco]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 16th-century Vijayanagara architectural masterpiece with musical stone pillars and the iconic monolithic Garuda chariot.
+
 - name: Mullayanagiri Peak
   city: Chikmagalur
   state: Karnataka
@@ -784,7 +1787,8 @@ places:
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Highest peak in Karnataka with cool breezes and mountain vistas.
+  description: The highest peak in Karnataka (1,930 m) offering crisp mountain breeze, grass-covered ridges, and valley viewpoints.
+
 - name: Panambur Beach
   city: Mangaluru
   state: Karnataka
@@ -800,23 +1804,8 @@ places:
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Golden sand beach on the Arabian Sea with evening boat rides and seafood.
-- name: Vittala Temple
-  city: Hampi
-  state: Karnataka
-  category: attraction
-  subcategory: temple
-  lat: 15.335
-  lng: 76.46
-  price_range: 1
-  average_cost: 40
-  indoor_outdoor: outdoor
-  ambience: [heritage, quiet, scenic]
-  tags: [heritage, historic, architecture, unesco]
-  couple_friendly: true
-  friends_friendly: true
-  family_friendly: true
-  description: 16th-century architectural marvel featuring the iconic Stone Chariot.
+  description: Golden sand beach on the Arabian Sea famous for clean shorelines, jet skiing, camel rides, and fresh seafood stalls.
+
 - name: Malpe Beach & Sea Walk
   city: Udupi
   state: Karnataka
@@ -832,5 +1821,1400 @@ places:
   couple_friendly: true
   friends_friendly: true
   family_friendly: true
-  description: Picturesque coastline with stone sea walk and ferry to St. Mary's volcanic islands.
-cities: []
+  description: Scenic beach featuring a 500-meter stone sea-walk path stretching into the ocean, plus ferries to volcanic St. Mary's Island.
+
+- name: Manjarabad Star Fort
+  city: Sakleshpur
+  state: Karnataka
+  category: attraction
+  subcategory: fort
+  lat: 12.9372
+  lng: 75.7538
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: outdoor
+  ambience: [heritage, scenic, outdoor]
+  tags: [heritage, architecture, viewpoint, trekking]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Unique 1792 AD octagonal eight-pointed star fort built by Tipu Sultan offering panoramic vistas across the Western Ghats.
+
+- name: Unkal Lake & Vivekananda Statue
+  city: Hubballi
+  state: Karnataka
+  category: park
+  subcategory: lake
+  lat: 15.385
+  lng: 75.1125
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: outdoor
+  ambience: [outdoor, casual, scenic]
+  tags: [lake, casual, scenic, sunset]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Historical water reservoir featuring a central island statue of Swami Vivekananda, lush garden promenade, and evening boating.
+
+- name: Belagavi Fort & Kamal Basti
+  city: Belagavi
+  state: Karnataka
+  category: attraction
+  subcategory: fort
+  lat: 15.8615
+  lng: 74.5245
+  price_range: 1
+  average_cost: 15
+  indoor_outdoor: outdoor
+  ambience: [heritage, quiet, scenic]
+  tags: [heritage, historic, architecture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 13th-century stone fortification housing the delicately carved Kamal Basti Jain shrine and ancient moat bastions.
+
+# =============================================================================
+# TAMIL NADU (CHENNAI, COIMBATORE, MADURAI, OOTY, KODAIKANAL)
+# =============================================================================
+- name: Marina Beach
+  city: Chennai
+  state: Tamil Nadu
+  category: attraction
+  subcategory: beach
+  lat: 13.05
+  lng: 80.2824
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, casual, lively]
+  tags: [casual, scenic, family, beach]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: One of the world's longest natural urban beaches, famous for sea breezes, sundal stalls, and historic statues along the promenade.
+
+- name: Kapaleeshwarar Temple
+  city: Chennai
+  state: Tamil Nadu
+  category: attraction
+  subcategory: temple
+  lat: 13.0339
+  lng: 80.2695
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [quiet, casual, heritage]
+  tags: [heritage, temple, culture, architecture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Magnificent 7th-century Dravidian temple in Mylapore with a 37-meter rainbow gopuram and a sacred temple tank.
+
+- name: Amethyst Cafe & Garden
+  city: Chennai
+  state: Tamil Nadu
+  category: cafe
+  subcategory: cafe
+  lat: 13.0578
+  lng: 80.2595
+  price_range: 3
+  average_cost: 1100
+  indoor_outdoor: both
+  ambience: [romantic, cozy, quiet]
+  tags: [first_date_friendly, romantic, garden, specialty_coffee]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Verandah cafe inside an old colonial bungalow surrounded by wild tropical greenery, antique chandeliers, and fresh bakes.
+
+- name: Besant Nagar Beach (Bessie)
+  city: Chennai
+  state: Tamil Nadu
+  category: attraction
+  subcategory: beach
+  lat: 13.0002
+  lng: 80.2705
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, trendy, casual]
+  tags: [beach, casual, sunset, first_date_friendly]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Relaxed youth beach with the Karl Schmidt memorial arch, beachfront cafes, artisan gelaterias, and evening walks.
+
+- name: Gedee Car Museum
+  city: Coimbatore
+  state: Tamil Nadu
+  category: museum
+  subcategory: gallery
+  lat: 11.0085
+  lng: 76.974
+  price_range: 1
+  average_cost: 75
+  indoor_outdoor: indoor
+  ambience: [quiet, casual, interesting]
+  tags: [culture, historic, casual, unique]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Fascinating vintage car collection showcasing rare classic motorcars from Britain, Germany, France, and early 20th-century America.
+
+- name: Meenakshi Amman Temple
+  city: Madurai
+  state: Tamil Nadu
+  category: attraction
+  subcategory: temple
+  lat: 9.9195
+  lng: 78.1193
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: both
+  ambience: [spiritual, heritage, quiet]
+  tags: [heritage, temple, culture, architecture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: World-renowned ancient Hindu temple complex on the Vaigai river featuring 14 soaring sculptured gopurams and a thousand-pillar hall.
+
+- name: Government Botanical Garden Ooty
+  city: Ooty
+  state: Tamil Nadu
+  category: park
+  subcategory: garden
+  lat: 11.4195
+  lng: 76.7112
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, quiet]
+  tags: [romantic, scenic, garden, nature]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 55-acre terraced British hill garden founded in 1848, with rare exotic flower beds, a fossilized tree trunk, and Italian terraces.
+
+- name: Earl's Secret Glasshouse Dining
+  city: Ooty
+  state: Tamil Nadu
+  category: restaurant
+  subcategory: fine_dining
+  lat: 11.4082
+  lng: 76.6875
+  price_range: 3
+  average_cost: 1800
+  indoor_outdoor: both
+  ambience: [romantic, cozy, heritage]
+  tags: [romantic, premium, intimate, anniversary]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Glass conservatory dining room inside King's Cliff heritage hotel serving continental delicacies surrounded by misty hills.
+
+- name: Kodai Lake & Coaker's Walk
+  city: Kodaikanal
+  state: Tamil Nadu
+  category: park
+  subcategory: lake
+  lat: 10.2355
+  lng: 77.4912
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, scenic]
+  tags: [romantic, scenic, lake, promenade]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Star-shaped hill lake encircled by bicycle trails, rowing boats, and a narrow pedestrian promenade perched over mountain clouds.
+
+# =============================================================================
+# TELANGANA (HYDERABAD, WARANGAL)
+# =============================================================================
+- name: Charminar & Laad Bazaar
+  city: Hyderabad
+  state: Telangana
+  category: attraction
+  subcategory: monument
+  lat: 17.3616
+  lng: 78.4747
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: outdoor
+  ambience: [lively, casual, heritage]
+  tags: [heritage, culture, casual, shopping]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 1591 AD four-minaret monument at the heart of old Hyderabad, flanked by sparkling lacquer bangle markets and Irani chai stalls.
+
+- name: Hussain Sagar Lake Promenade
+  city: Hyderabad
+  state: Telangana
+  category: park
+  subcategory: lake
+  lat: 17.4239
+  lng: 78.4738
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, casual]
+  tags: [romantic, scenic, casual, boat_ride]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Heart-shaped lake separating Hyderabad and Secunderabad, with a 350-ton monolithic Buddha statue and sunset boat rides.
+
+- name: Golconda Fort Sound & Light Show
+  city: Hyderabad
+  state: Telangana
+  category: attraction
+  subcategory: fort
+  lat: 17.3833
+  lng: 78.4011
+  price_range: 1
+  average_cost: 150
+  indoor_outdoor: outdoor
+  ambience: [heritage, scenic, quiet]
+  tags: [heritage, historic, architecture, sound_light]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Fortress citadel once famous for diamond trade with ingenious acoustic domes that transmit handclaps 1km away to the citadel summit.
+
+- name: Roastery Coffee House Banjara Hills
+  city: Hyderabad
+  state: Telangana
+  category: cafe
+  subcategory: cafe
+  lat: 17.4185
+  lng: 78.4382
+  price_range: 2
+  average_cost: 750
+  indoor_outdoor: both
+  ambience: [cozy, trendy, romantic]
+  tags: [first_date_friendly, specialty_coffee, cozy]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Beautiful courtyard bungalow cafe nestled among trees, serving house-roasted monsoon malabar coffee and artisanal pasta.
+
+- name: Ironhill Brewery Madhapur
+  city: Hyderabad
+  state: Telangana
+  category: bar
+  subcategory: brewery
+  lat: 17.4428
+  lng: 78.3855
+  price_range: 3
+  average_cost: 1600
+  indoor_outdoor: both
+  ambience: [lively, trendy, casual]
+  tags: [brewery, craft_beer, nightlife, date_spot]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: false
+  description: One of India's largest microbreweries with indoor water ponds, outdoor cabanas, fresh craft beers on tap, and lively DJ tunes.
+
+- name: Thousand Pillar Temple
+  city: Warangal
+  state: Telangana
+  category: attraction
+  subcategory: temple
+  lat: 18.0035
+  lng: 79.5742
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [quiet, heritage, spiritual]
+  tags: [heritage, historic, temple, architecture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 12th-century Kakatiya dynasty trikuta temple featuring exquisitely carved black basalt pillars and a monolithic Nandi bull.
+
+# =============================================================================
+# ANDHRA PRADESH (VISAKHAPATNAM, VIJAYAWADA, TIRUPATI)
+# =============================================================================
+- name: RK Beach & Submarine Museum
+  city: Visakhapatnam
+  state: Andhra Pradesh
+  category: attraction
+  subcategory: beach
+  lat: 17.7125
+  lng: 83.3245
+  price_range: 1
+  average_cost: 70
+  indoor_outdoor: both
+  ambience: [outdoor, casual, lively]
+  tags: [beach, casual, heritage, scenic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Sea-facing boulevard featuring INS Kursura, an authentic Soviet-built submarine preserved on the sands as a walk-through museum.
+
+- name: Kailasagiri Hilltop Park
+  city: Visakhapatnam
+  state: Andhra Pradesh
+  category: attraction
+  subcategory: viewpoint
+  lat: 17.7495
+  lng: 83.3422
+  price_range: 1
+  average_cost: 100
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, romantic]
+  tags: [romantic, viewpoint, scenic, ropeway]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Panoramic hilltop garden reached by coastal cable car ropeway, offering sweeping 360-degree views of the Bay of Bengal beaches.
+
+- name: Ironhill Brewery Siripuram
+  city: Visakhapatnam
+  state: Andhra Pradesh
+  category: bar
+  subcategory: brewery
+  lat: 17.7242
+  lng: 83.3155
+  price_range: 3
+  average_cost: 1500
+  indoor_outdoor: indoor
+  ambience: [lively, trendy, casual]
+  tags: [brewery, craft_beer, nightlife]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: false
+  description: Popular Vizag craft brewery pouring fresh Belgian witbier, cider, and IPAs alongside woodfired coastal pizzas.
+
+- name: Bhavani Island River Resort
+  city: Vijayawada
+  state: Andhra Pradesh
+  category: park
+  subcategory: island
+  lat: 16.5185
+  lng: 80.5935
+  price_range: 1
+  average_cost: 150
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, adventure]
+  tags: [adventure, nature, boat_ride, family]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Lush 133-acre island in the middle of the Krishna River accessible by boat, featuring water sports, ziplines, and gardens.
+
+- name: Undavalli Rock-cut Caves
+  city: Vijayawada
+  state: Andhra Pradesh
+  category: attraction
+  subcategory: heritage
+  lat: 16.4965
+  lng: 80.5815
+  price_range: 1
+  average_cost: 25
+  indoor_outdoor: both
+  ambience: [quiet, heritage, scenic]
+  tags: [heritage, historic, architecture, culture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 7th-century solid sandstone monolithic rock-cut cave temples with a giant reclining statue of Lord Vishnu.
+
+- name: Chandragiri Fort & Light Show
+  city: Tirupati
+  state: Andhra Pradesh
+  category: attraction
+  subcategory: fort
+  lat: 13.5833
+  lng: 79.3167
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: outdoor
+  ambience: [heritage, scenic, quiet]
+  tags: [heritage, historic, architecture, evening]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 11th-century Vijayanagara kingdom fortress with Raja Mahal palace, moat walls, and an evening sound and light performance.
+
+# =============================================================================
+# KERALA (KOCHI, THIRUVANANTHAPURAM, KOZHIKODE, ALAPPUZHA, MUNNAR, WAYANAD)
+# =============================================================================
+- name: Fort Kochi Beach & Chinese Fishing Nets
+  city: Kochi
+  state: Kerala
+  category: attraction
+  subcategory: beach
+  lat: 9.965
+  lng: 76.242
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, casual, romantic]
+  tags: [romantic, scenic, casual, heritage]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Historic shores with 14th-century cantilevered Chinese fishing nets, sunset walkways, and colonial spice warehouses.
+
+- name: Kashi Art Cafe Fort Kochi
+  city: Kochi
+  state: Kerala
+  category: cafe
+  subcategory: cafe
+  lat: 9.9665
+  lng: 76.2435
+  price_range: 2
+  average_cost: 600
+  indoor_outdoor: both
+  ambience: [cozy, quiet, artistic]
+  tags: [first_date_friendly, art, cozy, breakfast]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Landmark art gallery cafe set in a restored heritage Dutch house, known for chocolate cake, coffee, and rotating contemporary art.
+
+- name: Kovalam Lighthouse Beach
+  city: Thiruvananthapuram
+  state: Kerala
+  category: attraction
+  subcategory: beach
+  lat: 8.3985
+  lng: 76.9785
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, scenic]
+  tags: [beach, romantic, viewpoint, sunset]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Crescent beach flanked by palm groves and a 30-meter red-and-white spiral lighthouse with sweeping views of the Arabian Sea.
+
+- name: Villa Maya Heritage Fine Dining
+  city: Thiruvananthapuram
+  state: Kerala
+  category: restaurant
+  subcategory: fine_dining
+  lat: 8.4815
+  lng: 76.9412
+  price_range: 4
+  average_cost: 2800
+  indoor_outdoor: both
+  ambience: [romantic, quiet, heritage]
+  tags: [romantic, premium, anniversary, intimate]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Restored 18th-century Travancore royal palace with candlelit courtyards, lily ponds, and culinary traditions of the spice route.
+
+- name: Paragon Restaurant
+  city: Kozhikode
+  state: Kerala
+  category: restaurant
+  subcategory: dining
+  lat: 11.2588
+  lng: 75.7804
+  price_range: 2
+  average_cost: 500
+  indoor_outdoor: indoor
+  ambience: [lively, casual, heritage]
+  tags: [food, iconic, biryani, malabar]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: World-famous culinary landmark since 1939, hailed globally for legendary Malabar dum biryani, fish mango curry, and appams.
+
+- name: Alleppey Backwater Houseboat & Canals
+  city: Alappuzha
+  state: Kerala
+  category: attraction
+  subcategory: lake
+  lat: 9.4981
+  lng: 76.3388
+  price_range: 3
+  average_cost: 2500
+  indoor_outdoor: outdoor
+  ambience: [romantic, quiet, scenic]
+  tags: [romantic, scenic, backwaters, nature]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Serene glide through palm-fringed lagoons, paddy fields below sea level, and rustic backwater villages on a thatched kettuvallam.
+
+- name: Mattupetty Dam & Tea Gardens
+  city: Munnar
+  state: Kerala
+  category: attraction
+  subcategory: lake
+  lat: 10.1065
+  lng: 77.1245
+  price_range: 1
+  average_cost: 150
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, romantic]
+  tags: [scenic, romantic, lake, nature]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Concrete gravity dam nestled amidst emerald tea estates and misty Shola forests, offering speedboating and elephant spottings.
+
+- name: Banasura Sagar Earth Dam
+  city: Wayanad
+  state: Kerala
+  category: attraction
+  subcategory: lake
+  lat: 11.6695
+  lng: 75.9575
+  price_range: 1
+  average_cost: 100
+  indoor_outdoor: outdoor
+  ambience: [outdoor, adventure, scenic]
+  tags: [scenic, adventure, nature, viewpoint]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: India's largest earthen dam, with tiny island hillocks scattered across reservoir waters framed by mist-shrouded Banasura peaks.
+
+# =============================================================================
+# PUDUCHERRY
+# =============================================================================
+- name: Promenade Beach (Rock Beach)
+  city: Puducherry
+  state: Puducherry
+  category: attraction
+  subcategory: beach
+  lat: 11.9338
+  lng: 79.8358
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, lively]
+  tags: [romantic, casual, scenic, sea_breeze]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 1.5-kilometer stone sea-wall boulevard closed to traffic every evening for strolls past the Gandhi statue and French war memorial.
+
+- name: Coromandel Cafe & Craft Cocktails
+  city: Puducherry
+  state: Puducherry
+  category: cafe
+  subcategory: cafe
+  lat: 11.9315
+  lng: 79.8322
+  price_range: 3
+  average_cost: 1400
+  indoor_outdoor: both
+  ambience: [romantic, trendy, cozy]
+  tags: [romantic, first_date_friendly, premium, cocktails]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Stunning pastel-pink French colonial mansion cafe in White Town featuring lush courtyard palms, artisan pastas, and brioche.
+
+# =============================================================================
+# WEST BENGAL (KOLKATA, DARJEELING)
+# =============================================================================
+- name: Victoria Memorial
+  city: Kolkata
+  state: West Bengal
+  category: attraction
+  subcategory: museum
+  lat: 22.5448
+  lng: 88.3426
+  price_range: 1
+  average_cost: 30
+  indoor_outdoor: both
+  ambience: [quiet, casual, romantic]
+  tags: [heritage, culture, historic, first_date_friendly]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Majestic white Makrana marble monument and 64-acre landscaped gardens dedicated to art, colonial history, and evening walks.
+
+- name: Princep Ghat
+  city: Kolkata
+  state: West Bengal
+  category: attraction
+  subcategory: riverside
+  lat: 22.555
+  lng: 88.331
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, quiet]
+  tags: [romantic, scenic, casual, river_view]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Palladian porch riverside ghat on the Hooghly with wooden country boat rides under the illuminated Vidyasagar Setu cable bridge.
+
+- name: Flurys Tearoom Park Street
+  city: Kolkata
+  state: West Bengal
+  category: cafe
+  subcategory: cafe
+  lat: 22.5518
+  lng: 88.3524
+  price_range: 2
+  average_cost: 800
+  indoor_outdoor: indoor
+  ambience: [cozy, heritage, lively]
+  tags: [first_date_friendly, heritage, breakfast, bakery]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: European tea room founded in 1927 on Park Street, legendary for English breakfasts, rum balls, and Darjeeling second flush tea.
+
+- name: Peter Cat Chelo Kebab
+  city: Kolkata
+  state: West Bengal
+  category: restaurant
+  subcategory: dining
+  lat: 22.5526
+  lng: 88.3532
+  price_range: 3
+  average_cost: 1400
+  indoor_outdoor: indoor
+  ambience: [romantic, cozy, heritage]
+  tags: [food, iconic, heritage, anniversary]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Nostalgic dim-lit restaurant with red leather booths and turbaned stewards serving iconic Iranian Chelo Kebabs with butter.
+
+- name: Tiger Hill Sunrise
+  city: Darjeeling
+  state: West Bengal
+  category: attraction
+  subcategory: viewpoint
+  lat: 27.0095
+  lng: 88.2865
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, romantic]
+  tags: [scenic, sunrise, viewpoint, mountain]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Summit at 8,482 feet famous for dawn illumination of the twin peaks of Mount Kanchenjunga turning from pale pink to blazing gold.
+
+- name: Glenary's Bakery, Cafe & Pub
+  city: Darjeeling
+  state: West Bengal
+  category: cafe
+  subcategory: bakery
+  lat: 27.0425
+  lng: 88.2662
+  price_range: 2
+  average_cost: 700
+  indoor_outdoor: both
+  ambience: [cozy, romantic, scenic]
+  tags: [first_date_friendly, bakery, viewpoint, live_music]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 130-year-old colonial bakery and terrace cafe on Nehru Road serving chocolate eclairs, apple pies, and craft beers with mountain views.
+
+# =============================================================================
+# ODISHA (BHUBANESWAR, PURI)
+# =============================================================================
+- name: Lingaraj Temple
+  city: Bhubaneswar
+  state: Odisha
+  category: attraction
+  subcategory: temple
+  lat: 20.2382
+  lng: 85.8335
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [spiritual, quiet, heritage]
+  tags: [heritage, temple, culture, historic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 11th-century Kalinga architectural masterpiece standing 180 feet high with intricate sandstone carvings in the temple city.
+
+- name: Udayagiri and Khandagiri Caves
+  city: Bhubaneswar
+  state: Odisha
+  category: attraction
+  subcategory: heritage
+  lat: 20.2612
+  lng: 85.7875
+  price_range: 1
+  average_cost: 25
+  indoor_outdoor: outdoor
+  ambience: [quiet, heritage, scenic]
+  tags: [heritage, historic, viewpoint, culture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Partly natural and rock-carved Jain hermit monk cells dating back to the 2nd century BC with Hathigumpha royal inscriptions.
+
+- name: Puri Golden Beach & Blue Flag Boardwalk
+  city: Puri
+  state: Odisha
+  category: attraction
+  subcategory: beach
+  lat: 19.7985
+  lng: 85.8245
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, casual]
+  tags: [beach, scenic, sunrise, casual]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Certified Blue Flag eco-beach with golden sands, clean swimming zones, wooden sun deck boardwalks, and sunset sand art.
+
+- name: Konark Sun Temple
+  city: Puri
+  state: Odisha
+  category: attraction
+  subcategory: monument
+  lat: 19.8876
+  lng: 86.0945
+  price_range: 1
+  average_cost: 40
+  indoor_outdoor: outdoor
+  ambience: [heritage, quiet, scenic]
+  tags: [heritage, unesco, historic, architecture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 13th-century UNESCO marvel sculpted as a colossal 24-wheeled chariot of Surya drawn by seven spirited stone horses.
+
+# =============================================================================
+# BIHAR (PATNA, BODH GAYA)
+# =============================================================================
+- name: Bihar Museum
+  city: Patna
+  state: Bihar
+  category: museum
+  subcategory: gallery
+  lat: 25.6115
+  lng: 85.123
+  price_range: 1
+  average_cost: 100
+  indoor_outdoor: indoor
+  ambience: [quiet, trendy, heritage]
+  tags: [culture, heritage, modern, first_date_friendly]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: World-class Japanese-designed contemporary museum housing the 2,300-year-old Didarganj Yakshi and historic Mauryan treasures.
+
+- name: Marine Drive Ganga Pathway Patna
+  city: Patna
+  state: Bihar
+  category: park
+  subcategory: promenade
+  lat: 25.6265
+  lng: 85.1585
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, casual, lively]
+  tags: [casual, scenic, sunset, street_food]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Vibrant riverside expressway promenade on the banks of the Ganges, popular for evening breezes, kulhad chai, and street snacks.
+
+- name: Mahabodhi Temple & Bodhi Tree
+  city: Bodh Gaya
+  state: Bihar
+  category: attraction
+  subcategory: temple
+  lat: 24.696
+  lng: 84.9912
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: both
+  ambience: [spiritual, quiet, scenic]
+  tags: [heritage, unesco, spiritual, culture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: UNESCO World Heritage Buddhist shrine marking the exact sacred spot where Siddhartha Gautama attained enlightenment beneath the Bodhi tree.
+
+# =============================================================================
+# JHARKHAND (RANCHI, JAMSHEDPUR)
+# =============================================================================
+- name: Hundru Falls
+  city: Ranchi
+  state: Jharkhand
+  category: attraction
+  subcategory: waterfall
+  lat: 23.4475
+  lng: 85.654
+  price_range: 1
+  average_cost: 30
+  indoor_outdoor: outdoor
+  ambience: [outdoor, adventure, scenic]
+  tags: [waterfall, nature, scenic, adventure]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Dramatic 320-foot waterfall formed by the Subarnarekha River cascading over rocks into a frothy natural pool.
+
+- name: Patratu Valley Viewpoint
+  city: Ranchi
+  state: Jharkhand
+  category: attraction
+  subcategory: viewpoint
+  lat: 23.6335
+  lng: 85.2985
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, romantic]
+  tags: [scenic, viewpoint, road_trip, sunset]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Stunning serpentine ghat road winding through green hills with aerial viewpoints overlooking Patratu Dam reservoir.
+
+- name: Jubilee Park & Laser Fountains
+  city: Jamshedpur
+  state: Jharkhand
+  category: park
+  subcategory: garden
+  lat: 22.8085
+  lng: 22.8085
+  lat: 22.8085
+  lng: 86.195
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: outdoor
+  ambience: [outdoor, casual, lively]
+  tags: [garden, family, casual, lake]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 200-acre city park modeled after Mysore's Brindavan Gardens, gifted to the Steel City by Tata Steel with rose gardens and Jayanti Lake.
+
+# =============================================================================
+# CHHATTISGARH (RAIPUR)
+# =============================================================================
+- name: Telibandha Lake Marine Drive
+  city: Raipur
+  state: Chhattisgarh
+  category: park
+  subcategory: lake
+  lat: 21.2385
+  lng: 81.6612
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, lively, casual]
+  tags: [lake, casual, scenic, evening]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Clean urban lake promenade with India's monumental national flag mast, jogging tracks, street food stalls, and evening lights.
+
+- name: Purkhouti Muktangan Cultural Park
+  city: Raipur
+  state: Chhattisgarh
+  category: museum
+  subcategory: heritage
+  lat: 21.1415
+  lng: 81.7765
+  price_range: 1
+  average_cost: 30
+  indoor_outdoor: outdoor
+  ambience: [outdoor, quiet, cultural]
+  tags: [culture, heritage, art, family]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Expansive open-air cultural park showcasing authentic tribal folk art, Bastar terracotta sculptures, and traditional Chhattisgarh huts.
+
+# =============================================================================
+# MADHYA PRADESH (BHOPAL, INDORE, GWALIOR, JABALPUR)
+# =============================================================================
+- name: Upper Lake (Bhojtal) & Boat Club
+  city: Bhopal
+  state: Madhya Pradesh
+  category: park
+  subcategory: lake
+  lat: 23.2458
+  lng: 77.3755
+  price_range: 1
+  average_cost: 100
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, scenic]
+  tags: [romantic, lake, scenic, boat_ride]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 11th-century lake created by Raja Bhoj, offering cruise boats, kayaking, and sunset viewpoints along VIP Road.
+
+- name: Bharat Bhavan Multi-Arts Complex
+  city: Bhopal
+  state: Madhya Pradesh
+  category: museum
+  subcategory: gallery
+  lat: 23.2485
+  lng: 77.3915
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: both
+  ambience: [quiet, artistic, scenic]
+  tags: [art, culture, heritage, lake_view]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Charles Correa-designed terraced arts museum overlooking Bhojtal lake with tribal art galleries, sculpture courtyards, and poetry halls.
+
+- name: Sarafa Bazaar Midnight Street Food
+  city: Indore
+  state: Madhya Pradesh
+  category: restaurant
+  subcategory: dining
+  lat: 22.7185
+  lng: 75.8542
+  price_range: 1
+  average_cost: 300
+  indoor_outdoor: outdoor
+  ambience: [lively, casual, outdoor]
+  tags: [food, iconic, street_food, nightlife]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Jewelry market by day that turns into an electrifying midnight street food haven serving Bhutte ka Kees, Garadu, and Dahi Vada.
+
+- name: 56 Dukan (Chappan Dukan)
+  city: Indore
+  state: Madhya Pradesh
+  category: restaurant
+  subcategory: dining
+  lat: 22.7245
+  lng: 75.8825
+  price_range: 1
+  average_cost: 250
+  indoor_outdoor: outdoor
+  ambience: [lively, casual, trendy]
+  tags: [food, iconic, casual, first_date_friendly]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Spotless open pedestrian food street of 56 legendary specialty snack shops serving crispy poha jalebi, kachoris, and hot dogs.
+
+- name: Gwalior Fort & Man Singh Palace
+  city: Gwalior
+  state: Madhya Pradesh
+  category: attraction
+  subcategory: fort
+  lat: 26.2295
+  lng: 78.1695
+  price_range: 1
+  average_cost: 75
+  indoor_outdoor: outdoor
+  ambience: [heritage, quiet, scenic]
+  tags: [heritage, historic, architecture, viewpoint]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Hilltop medieval fortress described by Babur as 'the pearl amongst fortresses in Hind', featuring vibrant turquoise glazed ceramic tilework.
+
+- name: Bhedaghat Marble Rocks & Dhuandhar
+  city: Jabalpur
+  state: Madhya Pradesh
+  category: attraction
+  subcategory: waterfall
+  lat: 23.1315
+  lng: 79.8015
+  price_range: 1
+  average_cost: 100
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, romantic]
+  tags: [scenic, waterfall, boat_ride, nature]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 100-foot soaring white marble river canyons along the Narmada River leading to the thunderous smoke-mist Dhuandhar waterfall.
+
+# =============================================================================
+# ASSAM (GUWAHATI, KAZIRANGA)
+# =============================================================================
+- name: Kamakhya Temple Nilachal Hill
+  city: Guwahati
+  state: Assam
+  category: attraction
+  subcategory: temple
+  lat: 26.1664
+  lng: 91.7058
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: both
+  ambience: [spiritual, heritage, scenic]
+  tags: [heritage, temple, culture, historic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Ancient Shakti Peeth perched atop Nilachal Hill with beehive-shaped shikhara and sweeping views of the mighty Brahmaputra river.
+
+- name: Alfresco Grand Brahmaputra Cruise
+  city: Guwahati
+  state: Assam
+  category: attraction
+  subcategory: cruise
+  lat: 26.1925
+  lng: 91.7485
+  price_range: 3
+  average_cost: 1200
+  indoor_outdoor: both
+  ambience: [romantic, scenic, outdoor]
+  tags: [romantic, river_cruise, sunset, live_music]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Luxury river cruiser with open sundeck sunset sailings, Assamese folk dance performances, and candlelight dinner buffets.
+
+- name: Cafe Hendrix
+  city: Guwahati
+  state: Assam
+  category: bar
+  subcategory: pub
+  lat: 26.1415
+  lng: 91.8012
+  price_range: 2
+  average_cost: 900
+  indoor_outdoor: indoor
+  ambience: [lively, cozy, trendy]
+  tags: [live_music, nightlife, pub, craft_beer]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: false
+  description: Northeast India's premier live blues and classic rock bar, famous for home-style Naga pork, craft brews, and indie jam nights.
+
+- name: Kaziranga National Park Rhino Safari
+  city: Kaziranga
+  state: Assam
+  category: park
+  subcategory: nature
+  lat: 26.5775
+  lng: 93.1711
+  price_range: 3
+  average_cost: 1800
+  indoor_outdoor: outdoor
+  ambience: [outdoor, adventure, scenic]
+  tags: [adventure, nature, wildlife, safari]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: UNESCO World Heritage sanctuary home to two-thirds of the world's great one-horned rhinoceroses in tall elephant grass marshes.
+
+# =============================================================================
+# MEGHALAYA (SHILLONG, CHERRAPUNJI)
+# =============================================================================
+- name: Ward's Lake
+  city: Shillong
+  state: Meghalaya
+  category: park
+  subcategory: lake
+  lat: 25.5752
+  lng: 91.8885
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, quiet]
+  tags: [romantic, lake, scenic, first_date_friendly]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Horseshoe-shaped colonial lake surrounded by cherry blossom trees, wooden footbridges, swan pedal boats, and flower gardens.
+
+- name: Dylan's Cafe
+  city: Shillong
+  state: Meghalaya
+  category: cafe
+  subcategory: cafe
+  lat: 25.5682
+  lng: 91.8955
+  price_range: 2
+  average_cost: 650
+  indoor_outdoor: indoor
+  ambience: [cozy, artistic, trendy]
+  tags: [first_date_friendly, cozy, music, desserts]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Bob Dylan-themed boutique cafe in Risa Colony filled with vinyl records, cozy cushion booths, chocolate fudge, and pancake stacks.
+
+- name: Umiam Lake (Barapani)
+  city: Shillong
+  state: Meghalaya
+  category: attraction
+  subcategory: lake
+  lat: 25.6667
+  lng: 91.9167
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, romantic]
+  tags: [scenic, lake, adventure, viewpoint]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Expansive emerald reservoir framed by pine hills, offering sunset kayaking, speedboats, and peaceful picnic viewpoints.
+
+- name: Double Decker Living Root Bridge
+  city: Cherrapunji
+  state: Meghalaya
+  category: attraction
+  subcategory: trek
+  lat: 25.2535
+  lng: 91.6742
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: outdoor
+  ambience: [outdoor, adventure, scenic]
+  tags: [adventure, nature, trek, unique]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: false
+  description: Bio-engineering marvel in Nongriat grown over centuries by Khasi tribes from living rubber tree roots across tropical stream gorges.
+
+- name: Nohkalikai Falls
+  city: Cherrapunji
+  state: Meghalaya
+  category: attraction
+  subcategory: waterfall
+  lat: 25.2755
+  lng: 91.6852
+  price_range: 1
+  average_cost: 30
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, dramatic]
+  tags: [waterfall, scenic, viewpoint, nature]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: India's tallest plunge waterfall (1,115 feet) dropping dramatically into a crystal turquoise plunge pool from verdant plateau cliffs.
+
+# =============================================================================
+# SIKKIM (GANGTOK)
+# =============================================================================
+- name: MG Marg Walking Promenade
+  city: Gangtok
+  state: Sikkim
+  category: shopping
+  subcategory: promenade
+  lat: 27.3315
+  lng: 88.6135
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, lively, casual]
+  tags: [casual, shopping, food, first_date_friendly]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Spotless vehicle-free pedestrian boulevard lined with Victorian lampposts, park benches, Himalayan cafes, and momo parlors.
+
+- name: Rumtek Monastery
+  city: Gangtok
+  state: Sikkim
+  category: attraction
+  subcategory: temple
+  lat: 27.3015
+  lng: 88.5482
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: both
+  ambience: [quiet, spiritual, scenic]
+  tags: [culture, heritage, scenic, peaceful]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Historic seat of the Karma Kagyu lineage, decorated with vibrant Tibetan murals, golden stupas, and green valley views.
+
+- name: Cafe Fiction & Rachna Books
+  city: Gangtok
+  state: Sikkim
+  category: cafe
+  subcategory: cafe
+  lat: 27.3225
+  lng: 88.6185
+  price_range: 2
+  average_cost: 500
+  indoor_outdoor: indoor
+  ambience: [cozy, quiet, artistic]
+  tags: [first_date_friendly, cozy, books, specialty_coffee]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Award-winning independent bookstore and balcony cafe serving pour-over Sikkim coffee, handmade pastries, and regional literature.
+
+# =============================================================================
+# ARUNACHAL PRADESH (ITANAGAR, TAWANG)
+# =============================================================================
+- name: Ganga Lake (Gyakar Sinyi)
+  city: Itanagar
+  state: Arunachal Pradesh
+  category: park
+  subcategory: lake
+  lat: 27.0655
+  lng: 93.582
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: outdoor
+  ambience: [outdoor, quiet, scenic]
+  tags: [nature, scenic, lake, romantic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Tranquil emerald-green forest lake enclosed by ancient virgin jungle, tree ferns, and wooden picnic walkways.
+
+- name: Tawang Monastery
+  city: Tawang
+  state: Arunachal Pradesh
+  category: attraction
+  subcategory: temple
+  lat: 27.5861
+  lng: 91.8594
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: both
+  ambience: [spiritual, scenic, heritage]
+  tags: [heritage, culture, scenic, mountain]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: The second largest Buddhist monastery in the world, founded in 1680, perched like a fortress 10,000 feet high in the Himalayas.
+
+# =============================================================================
+# MANIPUR, MIZORAM, NAGALAND, TRIPURA
+# =============================================================================
+- name: Loktak Lake & Floating Phumdis
+  city: Imphal
+  state: Manipur
+  category: attraction
+  subcategory: lake
+  lat: 24.5512
+  lng: 93.8115
+  price_range: 1
+  average_cost: 100
+  indoor_outdoor: outdoor
+  ambience: [outdoor, scenic, unique]
+  tags: [lake, unique, nature, scenic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Largest freshwater lake in Northeast India, famous for floating circular biomass islands (phumdis) and the Keibul Lamjao deer park.
+
+- name: Durtlang Hills Sunset Viewpoint
+  city: Aizawl
+  state: Mizoram
+  category: attraction
+  subcategory: viewpoint
+  lat: 23.7542
+  lng: 92.7235
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, scenic]
+  tags: [romantic, viewpoint, sunset, scenic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: High hilltop ridge providing sweeping panoramic vistas over the stepped colorful hill town of Aizawl and sunset skies.
+
+- name: Kohima War Cemetery
+  city: Kohima
+  state: Nagaland
+  category: attraction
+  subcategory: memorial
+  lat: 25.6695
+  lng: 94.1065
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [quiet, heritage, scenic]
+  tags: [heritage, historic, peaceful]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Meticulously maintained Commonwealth memorial on Garrison Hill, honoring Allied and Indian soldiers of the Battle of Kohima.
+
+- name: Ujjayanta Palace
+  city: Agartala
+  state: Tripura
+  category: attraction
+  subcategory: palace
+  lat: 23.8345
+  lng: 91.2858
+  price_range: 1
+  average_cost: 20
+  indoor_outdoor: both
+  ambience: [heritage, quiet, scenic]
+  tags: [heritage, royal, architecture, museum]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Neoclassical royal white palace set amidst Mughal-style formal water gardens, now serving as the state museum of Northeast culture.
+
+# =============================================================================
+# ANDAMAN & NICOBAR ISLANDS (PORT BLAIR, HAVELOCK ISLAND)
+# =============================================================================
+- name: Cellular Jail National Memorial
+  city: Port Blair
+  state: Andaman and Nicobar Islands
+  category: attraction
+  subcategory: memorial
+  lat: 11.6738
+  lng: 92.7478
+  price_range: 1
+  average_cost: 30
+  indoor_outdoor: both
+  ambience: [heritage, quiet, scenic]
+  tags: [heritage, historic, sound_light, culture]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Historic colonial penal fortress ('Kala Pani') with seven radial wings, martyr galleries, and an evocative evening sound-and-light show.
+
+- name: Radhanagar Beach (Beach No. 7)
+  city: Havelock Island
+  state: Andaman and Nicobar Islands
+  category: attraction
+  subcategory: beach
+  lat: 11.9835
+  lng: 92.9515
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, scenic]
+  tags: [beach, romantic, sunset, world_class]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Ranked among Asia's best beaches, famed for blinding white sands, turquoise calm waters, and dramatic rainforest sunset silhouettes.
+
+- name: Something Different - A Beachside Cafe
+  city: Havelock Island
+  state: Andaman and Nicobar Islands
+  category: cafe
+  subcategory: cafe
+  lat: 12.0125
+  lng: 92.9815
+  price_range: 3
+  average_cost: 1200
+  indoor_outdoor: both
+  ambience: [romantic, trendy, scenic]
+  tags: [romantic, first_date_friendly, cocktails, seafood]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Colorful seaside cafe on Vijaynagar Beach with beach swings, craft cocktails, freshly baked woodfired pizzas, and live acoustic music.
