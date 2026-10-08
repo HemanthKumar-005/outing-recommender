@@ -52,7 +52,7 @@ export default function LoginPage() {
       <div className="auth-card fade-up">
         <Link href="/" className="logo" style={{ marginBottom: 28, display: "inline-flex" }}>
           <span className="logo-mark">N</span>
-          Nearby & Co.
+          Nearby &amp; Co.
         </Link>
         <h1>Welcome back</h1>
         <p className="lead">Log in with your workspace API key to continue.</p>
