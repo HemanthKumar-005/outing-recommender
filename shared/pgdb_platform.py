@@ -49,3 +49,17 @@ def create_tenant(name: str, api_key: str) -> dict:
             )
             row = cur.fetchone()
             return {"id": row["id"], "name": row["name"], "api_key": row["api_key"]}
+
+
+def list_tenant_ids() -> list[str]:
+    """Return all tenant IDs from the platform registry.
+
+    Used by background workers (e.g. sentiment-worker) that need to sweep
+    every tenant on startup.  Runs as worker_role which only has SELECT on
+    platform.tenants.
+    """
+    with _pool_get().connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT id FROM platform.tenants ORDER BY id")
+            return [str(row["id"]) for row in cur.fetchall()]
+

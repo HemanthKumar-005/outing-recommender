@@ -175,6 +175,7 @@ export default function RecommendPanel({ location: controlledLocation, onLocatio
               distance_km={rec.place.distance_km}
               price_range={rec.place.price_range}
               reason={rec.reasons?.[0]}
+              city={location?.city}
               showWhy={expandedId === rec.place.id}
               whyContent={JSON.stringify(rec.score_breakdown, null, 2)}
               onLike={() => sendFeedback(rec.place.id, "like")}

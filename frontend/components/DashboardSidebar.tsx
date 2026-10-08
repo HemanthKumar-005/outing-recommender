@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { getUserInfo, clearSession } from "../lib/api";
@@ -23,6 +24,22 @@ export default function DashboardSidebar({ open, onClose }: Props) {
   const router = useRouter();
   const user = getUserInfo();
   const initial = (user.name || "U").charAt(0).toUpperCase();
+
+  const [theme, setTheme] = useState<"dark" | "light">("dark");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("nearby-theme") as "dark" | "light" | null;
+    const preferred = saved || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+    setTheme(preferred);
+    document.documentElement.setAttribute("data-theme", preferred);
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === "dark" ? "light" : "dark";
+    setTheme(next);
+    document.documentElement.setAttribute("data-theme", next);
+    localStorage.setItem("nearby-theme", next);
+  };
 
   const logout = () => {
     clearSession();
@@ -59,6 +76,15 @@ export default function DashboardSidebar({ open, onClose }: Props) {
           <div className="dash-user-name">{user.name}</div>
           <div className="dash-user-workspace">{user.workspace}</div>
         </div>
+        <button
+          type="button"
+          className="btn-ghost btn-sm"
+          onClick={toggleTheme}
+          title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          style={{ fontSize: "1rem" }}
+        >
+          {theme === "dark" ? "☀️" : "🌙"}
+        </button>
         <button type="button" className="btn-ghost btn-sm" onClick={logout} title="Log out">
           ⎋
         </button>

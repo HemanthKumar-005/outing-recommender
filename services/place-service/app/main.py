@@ -55,9 +55,14 @@ class SurpriseBody(BaseModel):
     exclude_ids: list[int] = Field(default_factory=list)
 
 
+class SentimentUpdate(BaseModel):
+    sentiment_score: float
+
+
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "place-service"}
+
 
 
 @app.get("/occasions")
@@ -123,7 +128,13 @@ def search_places(
 
 @app.post("/places", status_code=201)
 def create_place(payload: PlaceCreate, tenant_id: str = Depends(require_tenant)):
-    return db.create_place(tenant_id, payload.model_dump())
+    row = db.create_place(tenant_id, payload.model_dump())
+    try:
+        from eventbus import publish
+        publish("place.updated", {"tenant_id": tenant_id, "place_id": row["id"], "reason": "place_created"})
+    except Exception as e:  # noqa: BLE001
+        print(f"[place-service] failed to publish place.updated for place {row.get('id')}: {e}")
+    return row
 
 
 @app.get("/places")
@@ -140,6 +151,19 @@ def get_place(place_id: int, tenant_id: str = Depends(require_tenant)):
     if not row:
         raise HTTPException(status_code=404, detail="place not found")
     return row
+
+
+@app.patch("/places/{place_id}/sentiment")
+def update_place_sentiment(
+    place_id: int,
+    payload: SentimentUpdate,
+    tenant_id: str = Depends(require_tenant),
+):
+    row = db.update_place_sentiment(tenant_id, place_id, payload.sentiment_score)
+    if not row:
+        raise HTTPException(status_code=404, detail="place not found")
+    return row
+
 
 
 def _surprise_impl(

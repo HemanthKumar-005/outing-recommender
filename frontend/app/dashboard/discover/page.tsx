@@ -23,13 +23,12 @@ export default function DiscoverPage() {
         <LocationPicker value={location} onChange={setLocation} />
       </div>
 
-      {location && (
-        <SurpriseButton
-          lat={location.lat}
-          lng={location.lng}
-          occasion={undefined}
-        />
-      )}
+      <SurpriseButton
+        lat={location?.lat}
+        lng={location?.lng}
+        city={location?.city}
+        occasion={undefined}
+      />
 
       <RecommendPanel
         location={location}
