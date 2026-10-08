@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ProductDemo from "../components/ProductDemo";
 import FAQ from "../components/FAQ";
 import { PRICING_PLANS } from "../lib/demo-data";
+import { isAuthenticated } from "../lib/api";
 
 function useInView(threshold = 0.15) {
   const ref = useRef<HTMLDivElement>(null);
@@ -80,8 +82,18 @@ const FLOATING_CARDS = [
 ];
 
 export default function HomePage() {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    setMounted(true);
+    if (!isAuthenticated()) {
+      router.replace("/login");
+    }
+  }, [router]);
+
+  // Don't flash content before redirect resolves
+  if (!mounted || !isAuthenticated()) return null;
 
   return (
     <>
@@ -106,8 +118,8 @@ export default function HomePage() {
                   Try the live demo
                   <span className="btn-arrow">↗</span>
                 </a>
-                <Link href="/signup" className="btn btn-secondary btn-lg">
-                  Create a workspace
+                <Link href="/dashboard" className="btn btn-secondary btn-lg">
+                  Go to Dashboard
                 </Link>
               </div>
               <div className="hero-trust">
@@ -406,8 +418,8 @@ export default function HomePage() {
                       </p>
                     </div>
                   </div>
-                  <Link href="/signup" className="btn btn-primary">
-                    Create a workspace
+                  <Link href="/dashboard" className="btn btn-primary">
+                    Go to Dashboard
                   </Link>
                 </div>
                 <div className="api-code">
@@ -444,7 +456,7 @@ export default function HomePage() {
                   <span className="hero-italic">starting point.</span>
                 </h2>
                 <p className="lead">
-                  Free during early access. Pick a path and start planning.
+                  Free during early access. Pick a path and Open Dashboard.
                 </p>
               </div>
             </Reveal>
@@ -515,8 +527,8 @@ export default function HomePage() {
                   Not the debate.
                 </h2>
                 <div className="hero-cta" style={{ justifyContent: "center" }}>
-                  <Link href="/signup" className="btn btn-ink btn-lg">
-                    Start planning
+                  <Link href="/dashboard" className="btn btn-ink btn-lg">
+                    Open Dashboard
                     <span className="btn-arrow">↗</span>
                   </Link>
                   <Link href="/model-card" className="btn btn-ghost-dark btn-lg">

@@ -56,8 +56,7 @@ export default function Navbar() {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
             )}
           </button>
-          <Link href="/login" className="btn btn-secondary btn-sm">Log in</Link>
-          <Link href="/signup" className="btn btn-primary btn-sm">Get started <span className="btn-arrow">↗</span></Link>
+          <Link href="/dashboard" className="btn btn-primary btn-sm">Dashboard <span className="btn-arrow">↗</span></Link>
           <button type="button" className="nav-toggle" aria-label="Menu" onClick={() => setOpen(!open)}>{open ? "✕" : "☰"}</button>
         </div>
       </div>
@@ -66,8 +65,7 @@ export default function Navbar() {
           <a key={l.href} href={l.href} className="nav-link" onClick={() => setOpen(false)}>{l.label}</a>
         ))}
         <div className="mobile-menu-actions">
-          <Link href="/login" className="btn btn-secondary btn-block" onClick={() => setOpen(false)}>Log in</Link>
-          <Link href="/signup" className="btn btn-primary btn-block" onClick={() => setOpen(false)}>Get started</Link>
+          <Link href="/dashboard" className="btn btn-primary btn-block" onClick={() => setOpen(false)}>Dashboard</Link>
         </div>
       </div>
     </header>
