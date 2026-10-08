@@ -188,3 +188,18 @@ def places_by_ids(tenant_id: str, ids: list[int]) -> list:
         rows = cur.fetchall()
         by_id = {r["id"]: r for r in rows}
         return [by_id[i] for i in ids if i in by_id]
+
+
+def update_place_sentiment(tenant_id: str, place_id: int, sentiment_score: float) -> dict | None:
+    with tenant_cursor(tenant_id) as cur:
+        cur.execute(
+            """
+            UPDATE places.places
+            SET sentiment_score = %s
+            WHERE id = %s
+            RETURNING *
+            """,
+            (sentiment_score, place_id),
+        )
+        return cur.fetchone()
+

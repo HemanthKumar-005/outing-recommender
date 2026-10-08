@@ -71,14 +71,17 @@ export default function DashboardHome() {
           <div className="card">
             <p className="eyebrow">Quick actions</p>
             <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 8 }}>
-              <Link href="/dashboard/discover" className="btn btn-primary btn-sm">
-                Discover places
+              <Link href="/dashboard/date-planner" className="btn btn-primary btn-sm">
+                💖 Plan a Date
+              </Link>
+              <Link href="/dashboard/discover" className="btn btn-secondary btn-sm">
+                🎲 Surprise Me & Discover
               </Link>
               <Link href="/dashboard/groups" className="btn btn-secondary btn-sm">
-                Plan with a group
+                👥 Plan with a group
               </Link>
               <Link href="/dashboard/settings" className="btn btn-ghost btn-sm">
-                Edit preferences
+                ⚙️ Edit preferences
               </Link>
             </div>
           </div>

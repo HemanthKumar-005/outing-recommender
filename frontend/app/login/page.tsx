@@ -8,8 +8,7 @@ import { setSession, isOnboarded } from "../../lib/api";
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [apiKey, setApiKey] = useState("");
-  const [workspace, setWorkspace] = useState("");
+  const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -17,15 +16,18 @@ export default function LoginPage() {
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!apiKey.trim()) {
-      setError("Enter your workspace API key (from signup).");
+    if (!email.trim()) {
+      setError("Please enter your email.");
+      return;
+    }
+    if (!password.trim()) {
+      setError("Please enter your password.");
       return;
     }
     setLoading(true);
     setSession({
-      apiKey: apiKey.trim(),
-      workspaceName: workspace.trim() || "My workspace",
-      userName: email.trim().split("@")[0] || "User",
+      apiKey: process.env.NEXT_PUBLIC_API_KEY || `user-${email.trim().split("@")[0]}`,
+      userName: email.trim().split("@")[0],
       email: email.trim(),
     });
     void remember;
@@ -39,7 +41,6 @@ export default function LoginPage() {
   const useDemo = () => {
     setSession({
       apiKey: process.env.NEXT_PUBLIC_API_KEY || "demo-key",
-      workspaceName: "Demo workspace",
       userName: "Demo User",
       email: "demo@nearby.co",
     });
@@ -50,24 +51,36 @@ export default function LoginPage() {
   return (
     <div className="auth-page">
       <div className="auth-card fade-up">
-        <Link href="/" className="logo" style={{ marginBottom: 28, display: "inline-flex" }}>
+        <Link href="/login" className="logo" style={{ marginBottom: 28, display: "inline-flex" }}>
           <span className="logo-mark">N</span>
           Nearby &amp; Co.
         </Link>
         <h1>Welcome back</h1>
-        <p className="lead">Log in with your workspace API key to continue.</p>
+        <p className="lead">Log in to continue planning great outings.</p>
         <form onSubmit={onSubmit}>
           <div className="form-group">
             <label className="form-label" htmlFor="email">Email</label>
-            <input id="email" type="email" className="form-input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
+            <input
+              id="email"
+              type="email"
+              className="form-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+            />
           </div>
           <div className="form-group">
-            <label className="form-label" htmlFor="apiKey">Workspace API key</label>
-            <input id="apiKey" className="form-input" value={apiKey} onChange={(e) => setApiKey(e.target.value)} placeholder="Paste your API key" required />
-          </div>
-          <div className="form-group">
-            <label className="form-label" htmlFor="workspace">Workspace name (optional)</label>
-            <input id="workspace" className="form-input" value={workspace} onChange={(e) => setWorkspace(e.target.value)} placeholder="My workspace" />
+            <label className="form-label" htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              className="form-input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Your password"
+              required
+            />
           </div>
           <div className="form-group" style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <input id="remember" type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
@@ -80,7 +93,7 @@ export default function LoginPage() {
         </form>
         <div className="auth-divider">or</div>
         <button type="button" className="btn btn-secondary btn-block" onClick={useDemo}>
-          Continue with demo workspace
+          Try the demo
         </button>
         <div className="auth-footer">
           New here? <Link href="/signup">Create an account</Link>

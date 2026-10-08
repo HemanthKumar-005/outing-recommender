@@ -625,4 +625,212 @@ places:
   friends_friendly: true
   family_friendly: false
   description: Generated place for Ahmedabad import.
+- name: Lalbagh Botanical Garden
+  city: Bengaluru
+  state: Karnataka
+  category: park
+  subcategory: garden
+  lat: 12.9507
+  lng: 77.5848
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, quiet]
+  tags: [romantic, scenic, first_date_friendly, nature]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Iconic glasshouse, lotus ponds, and tree-lined strolling paths.
+- name: Nandi Hills
+  city: Bengaluru
+  state: Karnataka
+  category: attraction
+  subcategory: viewpoint
+  lat: 13.3702
+  lng: 77.6835
+  price_range: 1
+  average_cost: 100
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, scenic]
+  tags: [romantic, scenic, viewpoint, sunrise]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Ancient hill fortress famous for cloud views and sunrise dates.
+- name: Arbor Brewing Company
+  city: Bengaluru
+  state: Karnataka
+  category: bar
+  subcategory: brewery
+  lat: 12.9719
+  lng: 77.607
+  price_range: 3
+  average_cost: 1600
+  indoor_outdoor: indoor
+  ambience: [lively, trendy, casual]
+  tags: [brewery, craft_beer, nightlife, date_spot]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: false
+  description: Legendary craft brewery with cozy booths and artisanal ales.
+- name: Windmills Craftworks
+  city: Bengaluru
+  state: Karnataka
+  category: bar
+  subcategory: brewery
+  lat: 12.9827
+  lng: 77.7219
+  price_range: 3
+  average_cost: 2200
+  indoor_outdoor: indoor
+  ambience: [romantic, quiet, trendy]
+  tags: [brewery, craft_beer, live_music, romantic]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: false
+  description: Microbrewery and jazz theatre with books and intimate ambiance.
+- name: Mysore Palace
+  city: Mysuru
+  state: Karnataka
+  category: attraction
+  subcategory: palace
+  lat: 12.3052
+  lng: 76.6552
+  price_range: 1
+  average_cost: 100
+  indoor_outdoor: both
+  ambience: [heritage, romantic, scenic]
+  tags: [heritage, historic, romantic, royal]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Magnificent Indo-Saracenic royal palace with weekend illumination.
+- name: Brindavan Gardens
+  city: Mysuru
+  state: Karnataka
+  category: park
+  subcategory: garden
+  lat: 12.4243
+  lng: 76.5731
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, lively]
+  tags: [romantic, evening, garden, musical_fountain]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Terraced garden with illuminated musical fountains at KRS Dam.
+- name: Raja's Seat
+  city: Coorg
+  state: Karnataka
+  category: attraction
+  subcategory: viewpoint
+  lat: 12.4216
+  lng: 75.7335
+  price_range: 1
+  average_cost: 25
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, scenic]
+  tags: [romantic, viewpoint, sunset, nature]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Historic sunset viewpoint with misty valley panoramas and flowerbeds.
+- name: Abbey Falls
+  city: Coorg
+  state: Karnataka
+  category: attraction
+  subcategory: waterfall
+  lat: 12.4549
+  lng: 75.7196
+  price_range: 1
+  average_cost: 50
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, scenic]
+  tags: [waterfall, nature, scenic, adventure]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Cascading waterfall tucked within lush coffee plantations and spice estates.
+- name: Om Beach
+  city: Gokarna
+  state: Karnataka
+  category: attraction
+  subcategory: beach
+  lat: 14.5173
+  lng: 74.3168
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, casual]
+  tags: [beach, romantic, sunset, cafe]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Crescent-shaped twin beach with seaside cafes and sunset walks.
+- name: Mullayanagiri Peak
+  city: Chikmagalur
+  state: Karnataka
+  category: attraction
+  subcategory: mountain
+  lat: 13.3908
+  lng: 75.7214
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, adventure, scenic]
+  tags: [mountain, adventure, scenic, trekking]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Highest peak in Karnataka with cool breezes and mountain vistas.
+- name: Panambur Beach
+  city: Mangaluru
+  state: Karnataka
+  category: attraction
+  subcategory: beach
+  lat: 12.9515
+  lng: 74.8016
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, lively, casual]
+  tags: [beach, sunset, casual, watersports]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Golden sand beach on the Arabian Sea with evening boat rides and seafood.
+- name: Vittala Temple
+  city: Hampi
+  state: Karnataka
+  category: attraction
+  subcategory: temple
+  lat: 15.335
+  lng: 76.46
+  price_range: 1
+  average_cost: 40
+  indoor_outdoor: outdoor
+  ambience: [heritage, quiet, scenic]
+  tags: [heritage, historic, architecture, unesco]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: 16th-century architectural marvel featuring the iconic Stone Chariot.
+- name: Malpe Beach & Sea Walk
+  city: Udupi
+  state: Karnataka
+  category: attraction
+  subcategory: beach
+  lat: 13.3542
+  lng: 74.7042
+  price_range: 1
+  average_cost: 0
+  indoor_outdoor: outdoor
+  ambience: [outdoor, romantic, lively]
+  tags: [beach, sunset, romantic, island]
+  couple_friendly: true
+  friends_friendly: true
+  family_friendly: true
+  description: Picturesque coastline with stone sea walk and ferry to St. Mary's volcanic islands.
 cities: []

@@ -172,7 +172,7 @@ export const PRICING_PLANS = [
   {
     id: "free",
     name: "Free",
-    price: "$0",
+    price: "₹0",
     period: "forever",
     description: "For individuals exploring the platform.",
     cta: "Start Free",
@@ -189,7 +189,7 @@ export const PRICING_PLANS = [
   {
     id: "pro",
     name: "Pro",
-    price: "$12",
+    price: "₹999",
     period: "/month",
     description: "For users who want advanced personalization and planning.",
     cta: "Upgrade",
@@ -207,7 +207,7 @@ export const PRICING_PLANS = [
   {
     id: "team",
     name: "Team",
-    price: "$49",
+    price: "₹3,999",
     period: "/month",
     description: "For groups and businesses that need collaborative planning.",
     cta: "Contact Sales",

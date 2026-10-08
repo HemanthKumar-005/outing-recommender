@@ -48,12 +48,12 @@ export default function SettingsPage() {
           <label className="form-label">Email</label>
           <input className="form-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
         </div>
-        <button type="button" className="btn-primary" onClick={save}>
+        <button type="button" className="btn btn-primary" onClick={save}>
           Save changes
         </button>
         {saved && <p className="hint" style={{ color: "var(--sage)", marginTop: 8 }}>Changes saved ✓</p>}
-        <hr style={{ margin: "24px 0", borderColor: "var(--border)" }} />
-        <button type="button" className="btn-secondary" onClick={logout}>
+        <hr style={{ margin: "24px 0", borderColor: "var(--hairline)" }} />
+        <button type="button" className="btn btn-secondary" onClick={logout}>
           Log out
         </button>
       </div>

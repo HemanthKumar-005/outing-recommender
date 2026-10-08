@@ -236,6 +236,7 @@ export type DatePlan = {
   occasion?: string;
   duration?: string;
   budget_estimate?: string;
+  area_label?: string;
   romantic_tips?: string[];
   backup_plan?: string | null;
   timeline_meta?: Array<{

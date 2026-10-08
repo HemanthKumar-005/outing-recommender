@@ -65,11 +65,11 @@ export default function ProductDemo() {
         </div>
         <div className="demo-control-block">
           <div className="demo-step">02</div>
-          <div className="form-label">What feels right? <span className="budget-value">${budget} / person</span></div>
+          <div className="form-label">What feels right? <span className="budget-value">₹{budget * 83} / person</span></div>
           <div className="slider-wrap">
-            <span className="slider-edge">$15</span>
+            <span className="slider-edge">₹1,200</span>
             <input type="range" min={15} max={70} step={5} value={budget} onChange={(e) => setBudget(Number(e.target.value))} className="premium-slider" />
-            <span className="slider-edge">$70+</span>
+            <span className="slider-edge">₹5,800+</span>
           </div>
         </div>
         <div className="demo-control-block">
