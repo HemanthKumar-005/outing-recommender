@@ -1,5 +1,3 @@
-version: "3.9"
-
 x-python-env: &python-env
   PYTHONUNBUFFERED: "1"
 
