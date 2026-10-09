@@ -30,7 +30,8 @@ def _connect(retries: int = 15, delay: float = 3.0) -> pika.BlockingConnection:
             return conn
         except Exception as e:  # noqa: BLE001
             last_err = e
-            print(f"[eventbus] connect attempt {attempt + 1}/{retries} failed: {e}")
+            err_msg = str(e).strip() or repr(e)
+            print(f"[eventbus] connect attempt {attempt + 1}/{retries} failed: {err_msg}")
             time.sleep(delay)
     raise RuntimeError(f"Could not connect to RabbitMQ after {retries} attempts: {last_err}")
 
@@ -38,7 +39,7 @@ def _connect(retries: int = 15, delay: float = 3.0) -> pika.BlockingConnection:
 def publish(routing_key: str, payload: dict) -> None:
     """Publish a single message and close the connection. Fine for low-volume writes."""
     try:
-        conn = _connect(retries=3, delay=2.0)
+        conn = _connect(retries=5, delay=2.0)
     except RuntimeError as e:
         # Don't take down a request path just because the broker is briefly unavailable.
         print(f"[eventbus] publish skipped, broker unreachable: {e}")
