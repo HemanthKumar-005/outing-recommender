@@ -1,0 +1,15 @@
+[Unit]
+Description=Outing Recommender Platform Containers
+Requires=docker.service
+After=docker.service network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/outing-recommender
+ExecStart=/usr/bin/docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env.production up -d
+ExecStop=/usr/bin/docker compose -f deploy/docker-compose.prod.yml down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

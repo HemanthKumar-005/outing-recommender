@@ -18,10 +18,10 @@ LOCATIONS_PATH = ROOT / "configs" / "india_locations.yaml"
 
 sys.path.insert(0, str(ROOT / "shared"))
 try:
-    from config_loader import list_cities, resolve_city
+    # pyrefly: ignore [missing-import]
+    from config_loader import resolve_city
 except ImportError:
     resolve_city = None
-    list_cities = None
 
 
 def load_catalog() -> dict:

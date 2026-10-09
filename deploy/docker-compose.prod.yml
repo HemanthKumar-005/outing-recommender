@@ -1,0 +1,349 @@
+x-python-env: &python-env
+  PYTHONUNBUFFERED: "1"
+
+networks:
+  outing_prod_net:
+    driver: bridge
+    name: outing_prod_network
+
+services:
+  # =========================================================================
+  # REVERSE PROXY (PUBLIC ENTRYPOINT)
+  # =========================================================================
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: outing-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - certbot_www:/var/www/certbot:ro
+      - certbot_certs:/etc/letsencrypt:ro
+    depends_on:
+      - frontend
+      - api-gateway
+    networks:
+      - outing_prod_net
+
+  # =========================================================================
+  # CORE INFRASTRUCTURE (INTERNAL ONLY - NO HOST PORTS EXPOSED)
+  # =========================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: outing-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-outing}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_admin_pw}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-outing}"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+    networks:
+      - outing_prod_net
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: outing-rabbitmq
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - outing_prod_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: outing-redis
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - outing_prod_net
+
+  # =========================================================================
+  # API GATEWAY & FRONTEND
+  # =========================================================================
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+        NEXT_PUBLIC_API_KEY: ${NEXT_PUBLIC_API_KEY:-demo-key}
+    container_name: outing-frontend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+      NEXT_PUBLIC_API_KEY: ${NEXT_PUBLIC_API_KEY:-demo-key}
+    depends_on:
+      - api-gateway
+    networks:
+      - outing_prod_net
+
+  api-gateway:
+    build:
+      context: ..
+      dockerfile: services/api-gateway/Dockerfile
+    container_name: outing-api-gateway
+    restart: unless-stopped
+    environment:
+      <<: *python-env
+      PLATFORM_DATABASE_URL: postgresql://${GATEWAY_ROLE_USER:-gateway_role}:${GATEWAY_ROLE_PW:-gateway_role_pw}@postgres:5432/${POSTGRES_DB:-outing}
+      REDIS_URL: redis://redis:6379/0
+      RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-120}
+      USER_SERVICE_URL: http://user-service:8000
+      PLACE_SERVICE_URL: http://place-service:8000
+      CONTEXT_SERVICE_URL: http://context-service:8000
+      INTERACTION_SERVICE_URL: http://interaction-service:8000
+      RECOMMENDATION_ENGINE_URL: http://recommendation-engine:8000
+      ITINERARY_SERVICE_URL: http://itinerary-service:8000
+      NOTIFICATION_SERVICE_URL: http://notification-service:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      user-service:
+        condition: service_started
+      place-service:
+        condition: service_started
+      context-service:
+        condition: service_started
+      interaction-service:
+        condition: service_started
+      recommendation-engine:
+        condition: service_started
+      itinerary-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+    networks:
+      - outing_prod_net
+
+  # =========================================================================
+  # APPLICATION MICROSERVICES
+  # =========================================================================
+  user-service:
+    build:
+      context: ..
+      dockerfile: services/user-service/Dockerfile
+    container_name: outing-user-service
+    restart: unless-stopped
+    environment:
+      <<: *python-env
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/${POSTGRES_DB:-outing}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - outing_prod_net
+
+  place-service:
+    build:
+      context: ..
+      dockerfile: services/place-service/Dockerfile
+    container_name: outing-place-service
+    restart: unless-stopped
+    environment:
+      <<: *python-env
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/${POSTGRES_DB:-outing}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - outing_prod_net
+
+  context-service:
+    build:
+      context: ..
+      dockerfile: services/context-service/Dockerfile
+    container_name: outing-context-service
+    restart: unless-stopped
+    environment:
+      <<: *python-env
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - outing_prod_net
+
+  interaction-service:
+    build:
+      context: ..
+      dockerfile: services/interaction-service/Dockerfile
+    container_name: outing-interaction-service
+    restart: unless-stopped
+    environment:
+      <<: *python-env
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/${POSTGRES_DB:-outing}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - outing_prod_net
+
+  recommendation-engine:
+    build:
+      context: ..
+      dockerfile: services/recommendation-engine/Dockerfile
+    container_name: outing-recommendation-engine
+    restart: unless-stopped
+    environment:
+      <<: *python-env
+      MODEL_PATH: /models/xgboost_model.json
+      MODEL_METADATA_PATH: /models/xgboost_model.meta.json
+      RANKING_CONFIG_PATH: /configs/ranking.yaml
+      EVALUATION_RESULTS_PATH: /evaluation/evaluation_results.csv
+      REDIS_URL: redis://redis:6379/0
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+      USER_SERVICE_URL: http://user-service:8000
+      PLACE_SERVICE_URL: http://place-service:8000
+      CONTEXT_SERVICE_URL: http://context-service:8000
+      INTERACTION_SERVICE_URL: http://interaction-service:8000
+    volumes:
+      - models_data:/models
+      - ../configs:/configs:ro
+      - ../evaluation:/evaluation:ro
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      user-service:
+        condition: service_started
+      place-service:
+        condition: service_started
+      context-service:
+        condition: service_started
+      interaction-service:
+        condition: service_started
+    networks:
+      - outing_prod_net
+
+  itinerary-service:
+    build:
+      context: ..
+      dockerfile: services/itinerary-service/Dockerfile
+    container_name: outing-itinerary-service
+    restart: unless-stopped
+    environment:
+      <<: *python-env
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/${POSTGRES_DB:-outing}
+      PLATFORM_DATABASE_URL: postgresql://${WORKER_ROLE_USER:-worker_role}:${WORKER_ROLE_PW:-worker_role_pw}@postgres:5432/${POSTGRES_DB:-outing}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+      PLACE_SERVICE_URL: http://place-service:8000
+      CONTEXT_SERVICE_URL: http://context-service:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      place-service:
+        condition: service_started
+      context-service:
+        condition: service_started
+    networks:
+      - outing_prod_net
+
+  notification-service:
+    build:
+      context: ..
+      dockerfile: services/notification-service/Dockerfile
+    container_name: outing-notification-service
+    restart: unless-stopped
+    environment:
+      <<: *python-env
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/${POSTGRES_DB:-outing}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - outing_prod_net
+
+  # =========================================================================
+  # BACKGROUND WORKERS
+  # =========================================================================
+  model-training-worker:
+    build:
+      context: ..
+      dockerfile: services/model-training-worker/Dockerfile
+    container_name: outing-model-worker
+    restart: on-failure
+    environment:
+      <<: *python-env
+      MODEL_PATH: /models/xgboost_model.json
+      MODEL_METADATA_PATH: /models/xgboost_model.meta.json
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+      DAEMON_MODE: "true"
+    volumes:
+      - models_data:/models
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - outing_prod_net
+
+  sentiment-worker:
+    build:
+      context: ..
+      dockerfile: services/sentiment-worker/Dockerfile
+    container_name: outing-sentiment-worker
+    restart: unless-stopped
+    environment:
+      <<: *python-env
+      PLACE_SERVICE_URL: http://place-service:8000
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+      PLATFORM_DATABASE_URL: postgresql://${WORKER_ROLE_USER:-worker_role}:${WORKER_ROLE_PW:-worker_role_pw}@postgres:5432/${POSTGRES_DB:-outing}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      place-service:
+        condition: service_started
+    networks:
+      - outing_prod_net
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+  redis_data:
+  models_data:
+  certbot_www:
+  certbot_certs:
