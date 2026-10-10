@@ -4,16 +4,28 @@ import sys
 import time
 
 import httpx
+# pyrefly: ignore [missing-import]
 import redis
 from fastapi import FastAPI, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 sys.path.insert(0, "/shared")
+# pyrefly: ignore [missing-import]
 from pgdb_platform import create_tenant, resolve_tenant_by_api_key  # noqa: E402
+# pyrefly: ignore [missing-import]
 from tenant import TENANT_HEADER  # noqa: E402
 
 app = FastAPI(title="API Gateway")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379/0")
 RATE_LIMIT_PER_MINUTE = int(os.environ.get("RATE_LIMIT_PER_MINUTE", "120"))
@@ -101,7 +113,7 @@ def _check_rate_limit(identity: str) -> bool:
         return True
 
 
-@app.api_route("/api/{service}/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE"])
+@app.api_route("/api/{service}/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
 async def proxy(service: str, path: str, request: Request):
     if service not in ROUTES:
         return JSONResponse(status_code=404, content={"detail": f"unknown service '{service}'"})

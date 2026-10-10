@@ -18,14 +18,37 @@ import random
 import sys
 import time
 from datetime import datetime, timezone
+from pathlib import Path
+
+# Add shared directory (works both inside Docker container and on local host/IDE)
+ROOT = Path(__file__).resolve().parents[2]
+SHARED_DIR = ROOT / "shared"
+if str(SHARED_DIR) not in sys.path and SHARED_DIR.is_dir():
+    sys.path.insert(0, str(SHARED_DIR))
+if os.path.isdir("/shared") and "/shared" not in sys.path:
+    sys.path.insert(0, "/shared")
+
+try:
+    # pyrefly: ignore [missing-import]
+    from eventbus import publish  # noqa: E402
+except ImportError:
+    # Graceful fallback when running locally without RabbitMQ/pika
+    def publish(routing_key: str, payload: dict) -> None:
+        print(f"[eventbus-stub] publish {routing_key}: {payload}")
+
+try:
+    # pyrefly: ignore [missing-import]
+    from features import FEATURE_NAMES  # noqa: E402
+except ImportError:
+    FEATURE_NAMES = [
+        "distance_km", "price_fit", "cbf_score", "cf_score", "sentiment_score",
+        "popularity_score", "is_weekend", "is_evening_or_night", "temp_c_norm", "is_rainy",
+    ]
 
 import numpy as np
+# pyrefly: ignore [missing-import]
 import xgboost as xgb
-from sklearn.metrics import roc_auc_score, precision_score, recall_score, f1_score
-
-sys.path.insert(0, "/shared")
-from eventbus import publish  # noqa: E402
-from features import FEATURE_NAMES  # noqa: E402
+from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_score
 
 MODEL_PATH = os.environ.get("MODEL_PATH", "/models/xgboost_model.json")
 MODEL_METADATA_PATH = os.environ.get("MODEL_METADATA_PATH", "/models/xgboost_model.meta.json")
@@ -104,14 +127,15 @@ def train() -> tuple:
     val_preds = (val_probs >= 0.5).astype(int)
     metrics = {
         "roc_auc": round(float(roc_auc_score(y_val, val_probs)), 4),
-        "precision": round(float(precision_score(y_val, val_preds)), 4),
-        "recall": round(float(recall_score(y_val, val_preds)), 4),
-        "f1": round(float(f1_score(y_val, val_preds)), 4),
+        "precision": round(float(precision_score(y_val, val_preds, zero_division=0)), 4),
+        "recall": round(float(recall_score(y_val, val_preds, zero_division=0)), 4),
+        "f1": round(float(f1_score(y_val, val_preds, zero_division=0)), 4),
         "val_samples": int(len(y_val)),
     }
     print(f"[model-training-worker] validation metrics: {metrics}")
 
-    os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
+    if os.path.dirname(MODEL_PATH):
+        os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
     booster.save_model(MODEL_PATH)
     print(f"[model-training-worker] saved model to {MODEL_PATH}")
     return MODEL_PATH, metrics
@@ -120,6 +144,7 @@ def train() -> tuple:
 def main():
     while True:
         version = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+        success = False
         try:
             path, metrics = train()
             
@@ -132,16 +157,23 @@ def main():
                 "feature_names": FEATURE_NAMES,
                 "metrics": metrics,
             }
+            if os.path.dirname(MODEL_METADATA_PATH):
+                os.makedirs(os.path.dirname(MODEL_METADATA_PATH), exist_ok=True)
             with open(MODEL_METADATA_PATH, "w") as f:
                 json.dump(metadata, f, indent=2)
             print(f"[model-training-worker] saved metadata to {MODEL_METADATA_PATH}")
 
             publish("model.updated", {"version": version, "path": path, "metrics": metrics})
+            success = True
         except Exception as e:
+            import traceback
             print(f"[model-training-worker] training failed: {e}")
+            traceback.print_exc()
             
         daemon_mode = os.environ.get("DAEMON_MODE", "false").lower() == "true"
         if not daemon_mode:
+            if not success:
+                sys.exit(1)
             break
             
         print("[model-training-worker] sleeping for 24 hours...")
