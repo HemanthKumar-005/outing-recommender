@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { DatePlan } from "../../lib/api";
 import { refinePlan } from "../../lib/api";
+import GoogleMapView, { type MapPlace } from "../GoogleMapView";
 
 type Props = {
   plan: DatePlan;
@@ -137,6 +138,36 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
           </div>
         </div>
       )}
+
+      {/* Interactive Google Maps Route */}
+      {(() => {
+        const mapPlaces: MapPlace[] = (((plan.items as any[]) || []))
+          .filter((it) => it && it.lat && it.lng)
+          .map((it, idx) => ({
+            id: it.place_id || idx + 1,
+            name: it.name || `Stop ${idx + 1}`,
+            category: it.category || "attraction",
+            lat: it.lat,
+            lng: it.lng,
+            city: plan.area_label,
+          }));
+
+        if (mapPlaces.length === 0) return null;
+
+        return (
+          <div style={{ margin: "20px 0" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+              <h3 style={{ fontSize: "1.15rem", fontWeight: 700, margin: 0, color: "var(--slate-strong)" }}>
+                🗺️ Interactive Itinerary Route
+              </h3>
+              <span style={{ fontSize: "0.8rem", color: "var(--slate)" }}>
+                {mapPlaces.length} sequenced stops
+              </span>
+            </div>
+            <GoogleMapView places={mapPlaces} routeMode={true} height={320} />
+          </div>
+        );
+      })()}
 
       {/* Timeline Stops */}
       {plan.timeline_meta && plan.timeline_meta.length > 0 && (

@@ -3209,3 +3209,55 @@ h3 {
   border-radius: var(--radius);
 }
 
+/* Split Layout for Recommendations with Interactive Map */
+.recommend-split-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .recommend-split-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.map-sticky-container {
+  position: sticky;
+  top: 24px;
+  z-index: 2;
+}
+
+.view-mode-pill {
+  display: inline-flex;
+  align-items: center;
+  background: var(--ink-3, #221c19);
+  padding: 3px;
+  border-radius: 999px;
+  border: 1px solid var(--hairline, rgba(255, 255, 255, 0.08));
+  gap: 2px;
+}
+
+.view-mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--slate, #9ca3af);
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-mode-btn:hover {
+  color: #fff;
+}
+
+.view-mode-btn.active {
+  background: var(--brass, #c9a15a);
+  color: #1a1210;
+  font-weight: 700;
+}
+
