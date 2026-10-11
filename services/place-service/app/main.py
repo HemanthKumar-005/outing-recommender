@@ -7,6 +7,11 @@ from typing import Any
 from fastapi import Depends, FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
+from pathlib import Path
+_ROOT = Path(__file__).resolve().parents[3]
+if (_ROOT / "shared").is_dir():
+    sys.path.insert(0, str(_ROOT / "shared"))
+
 sys.path.insert(0, "/shared")
 from config_loader import (  # noqa: E402
     default_search_radius_km,
@@ -16,11 +21,28 @@ from config_loader import (  # noqa: E402
     occasion_by_id,
     resolve_city,
 )
+from hours_pricing import evaluate_place_hours, format_price_display  # noqa: E402
 from tenant import require_tenant  # noqa: E402
 
 from . import db
 
 app = FastAPI(title="Place Service")
+
+
+def _enrich_place(row: dict | None) -> dict | None:
+    if not row:
+        return None
+    res = dict(row)
+    hours_eval = evaluate_place_hours(res.get("opening_hours"))
+    price_eval = format_price_display(
+        res.get("cost_for_two") or res.get("average_cost"),
+        res.get("price_range"),
+        res.get("pricing_is_estimated", True),
+        res.get("entry_fee", 0.0),
+    )
+    res.update(hours_eval)
+    res.update(price_eval)
+    return res
 
 
 class PlaceCreate(BaseModel):
@@ -43,6 +65,12 @@ class PlaceCreate(BaseModel):
     couple_friendly: bool = False
     friends_friendly: bool = False
     opening_hours: dict[str, Any] = Field(default_factory=dict)
+    opening_hours_source: str = "category_default"
+    opening_hours_is_estimated: bool = True
+    entry_fee: float = 0.0
+    cost_for_two: float | None = None
+    pricing_source: str = "category_default"
+    pricing_is_estimated: bool = True
 
 
 class SurpriseBody(BaseModel):
@@ -99,6 +127,7 @@ def search_places(
     state: str | None = None,
     category: str | None = None,
     q: str | None = None,
+    open_now: bool | None = None,
     limit: int = Query(50, ge=1, le=200),
     tenant_id: str = Depends(require_tenant),
 ):
@@ -121,9 +150,15 @@ def search_places(
         q=q,
         limit=limit,
     )
-    return {"count": len(rows), "places": rows, "query": {
+    enriched = [_enrich_place(r) for r in rows if r]
+    if open_now is True:
+        enriched = [r for r in enriched if r.get("open_now") is True]
+    elif open_now is False:
+        enriched = [r for r in enriched if r.get("open_now") is False]
+    return {"count": len(enriched), "places": enriched, "query": {
         "lat": lat, "lng": lng, "radius_km": radius_km,
         "city": city, "state": state, "category": category, "q": q,
+        "open_now": open_now,
     }}
 
 @app.post("/places", status_code=201)
@@ -134,7 +169,7 @@ def create_place(payload: PlaceCreate, tenant_id: str = Depends(require_tenant))
         publish("place.updated", {"tenant_id": tenant_id, "place_id": row["id"], "reason": "place_created"})
     except Exception as e:  # noqa: BLE001
         print(f"[place-service] failed to publish place.updated for place {row.get('id')}: {e}")
-    return row
+    return _enrich_place(row)
 
 
 @app.get("/places")
@@ -142,7 +177,7 @@ def list_places(
     limit: int = Query(200, ge=1, le=1000),
     tenant_id: str = Depends(require_tenant),
 ):
-    return db.list_places(tenant_id, limit)
+    return [_enrich_place(r) for r in db.list_places(tenant_id, limit) if r]
 
 
 @app.get("/places/{place_id}")
@@ -150,7 +185,7 @@ def get_place(place_id: int, tenant_id: str = Depends(require_tenant)):
     row = db.get_place(tenant_id, place_id)
     if not row:
         raise HTTPException(status_code=404, detail="place not found")
-    return row
+    return _enrich_place(row)
 
 
 @app.patch("/places/{place_id}/sentiment")
@@ -213,7 +248,7 @@ def _surprise_impl(
     result["note"] = (
         "Surprise pick" + (f" ({', '.join(note_parts)})" if note_parts else "")
     )
-    return result
+    return _enrich_place(result)
 
 
 @app.get("/surprise")

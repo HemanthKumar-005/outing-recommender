@@ -97,39 +97,68 @@ def weather_suitability(place: dict, context: dict) -> float:
     return 0.8
 
 
+from pathlib import Path
+_ROOT = Path(__file__).resolve().parents[3]
+if (_ROOT / "shared").is_dir():
+    sys.path.insert(0, str(_ROOT / "shared"))
+
+sys.path.insert(0, "/shared")
+from ranking_config import load_config  # noqa: E402
+from hours_pricing import evaluate_place_hours  # noqa: E402
+
+
 def time_suitability(place: dict, context: dict) -> float:
-    """Places are already hard-filtered by open/closed upstream when
-    open_now is requested; this gives a soft signal for how comfortably a
-    place fits the requested time (e.g. not right at closing)."""
-    opening_hours = place.get("opening_hours") or {}
-    day_key = context.get("day_of_week", "")[:3]
-    window = opening_hours.get(day_key)
-    if not window or len(window) != 2:
+    """Soft score for how comfortably a place fits the requested time.
+    Uses real weekly opening hours evaluated in Asia/Kolkata time."""
+    ref_dt = None
+    if context.get("datetime"):
+        try:
+            ref_dt = datetime.fromisoformat(context["datetime"])
+        except Exception:
+            pass
+
+    eval_res = evaluate_place_hours(place.get("opening_hours"), ref_dt=ref_dt)
+    open_now = eval_res.get("open_now")
+    if open_now is None:
+        return 0.85  # Hours unavailable: neutral-good, never penalized as closed
+    if open_now is True:
+        closes_in = eval_res.get("closes_in_minutes")
+        if closes_in is not None and closes_in < 30:
+            return 0.4
+        if closes_in is not None and closes_in < 60:
+            return 0.75
         return 1.0
-    try:
-        at = datetime.fromisoformat(context["datetime"])
-        close_h, close_m = (int(x) for x in window[1].split(":"))
-        close_minutes = close_h * 60 + close_m
-        now_minutes = at.hour * 60 + at.minute
-        remaining = close_minutes - now_minutes
-        if remaining < 0:
-            remaining += 24 * 60
-        if remaining < 30:
-            return 0.3
-        if remaining < 60:
-            return 0.7
-        return 1.0
-    except Exception:  # noqa: BLE001
-        return 1.0
+    # Currently closed
+    if eval_res.get("opens_at"):
+        return 0.5  # opens later today
+    return 0.2  # closed today
 
 
-def budget_suitability(place: dict, user: dict) -> float:
-    price = place.get("price_range", 2)
-    budget_min = user.get("budget_min", 0)
-    budget_max = user.get("budget_max", 4)
-    if budget_min <= price <= budget_max:
+def budget_suitability(place: dict, user: dict, budget_override: str | None = None) -> float:
+    cost_for_two = place.get("cost_for_two") or place.get("average_cost")
+    price_tier = place.get("price_range", 2)
+
+    budget_choice = (budget_override or "").lower()
+    if budget_choice in ("low", "budget"):
+        if cost_for_two is not None:
+            return 1.0 if cost_for_two <= 800 else max(0.2, 1.0 - (cost_for_two - 800) / 1200)
+        return 1.0 if price_tier <= 1 else max(0.2, 1.0 - 0.4 * (price_tier - 1))
+    elif budget_choice in ("medium", "standard", "moderate"):
+        if cost_for_two is not None:
+            if 400 <= cost_for_two <= 2200:
+                return 1.0
+            return max(0.3, 1.0 - abs(cost_for_two - 1200) / 2000)
+        return 1.0 if price_tier in (2, 3) else 0.6
+    elif budget_choice in ("high", "premium", "luxury"):
+        if cost_for_two is not None:
+            return 1.0 if cost_for_two >= 1800 else max(0.3, cost_for_two / 1800)
+        return 1.0 if price_tier >= 3 else 0.5
+
+    budget_min = user.get("budget_min", 0) if user else 0
+    budget_max = user.get("budget_max", 4) if user else 4
+    if budget_min <= price_tier <= budget_max:
         return 1.0
-    distance = min(abs(price - budget_min), abs(price - budget_max))
+    distance = min(abs(price_tier - budget_min), abs(price_tier - budget_max))
     return max(0.0, 1.0 - 0.35 * distance)
 
 
@@ -146,12 +175,12 @@ def group_suitability(place: dict, outing_type: str) -> float:
     return 1.0 if place.get(flag) else 0.5
 
 
-def context_score(place: dict, context: dict, user: dict, outing_type: str) -> tuple:
+def context_score(place: dict, context: dict, user: dict, outing_type: str, budget_override: str | None = None) -> tuple:
     """ContextScore = a*Weather + b*Time + c*Budget + d*Group (Review §17)."""
     sub = load_config()["context_subweights"]
     weather = weather_suitability(place, context)
     time_s = time_suitability(place, context)
-    budget = budget_suitability(place, user)
+    budget = budget_suitability(place, user, budget_override=budget_override)
     group = group_suitability(place, outing_type)
     score = sub["weather"] * weather + sub["time"] * time_s + sub["budget"] * budget + sub["group"] * group
     return score, {"weather": weather, "time": time_s, "budget": budget, "group": group}
@@ -218,23 +247,50 @@ def fuse_scores(xgb_score: float, cbf_score: float, cf_score: float,
 def build_explanation(place: dict, breakdown: dict, distance_km: float) -> list:
     """Explainable recommendations (Review §33): a short list of ✓ reasons."""
     reasons = []
-    ctx = breakdown["context_components"]
-    if ctx["budget"] >= 0.99:
+    ctx = breakdown.get("context_components") or {}
+
+    # Opening hours reasons
+    hours_detail = place.get("hours_detail") or ""
+    open_now = place.get("open_now")
+    if open_now is True:
+        if "Open until" in hours_detail:
+            reasons.append(hours_detail)
+        elif "Closes in" in hours_detail:
+            reasons.append(hours_detail)
+        else:
+            reasons.append("Open now")
+    elif open_now is False and hours_detail and "Opens" in hours_detail:
+        reasons.append(hours_detail)
+
+    # Cost for two / Entry fee reason
+    cost_val = place.get("cost_for_two") or place.get("average_cost")
+    is_est = place.get("pricing_is_estimated", True)
+    approx = "~" if is_est else ""
+    if cost_val is not None and cost_val > 0:
+        reasons.append(f"{approx}₹{int(cost_val)} for two")
+    elif place.get("entry_fee", 0) > 0:
+        reasons.append(f"Entry ₹{int(place['entry_fee'])}")
+    elif cost_val == 0:
+        reasons.append("Free entry")
+
+    if ctx.get("budget", 0) >= 0.99:
         reasons.append("Within your budget")
-    if breakdown["cbf_score"] >= 0.5:
+    if breakdown.get("cbf_score", 0) >= 0.5:
         reasons.append("High match with your preferences")
-    if ctx["weather"] >= 0.8:
+    if ctx.get("weather", 0) >= 0.8:
         reasons.append("Good fit for current weather")
     if distance_km <= 3:
         reasons.append(f"Only {distance_km:.1f} km away")
     if place.get("rating") and place["rating"] >= 4.0:
         reasons.append(f"Highly rated ({place['rating']}/5)")
-    if breakdown["cf_score"] >= 0.3:
+    if breakdown.get("cf_score", 0) >= 0.3:
         reasons.append("Popular with similar users")
     if place.get("sentiment_score", 0) >= 0.7:
         reasons.append("Positive reviews")
-    if ctx["group"] >= 0.99:
+    if ctx.get("group", 0) >= 0.99:
         reasons.append("Well-suited for this outing type")
+    if breakdown.get("ml", 0) >= 0.65:
+        reasons.append("Strong match predicted by AI model")
     if breakdown.get("exploration_bonus", 0) > 0.02:
         reasons.append("Rising / under-the-radar pick")
     if not reasons:

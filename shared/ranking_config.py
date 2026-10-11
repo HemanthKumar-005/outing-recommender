@@ -1,8 +1,12 @@
+from pathlib import Path
 import os
-
 import yaml
 
-CONFIG_PATH = os.environ.get("RANKING_CONFIG_PATH", "/configs/ranking.yaml")
+_LOCAL_FALLBACK = Path(__file__).resolve().parents[1] / "configs" / "ranking.yaml"
+CONFIG_PATH = os.environ.get(
+    "RANKING_CONFIG_PATH",
+    str(_LOCAL_FALLBACK) if not Path("/configs/ranking.yaml").is_file() and _LOCAL_FALLBACK.is_file() else "/configs/ranking.yaml"
+)
 
 _cache = None
 

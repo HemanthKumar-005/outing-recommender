@@ -54,10 +54,24 @@ export default function SavedPage() {
               key={p.id}
               name={p.name}
               category={p.category}
-              match={95} // Mock match percentage
+              match={95}
               rating={p.rating}
               distance_km={p.distance_km || 2.5}
               price_range={p.price_range}
+              cost_for_two={p.cost_for_two}
+              entry_fee={p.entry_fee}
+              cost_text={p.cost_text}
+              entry_text={p.entry_text}
+              price_symbols={p.price_symbols}
+              pricing_is_estimated={p.pricing_is_estimated}
+              open_now={p.open_now}
+              hours_status={p.hours_status}
+              hours_detail={p.hours_detail}
+              today_hours={p.today_hours}
+              weekly_hours={p.weekly_hours || p.opening_hours}
+              lat={p.lat}
+              lng={p.lng}
+              city={p.city}
               reason="Saved by you"
               liked
             />

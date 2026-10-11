@@ -23,6 +23,8 @@ INTERACTION_WEIGHTS = {
 }
 POSITIVE_INTERACTION_TYPES = {"save", "visit", "rating", "share"}
 
+FEATURE_VERSION = "v1"
+
 FEATURE_NAMES = [
     "distance_km", "price_fit", "cbf_score", "cf_score", "sentiment_score",
     "popularity_score", "is_weekend", "is_evening_or_night", "temp_c_norm", "is_rainy",

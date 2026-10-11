@@ -5,6 +5,15 @@ export type DemoPlace = {
   rating: number;
   distance_km: number;
   price_range: number;
+  cost_for_two?: number;
+  open_now?: boolean;
+  hours_status?: string;
+  hours_detail?: string;
+  today_hours?: string;
+  weekly_hours?: Record<string, string[][]>;
+  lat?: number;
+  lng?: number;
+  city?: string;
   match: number;
   reason: string;
   weather_fit: string;
@@ -20,6 +29,23 @@ export const DEMO_PLACES: DemoPlace[] = [
     rating: 4.7,
     distance_km: 1.2,
     price_range: 2,
+    cost_for_two: 650,
+    open_now: true,
+    hours_status: "Open now",
+    hours_detail: "Open until 11 PM",
+    today_hours: "09:00 AM – 11:00 PM",
+    weekly_hours: {
+      mon: [["09:00", "23:00"]],
+      tue: [["09:00", "23:00"]],
+      wed: [["09:00", "23:00"]],
+      thu: [["09:00", "23:00"]],
+      fri: [["09:00", "23:30"]],
+      sat: [["09:00", "23:30"]],
+      sun: [["09:00", "23:00"]],
+    },
+    lat: 28.6002,
+    lng: 77.2270,
+    city: "New Delhi",
     match: 94,
     reason: "Matches your café preference · Quiet ambience · Great for conversation",
     weather_fit: "Indoor — perfect for any weather",
@@ -33,6 +59,23 @@ export const DEMO_PLACES: DemoPlace[] = [
     rating: 4.8,
     distance_km: 2.4,
     price_range: 1,
+    cost_for_two: 40,
+    open_now: true,
+    hours_status: "Open now",
+    hours_detail: "Open until 8 PM",
+    today_hours: "06:00 AM – 08:00 PM",
+    weekly_hours: {
+      mon: [["06:00", "20:00"]],
+      tue: [["06:00", "20:00"]],
+      wed: [["06:00", "20:00"]],
+      thu: [["06:00", "20:00"]],
+      fri: [["06:00", "20:00"]],
+      sat: [["06:00", "20:00"]],
+      sun: [["06:00", "20:00"]],
+    },
+    lat: 28.5931,
+    lng: 77.2197,
+    city: "New Delhi",
     match: 91,
     reason: "Outdoor preference · Sunny forecast · Free entry",
     weather_fit: "Best on sunny days",
@@ -45,7 +88,24 @@ export const DEMO_PLACES: DemoPlace[] = [
     category: "cinema",
     rating: 4.5,
     distance_km: 3.1,
-    price_range: 3,
+    price_range: 2,
+    cost_for_two: 800,
+    open_now: false,
+    hours_status: "Closed",
+    hours_detail: "Opens today at 10 AM",
+    today_hours: "10:00 AM – 11:30 PM",
+    weekly_hours: {
+      mon: [["10:00", "23:30"]],
+      tue: [["10:00", "23:30"]],
+      wed: [["10:00", "23:30"]],
+      thu: [["10:00", "23:30"]],
+      fri: [["10:00", "23:30"]],
+      sat: [["10:00", "23:30"]],
+      sun: [["10:00", "23:30"]],
+    },
+    lat: 28.6289,
+    lng: 77.2065,
+    city: "New Delhi",
     match: 88,
     reason: "Entertainment match · Group-friendly · Climate controlled",
     weather_fit: "Indoor — rain-proof",
@@ -59,6 +119,23 @@ export const DEMO_PLACES: DemoPlace[] = [
     rating: 4.6,
     distance_km: 1.8,
     price_range: 3,
+    cost_for_two: 1800,
+    open_now: true,
+    hours_status: "Open now",
+    hours_detail: "Open until 1 AM",
+    today_hours: "12:00 PM – 01:00 AM",
+    weekly_hours: {
+      mon: [["12:00", "01:00"]],
+      tue: [["12:00", "01:00"]],
+      wed: [["12:00", "01:00"]],
+      thu: [["12:00", "01:00"]],
+      fri: [["12:00", "01:30"]],
+      sat: [["12:00", "01:30"]],
+      sun: [["12:00", "01:00"]],
+    },
+    lat: 28.5528,
+    lng: 77.1949,
+    city: "New Delhi",
     match: 86,
     reason: "Friends outing · Medium budget · High popularity",
     weather_fit: "Covered terrace available",
