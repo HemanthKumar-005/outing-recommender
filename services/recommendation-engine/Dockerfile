@@ -1,7 +1,7 @@
 FROM python:3.12-slim
 WORKDIR /app
 COPY services/recommendation-engine/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --prefer-binary --retries 5 --timeout 120 -r requirements.txt
 COPY shared /shared
 COPY configs /configs
 COPY data /data

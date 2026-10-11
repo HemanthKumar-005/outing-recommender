@@ -37,6 +37,15 @@ export default function DashboardHome() {
                 rating={p.rating}
                 distance_km={p.distance_km}
                 price_range={p.price_range}
+                cost_for_two={p.cost_for_two}
+                open_now={p.open_now}
+                hours_status={p.hours_status}
+                hours_detail={p.hours_detail}
+                today_hours={p.today_hours}
+                weekly_hours={p.weekly_hours}
+                lat={p.lat}
+                lng={p.lng}
+                city={p.city}
                 reason={p.reason.split(" · ")[0]}
               />
             ))}

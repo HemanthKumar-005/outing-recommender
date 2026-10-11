@@ -111,6 +111,12 @@ CREATE TABLE places.places (
     couple_friendly     BOOLEAN NOT NULL DEFAULT false,
     friends_friendly    BOOLEAN NOT NULL DEFAULT false,
     opening_hours       JSONB NOT NULL DEFAULT '{}',
+    opening_hours_source TEXT NOT NULL DEFAULT 'category_default',
+    opening_hours_is_estimated BOOLEAN NOT NULL DEFAULT true,
+    entry_fee           REAL NOT NULL DEFAULT 0,
+    cost_for_two        REAL,
+    pricing_source      TEXT NOT NULL DEFAULT 'category_default',
+    pricing_is_estimated BOOLEAN NOT NULL DEFAULT true,
     sentiment_score     REAL NOT NULL DEFAULT 0.5,
     popularity_score    REAL NOT NULL DEFAULT 0.5,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT now()

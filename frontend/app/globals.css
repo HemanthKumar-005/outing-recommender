@@ -2993,3 +2993,219 @@ h3 {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* =========================================================================
+   Opening Hours, Pricing Badges, Weekly Schedule & Card Enhancements
+   ========================================================================= */
+
+.badge-hours {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+  letter-spacing: 0.01em;
+}
+
+.badge-open {
+  background: #e6f4ea;
+  color: #137333;
+  border: 1px solid rgba(19, 115, 51, 0.35);
+}
+
+.badge-closed {
+  background: #fce8e6;
+  color: #c5221f;
+  border: 1px solid rgba(197, 34, 31, 0.35);
+}
+
+.badge-unavailable {
+  background: #f1f3f4;
+  color: #4b5563;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+.badge-dot {
+  font-size: 0.82rem;
+  line-height: 1;
+}
+
+.maps-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--brass-dim, #c45f48);
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(224, 122, 95, 0.08);
+  border: 1px solid rgba(224, 122, 95, 0.22);
+  transition: all 0.18s ease;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.maps-link:hover {
+  background: rgba(224, 122, 95, 0.18);
+  color: var(--brass-bright, #f08a6e);
+  transform: translateY(-1px);
+}
+
+.maps-link:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+
+.hours-widget {
+  background: #fdfaf7;
+  border: 1px solid rgba(44, 24, 16, 0.1);
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.btn-hours-toggle {
+  background: transparent;
+  border: none;
+  color: var(--brass-dim, #c45f48);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.15s ease;
+}
+
+.btn-hours-toggle:hover {
+  background: rgba(224, 122, 95, 0.12);
+}
+
+.btn-hours-toggle:focus-visible {
+  outline: 2px solid var(--brass);
+}
+
+.weekly-schedule-dropdown {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(44, 24, 16, 0.14);
+}
+
+.weekly-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.weekly-table td {
+  padding: 4px 0;
+}
+
+.weekly-table .day-name {
+  font-weight: 500;
+  color: #4b5563;
+  width: 110px;
+}
+
+.weekly-table .day-hours {
+  color: #1f2937;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.weekly-row-today {
+  font-weight: 700;
+}
+
+.weekly-row-today .day-name {
+  color: var(--brass-dim, #c45f48);
+}
+
+.weekly-row-today .day-hours {
+  color: #111827;
+  font-weight: 600;
+}
+
+.today-chip {
+  font-size: 0.65rem;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--brass-glow, rgba(224, 122, 95, 0.2));
+  color: var(--brass-dim, #c45f48);
+  margin-left: 4px;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.meta-price strong {
+  color: #1a1210;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+}
+
+/* Loading Skeletons */
+.ticket-skeleton {
+  pointer-events: none;
+  opacity: 0.88;
+  margin-bottom: 16px;
+}
+
+.skeleton-image {
+  width: 100%;
+  height: 140px;
+  background: linear-gradient(90deg, #f0ece6 25%, #e6dfd6 50%, #f0ece6 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+}
+
+.skeleton-stub {
+  background: #2b221f !important;
+}
+
+.skeleton-line {
+  background: linear-gradient(90deg, #eae5df 25%, #dcd6ce 50%, #eae5df 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.form-select-sm {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: var(--ink-2, #241A17);
+  color: var(--slate-strong, #fff);
+  font-size: 0.84rem;
+  cursor: pointer;
+  outline: none;
+}
+
+[data-theme="light"] .form-select-sm {
+  background: #ffffff;
+  color: #1a1210;
+  border: 1px solid rgba(44, 24, 16, 0.2);
+}
+
+.form-select-sm:focus-visible {
+  border-color: var(--brass);
+  box-shadow: 0 0 0 2px var(--brass-glow);
+}
+
+.empty-state-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius);
+}
+

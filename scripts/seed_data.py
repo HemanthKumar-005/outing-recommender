@@ -98,7 +98,13 @@ def seed_places_from_catalog() -> list[int]:
             "family_friendly": p.get("family_friendly", False),
             "couple_friendly": p.get("couple_friendly", False),
             "friends_friendly": p.get("friends_friendly", False),
-            "opening_hours": {},
+            "opening_hours": p.get("opening_hours") or {},
+            "opening_hours_source": p.get("opening_hours_source", "category_default"),
+            "opening_hours_is_estimated": p.get("opening_hours_is_estimated", True),
+            "entry_fee": p.get("entry_fee", 0.0),
+            "cost_for_two": p.get("cost_for_two") or p.get("average_cost"),
+            "pricing_source": p.get("pricing_source", "category_default"),
+            "pricing_is_estimated": p.get("pricing_is_estimated", True),
         }
         resp = requests.post(f"{BASE_URL}/places/places", json=payload, headers=HEADERS)
         if resp.status_code >= 400:

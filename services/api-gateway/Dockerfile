@@ -1,7 +1,7 @@
 FROM python:3.12-slim
 WORKDIR /app
 COPY services/api-gateway/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --prefer-binary --retries 5 --timeout 120 -r requirements.txt
 COPY shared /shared
 COPY services/api-gateway/app ./app
 ENV PYTHONUNBUFFERED=1

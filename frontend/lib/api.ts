@@ -104,31 +104,67 @@ export async function signupTenant(name: string) {
   return res.json() as Promise<{ tenant_id: string; name: string; api_key: string }>;
 }
 
+export type Place = {
+  id: number;
+  name: string;
+  category: string;
+  subcategory?: string;
+  price_range: number;
+  cost_for_two?: number;
+  average_cost?: number;
+  entry_fee?: number;
+  cost_text?: string;
+  entry_text?: string;
+  price_symbols?: string;
+  pricing_is_estimated?: boolean;
+  pricing_source?: string;
+  distance_km?: number;
+  rating?: number;
+  lat: number;
+  lng: number;
+  city?: string;
+  state?: string;
+  opening_hours?: Record<string, string[][]>;
+  opening_hours_source?: string;
+  opening_hours_is_estimated?: boolean;
+  open_now?: boolean | null;
+  hours_status?: string;
+  hours_detail?: string;
+  today_hours?: string;
+  weekly_hours?: Record<string, string[][]>;
+  closes_in_minutes?: number | null;
+  opens_at?: string | null;
+  tags?: string[];
+  ambience?: string[];
+  description?: string;
+};
+
 export type Recommendation = {
-  place: {
-    id: number;
-    name: string;
-    category: string;
-    price_range: number;
-    distance_km: number;
-    rating?: number;
-  };
+  place: Place;
   score: number;
-  score_breakdown: Record<string, unknown>;
-  reasons: string[];
+  distance_km?: number;
+  score_breakdown?: Record<string, unknown>;
+  reasons?: string[];
 };
 
 export type RecommendResponse = {
-  session_id: string;
-  group_user_ids: number[] | null;
-  group_aggregation: string | null;
+  session_id?: string;
+  group_user_ids?: number[] | null;
+  group_aggregation?: string | null;
   context: {
-    time_of_day: string;
-    day_of_week: string;
-    weather: { condition: string; temp_c: number };
+    time_of_day?: string;
+    day_of_week?: string;
+    weather?: { condition: string; temp_c: number };
+    occasion?: string;
+    duration?: string;
+    outing_type?: string;
+    radius_km?: number;
+    open_now?: boolean;
+    budget?: string;
+    sort_by?: string;
   };
-  weight_profile: Record<string, string>;
-  diversity: number;
+  weight_profile?: Record<string, string>;
+  diversity?: number;
   recommendations: Recommendation[];
 };
 /** Canonical occasions — prefer live API; fall back to static list matching configs/occasions.yaml */

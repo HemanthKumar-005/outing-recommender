@@ -23,6 +23,34 @@ places:
   family_friendly: true
   description: Historic 90-acre park with 15th-century Sayyid and Lodi tombs, walking
     paths, and peaceful lawns.
+  opening_hours:
+    mon: &id022
+    - - 06:00
+      - '20:00'
+    tue: &id023
+    - - 06:00
+      - '20:00'
+    wed: &id024
+    - - 06:00
+      - '20:00'
+    thu: &id025
+    - - 06:00
+      - '20:00'
+    fri: &id026
+    - - 06:00
+      - '20:00'
+    sat: &id027
+    - - 06:00
+      - '20:00'
+    sun: &id028
+    - - 06:00
+      - '20:00'
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 20.0
 - name: India Gate Lawns
   city: New Delhi
   state: Delhi
@@ -47,6 +75,32 @@ places:
   family_friendly: true
   description: Iconic war memorial arch surrounded by sprawling lawns, evening lights,
     and street food.
+  opening_hours:
+    mon: &id001 []
+    tue: &id002
+    - - 09:00
+      - '17:30'
+    wed: &id003
+    - - 09:00
+      - '17:30'
+    thu: &id004
+    - - 09:00
+      - '17:30'
+    fri: &id005
+    - - 09:00
+      - '17:30'
+    sat: &id006
+    - - 09:00
+      - '17:30'
+    sun: &id007
+    - - 09:00
+      - '17:30'
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Khan Market Cafes
   city: New Delhi
   state: Delhi
@@ -54,7 +108,7 @@ places:
   subcategory: cafe
   lat: 28.6002
   lng: 77.227
-  price_range: 3
+  price_range: 2
   average_cost: 800
   indoor_outdoor: indoor
   ambience:
@@ -72,6 +126,34 @@ places:
   family_friendly: true
   description: Upscale leafy lifestyle market with artisanal coffee roasters, independent
     bookshops, and boutique cafes.
+  opening_hours:
+    mon: &id015
+    - - 09:00
+      - '23:00'
+    tue: &id016
+    - - 09:00
+      - '23:00'
+    wed: &id017
+    - - 09:00
+      - '23:00'
+    thu: &id018
+    - - 09:00
+      - '23:00'
+    fri: &id019
+    - - 09:00
+      - '23:00'
+    sat: &id020
+    - - 09:00
+      - '23:00'
+    sun: &id021
+    - - 09:00
+      - '23:00'
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 800.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Hauz Khas Social & Deer Park
   city: New Delhi
   state: Delhi
@@ -97,6 +179,34 @@ places:
   family_friendly: false
   description: Multi-level lakeview gastrobar overlooking medieval reservoir ruins
     and the lush Deer Park trail.
+  opening_hours:
+    mon: &id008
+    - - '12:00'
+      - 01:00
+    tue: &id009
+    - - '12:00'
+      - 01:00
+    wed: &id010
+    - - '12:00'
+      - 01:00
+    thu: &id011
+    - - '12:00'
+      - 01:00
+    fri: &id012
+    - - '12:00'
+      - 01:00
+    sat: &id013
+    - - '12:00'
+      - 01:00
+    sun: &id014
+    - - '12:00'
+      - 01:00
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Qutub Minar Complex
   city: New Delhi
   state: Delhi
@@ -121,6 +231,20 @@ places:
   family_friendly: true
   description: UNESCO World Heritage 73-meter victory minaret surrounded by intricate
     12th-century Afghan-Hindu stone carving ruins.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Olive Bar & Kitchen Mehrauli
   city: New Delhi
   state: Delhi
@@ -145,6 +269,48 @@ places:
   family_friendly: true
   description: White-walled Mediterranean courtyard restaurant under a banyan tree
     with candlelit al-fresco dining.
+  opening_hours:
+    mon: &id029
+    - - '11:30'
+      - '15:30'
+    - - '19:00'
+      - '23:30'
+    tue: &id030
+    - - '11:30'
+      - '15:30'
+    - - '19:00'
+      - '23:30'
+    wed: &id031
+    - - '11:30'
+      - '15:30'
+    - - '19:00'
+      - '23:30'
+    thu: &id032
+    - - '11:30'
+      - '15:30'
+    - - '19:00'
+      - '23:30'
+    fri: &id033
+    - - '11:30'
+      - '15:30'
+    - - '19:00'
+      - '23:30'
+    sat: &id034
+    - - '11:30'
+      - '15:30'
+    - - '19:00'
+      - '23:30'
+    sun: &id035
+    - - '11:30'
+      - '15:30'
+    - - '19:00'
+      - '23:30'
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 3500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: National Gallery of Modern Art
   city: New Delhi
   state: Delhi
@@ -169,6 +335,32 @@ places:
   family_friendly: true
   description: Former Jaipur House palace displaying landmark modern Indian artwork,
     sculpture gardens, and calm exhibition halls.
+  opening_hours:
+    mon: &id036 []
+    tue: &id037
+    - - '10:00'
+      - '17:00'
+    wed: &id038
+    - - '10:00'
+      - '17:00'
+    thu: &id039
+    - - '10:00'
+      - '17:00'
+    fri: &id040
+    - - '10:00'
+      - '17:00'
+    sat: &id041
+    - - '10:00'
+      - '17:00'
+    sun: &id042
+    - - '10:00'
+      - '17:00'
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Dilli Haat INA
   city: New Delhi
   state: Delhi
@@ -193,6 +385,20 @@ places:
   family_friendly: true
   description: Open-air rural craft bazaar with regional handicrafts and authentic
     state-by-state food stalls across India.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 400.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Cyber Hub & Social
   city: Gurugram
   state: Haryana
@@ -217,6 +423,20 @@ places:
   family_friendly: false
   description: Premier open-air corporate dining and brewery boulevard featuring artisanal
     pubs, gourmet diners, and live music.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Open Tap Sector 29
   city: Gurugram
   state: Haryana
@@ -240,6 +460,20 @@ places:
   family_friendly: false
   description: Popular microbrewery hub with fresh wheat beers, IPA taps, finger food,
     and vibrant weekend DJ sets.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1400.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Roots - Cafe in the Park
   city: Gurugram
   state: Haryana
@@ -264,6 +498,20 @@ places:
   family_friendly: true
   description: Solar-powered rustic breakfast cafe tucked inside Rajiv Gandhi Renewal
     Energy Park with breezy outdoor wooden benches.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Aravali Biodiversity Park
   city: Gurugram
   state: Haryana
@@ -288,6 +536,20 @@ places:
   family_friendly: true
   description: Restored 380-acre wilderness forest featuring seasonal native scrubland
     trails, bird watching, and cycling.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 20.0
 - name: Rock Garden of Chandigarh
   city: Chandigarh
   state: Haryana
@@ -312,6 +574,20 @@ places:
   family_friendly: true
   description: Nek Chand's world-famous 40-acre sculpture garden created entirely
     from industrial waste, discarded ceramic, and scrap rocks.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 30.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Sukhna Lake Promenade
   city: Chandigarh
   state: Haryana
@@ -336,6 +612,20 @@ places:
   family_friendly: true
   description: Serene Himalayan foothills reservoir featuring sunrise jogging paths,
     paddle boating, and shaded sunset viewpoints.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 20.0
 - name: Backpackers Cafe Sector 9
   city: Chandigarh
   state: Haryana
@@ -360,6 +650,20 @@ places:
   family_friendly: true
   description: Cult favorite cozy all-day brunch hangout renowned for skillet eggs,
     handmade pancakes, and traveler memorabilia.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 800.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: The Big Chill Cafe DLF Mall
   city: Noida
   state: Uttar Pradesh
@@ -367,7 +671,7 @@ places:
   subcategory: cafe
   lat: 28.5672
   lng: 77.3211
-  price_range: 3
+  price_range: 2
   average_cost: 1200
   indoor_outdoor: indoor
   ambience:
@@ -384,6 +688,20 @@ places:
   family_friendly: true
   description: Vintage retro-hollywood cafe famed for decadent baked cheesecakes,
     artisanal pastas, and nostalgic wall posters.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1200.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Okhla Bird Sanctuary
   city: Noida
   state: Uttar Pradesh
@@ -408,6 +726,20 @@ places:
   family_friendly: true
   description: Wetlands reserve along the Yamuna river hosting migratory birds, tranquil
     walking trails, and sunrise vistas.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 30.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Taj Mahal
   city: Agra
   state: Uttar Pradesh
@@ -434,6 +766,20 @@ places:
   family_friendly: true
   description: World Wonder white marble mausoleum built by Shah Jahan along the Yamuna
     River, renowned for sunrise and sunset glow.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Agra Fort
   city: Agra
   state: Uttar Pradesh
@@ -458,6 +804,20 @@ places:
   family_friendly: true
   description: Vast 16th-century Mughal red sandstone citadel with majestic imperial
     courtyards, Diwan-i-Khas, and Taj Mahal views.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Salt Cafe Rooftop
   city: Agra
   state: Uttar Pradesh
@@ -482,6 +842,20 @@ places:
   family_friendly: true
   description: Chic Greek-inspired rooftop lounge with open breeze terraces, craft
     mocktails, and panoramic evening city skyline.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 900.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Bara Imambara & Bhul-Bhulaiya
   city: Lucknow
   state: Uttar Pradesh
@@ -506,6 +880,20 @@ places:
   family_friendly: true
   description: Grand 18th-century Awadhi monument featuring an arched pillarless hall
     and an intricate three-dimensional labyrinth.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Hazratganj Heritage Stroll & Royal Cafe
   city: Lucknow
   state: Uttar Pradesh
@@ -530,6 +918,20 @@ places:
   family_friendly: true
   description: Iconic Victorian boulevard with colonial lampposts, bookshops, and
     the birthplace of Lucknow's legendary Basket Chaat.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Janeshwar Mishra Park
   city: Lucknow
   state: Uttar Pradesh
@@ -554,6 +956,20 @@ places:
   family_friendly: true
   description: Sprawling 376-acre eco-park with serene waterways, jogging boardwalks,
     musical fountains, and sunset boat rides.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 10.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Dashashwamedh Ghat
   city: Varanasi
   state: Uttar Pradesh
@@ -578,6 +994,20 @@ places:
   family_friendly: true
   description: Ancient riverfront steps along the sacred Ganges celebrated for the
     hypnotic evening Ganga Aarti ceremony.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Assi Ghat Morning Stroll
   city: Varanasi
   state: Uttar Pradesh
@@ -602,6 +1032,20 @@ places:
   family_friendly: true
   description: Southernmost ghat popular for Subah-e-Banaras sunrise classical concerts,
     morning yoga, and peaceful boat rides.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Blue Lassi Shop
   city: Varanasi
   state: Uttar Pradesh
@@ -626,6 +1070,20 @@ places:
   family_friendly: true
   description: Centuries-old cozy lane institution whipping hand-churned fruit and
     rabdi lassis served in clay kulhads.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 120.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Triveni Sangam Boat Ride
   city: Prayagraj
   state: Uttar Pradesh
@@ -650,6 +1108,20 @@ places:
   family_friendly: true
   description: Sacred confluence of the Ganga, Yamuna, and mythical Saraswati rivers
     with peaceful wooden rowboats and migratory gulls.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Golden Temple (Harmandir Sahib)
   city: Amritsar
   state: Punjab
@@ -674,6 +1146,20 @@ places:
   family_friendly: true
   description: Revered Sikh shrine plated with 500kg gold foil, shimmering in the
     nectar tank Amrit Sarovar with 24/7 community langar.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Jallianwala Bagh Memorial
   city: Amritsar
   state: Punjab
@@ -697,6 +1183,20 @@ places:
   family_friendly: true
   description: Historic national memorial park preserving bullet-marked brick walls
     and the martyrs' well from the 1919 uprising.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Kesar Da Dhaba
   city: Amritsar
   state: Punjab
@@ -721,6 +1221,20 @@ places:
   family_friendly: true
   description: Century-old rustic food institution famous for slow-simmered dal makhani,
     layered parathas, and rich firni.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 350.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Rakh Bagh Park
   city: Ludhiana
   state: Punjab
@@ -745,6 +1259,20 @@ places:
   family_friendly: true
   description: City center heritage park with a toy train ride, jogging trails, outdoor
     workout stations, and lush green canopies.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 10.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: The Ridge Shimla
   city: Shimla
   state: Himachal Pradesh
@@ -769,6 +1297,20 @@ places:
   family_friendly: true
   description: Grand open pedestrian promenade offering sweeping Himalayan panoramas,
     colonial Christ Church, and horse rides.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Cafe Simla Times
   city: Shimla
   state: Himachal Pradesh
@@ -793,6 +1335,20 @@ places:
   family_friendly: true
   description: Artsy rooftop cafe with painted ceilings, hand-stretched woodfired
     pizzas, and sunset cocktails over the valley.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 900.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Viceregal Lodge (Rashtrapati Niwas)
   city: Shimla
   state: Himachal Pradesh
@@ -817,6 +1373,20 @@ places:
   family_friendly: true
   description: Jacobethan-style summer capital fortress perched atop Observatory Hill,
     surrounded by English pine manicured lawns.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Old Manali & Cafe 1947
   city: Manali
   state: Himachal Pradesh
@@ -841,6 +1411,20 @@ places:
   family_friendly: true
   description: Legendary riverside Italian cafe on the gushing Manalsu stream with
     acoustic jam sessions and craft cider.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 850.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Hadimba Devi Temple & Cedar Woods
   city: Manali
   state: Himachal Pradesh
@@ -865,6 +1449,20 @@ places:
   family_friendly: true
   description: 1553 AD pagoda-style wooden temple sheltered within towering deodar
     cedar trees and mossy forest footpaths.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Solang Valley Adventure
   city: Manali
   state: Himachal Pradesh
@@ -889,6 +1487,20 @@ places:
   family_friendly: true
   description: Alpine valley bowl renowned for tandem paragliding, ropeway cable car
     rides, zorbing, and winter snow fields.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1000.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Tsuglagkhang Complex (Dalai Lama Temple)
   city: Dharamshala
   state: Himachal Pradesh
@@ -913,6 +1525,20 @@ places:
   family_friendly: true
   description: Spiritual seat of the 14th Dalai Lama featuring spinning prayer wheels,
     gilded Buddhist idols, and monastic debate halls.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Illiterati Books & Coffee
   city: Dharamshala
   state: Himachal Pradesh
@@ -937,6 +1563,20 @@ places:
   family_friendly: true
   description: Bohemian balcony bookstore cafe with floor-to-ceiling books, gourmet
     European brunch, and snow-capped Dhauladhar views.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 700.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Robber's Cave (Guchhupani)
   city: Dehradun
   state: Uttarakhand
@@ -961,6 +1601,20 @@ places:
   family_friendly: true
   description: Natural limestone river gorge where ankle-deep chilled mountain water
     flows between high vertical rock fissures.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 35.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Forest Research Institute (FRI)
   city: Dehradun
   state: Uttarakhand
@@ -985,6 +1639,20 @@ places:
   family_friendly: true
   description: Colossal Greco-Roman colonial brick campus with six forestry museums,
     lush botanical arboretums, and grand archways.
+  opening_hours:
+    mon: *id036
+    tue: *id037
+    wed: *id038
+    thu: *id039
+    fri: *id040
+    sat: *id041
+    sun: *id042
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 40.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: The Beatles Ashram (Chaurasi Kutia)
   city: Rishikesh
   state: Uttarakhand
@@ -1009,6 +1677,20 @@ places:
   family_friendly: true
   description: Forest hermitage where the Beatles composed the White Album in 1968,
     now covered in vibrant psychedelic murals and stone domes.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 150.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Little Buddha Cafe
   city: Rishikesh
   state: Uttarakhand
@@ -1033,6 +1715,20 @@ places:
   family_friendly: true
   description: Treehouse-style bamboo rooftop cafe perched over the emerald Ganges
     River, serving falafel platters and iced mint teas.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 650.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Triveni Ghat Ganga Aarti
   city: Rishikesh
   state: Uttarakhand
@@ -1057,6 +1753,20 @@ places:
   family_friendly: true
   description: Largest bathing ghat in Rishikesh where priests chant Vedic hymns and
     float hundreds of lit leaf-diyas onto the river at dusk.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Landour Bakehouse & Char Dukan
   city: Mussoorie
   state: Uttarakhand
@@ -1081,6 +1791,20 @@ places:
   family_friendly: true
   description: 19th-century hill station bakery nestled amidst pine forests, famous
     for lemon curd tart, cinnamon rolls, and mountain tea.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Gun Hill Viewpoint & Cable Car
   city: Mussoorie
   state: Uttarakhand
@@ -1105,6 +1829,20 @@ places:
   family_friendly: true
   description: Mussoorie's second highest peak reached by aerial ropeway, with 360-degree
     vistas of the Bunderpunch Himalayan range.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 150.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Naini Lake Boating & Mall Road
   city: Nainital
   state: Uttarakhand
@@ -1129,6 +1867,20 @@ places:
   family_friendly: true
   description: Eye-shaped freshwater lake cradled by green mountains, with vintage
     colorful gondola boat rides and lakeside cafes.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Dal Lake Shikara Ride
   city: Srinagar
   state: Jammu and Kashmir
@@ -1153,6 +1905,20 @@ places:
   family_friendly: true
   description: Iconic gondola-style wooden shikara cruise past floating vegetable
     markets, lotus gardens, and carved cedar houseboats.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Nishat Bagh Mughal Gardens
   city: Srinagar
   state: Jammu and Kashmir
@@ -1177,6 +1943,20 @@ places:
   family_friendly: true
   description: 12-terraced garden of bliss built in 1633, framed by giant chinar trees,
     cascading water fountains, and Zabarwan peaks.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 25.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Chai Jaai Tea Room
   city: Srinagar
   state: Jammu and Kashmir
@@ -1201,6 +1981,20 @@ places:
   family_friendly: true
   description: Whimsical riverside Cotwolds-meets-Kashmir tea salon serving authentic
     pink noon chai, saffron kahwa, and walnut pastries.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Gulmarg Gondola & Apharwat Peak
   city: Gulmarg
   state: Jammu and Kashmir
@@ -1225,6 +2019,20 @@ places:
   family_friendly: true
   description: One of the world's highest operating cable cars ascending to 13,780
     feet for alpine skiing, pine meadows, and glacier bowls.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1800.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Bahu Fort & Bagh-e-Bahu
   city: Jammu
   state: Jammu and Kashmir
@@ -1249,6 +2057,20 @@ places:
   family_friendly: true
   description: Ancient fort overlooking the Tawi river featuring terraced flower gardens,
     musical fountains, and a subterranean aquarium.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 25.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Pangong Tso Lake
   city: Leh
   state: Ladakh
@@ -1273,6 +2095,20 @@ places:
   family_friendly: true
   description: World-famous high-altitude endorheic lake changing shades from turquoise
     to cobalt blue against arid Tibetan mountains.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 800.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Shanti Stupa
   city: Leh
   state: Ladakh
@@ -1297,6 +2133,20 @@ places:
   family_friendly: true
   description: White-domed Buddhist stupa perched on a Changspa hilltop offering breathtaking
     panoramic sunset vistas of Leh city.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Gesmo Restaurant & Bakery
   city: Leh
   state: Ladakh
@@ -1321,6 +2171,20 @@ places:
   family_friendly: true
   description: Popular old-town hub dating back to 1989, renowned for fresh yak cheese
     pizza, apple pie, and hearty cinnamon rolls.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 450.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Marine Drive
   city: Mumbai
   state: Maharashtra
@@ -1345,6 +2209,20 @@ places:
   family_friendly: true
   description: Famous 3.6-kilometer Queen's Necklace sea-facing promenade for evening
     breeze walks and sunset skyline views.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Bandra Fort & Lands End
   city: Mumbai
   state: Maharashtra
@@ -1369,6 +2247,20 @@ places:
   family_friendly: true
   description: 17th-century Portuguese fort ruins overlooking the Arabian Sea and
     the grand Bandra-Worli Sea Link.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Todi Mill Social
   city: Mumbai
   state: Maharashtra
@@ -1392,6 +2284,20 @@ places:
   family_friendly: false
   description: Energetic Lower Parel industrial-chic warehouse pub serving craft cocktails,
     comfort fusion bites, and weekend sets.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1400.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Subko Coffee Bandra
   city: Mumbai
   state: Maharashtra
@@ -1415,6 +2321,20 @@ places:
   family_friendly: true
   description: Flagship specialty roastery and craft bakehouse in Ranwar Village highlighting
     subcontinent beans and artisanal sourdough.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 650.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Prithvi Cafe Juhu
   city: Mumbai
   state: Maharashtra
@@ -1439,6 +2359,20 @@ places:
   family_friendly: true
   description: Iconic bamboo garden cafe adjoining Prithvi Theatre, loved for Irish
     coffee, cutting chai, parathas, and creative crowds.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Shaniwar Wada
   city: Pune
   state: Maharashtra
@@ -1462,6 +2396,20 @@ places:
   family_friendly: true
   description: Historic 18th-century Maratha Peshwa fortified palace complex famous
     for teakwood gateways and fountain foundations.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Effingut Brewhouse Koregaon Park
   city: Pune
   state: Maharashtra
@@ -1485,6 +2433,20 @@ places:
   family_friendly: false
   description: Craft brewery pioneer pouring handcrafted German Hefeweizen, apple
     ciders, stouts, and gastropub comfort plates.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Vohuman Cafe
   city: Pune
   state: Maharashtra
@@ -1509,6 +2471,20 @@ places:
   family_friendly: true
   description: Legendary Irani cafe institution near the railway station serving double
     cheese omelettes, maska pav, and steaming chai.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 250.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Futala Lake Promenade
   city: Nagpur
   state: Maharashtra
@@ -1533,6 +2509,20 @@ places:
   family_friendly: true
   description: 200-year-old Bhosle lake promenade known for evening illuminated musical
     fountains, chowpatty snacks, and sunset strolls.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Sula Vineyards & Tasting Room
   city: Nashik
   state: Maharashtra
@@ -1557,6 +2547,20 @@ places:
   family_friendly: false
   description: Rolling wine estate overlooking Gangapur Lake, featuring guided winery
     cellar tours, tasting balconies, and sun terraces.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Tiger's Leap & Sunset Point
   city: Lonavala
   state: Maharashtra
@@ -1581,6 +2585,20 @@ places:
   family_friendly: true
   description: Cliff top with a sheer 650-meter drop resembling a leaping tiger, offering
     misty Western Ghats valley panoramas.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Bibi Ka Maqbara
   city: Chhatrapati Sambhajinagar
   state: Maharashtra
@@ -1605,6 +2623,20 @@ places:
   family_friendly: true
   description: Known as the 'Taj of the Deccan', this 17th-century marble mausoleum
     was commissioned by Prince Azam Shah with landscaped charbagh.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 25.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Sabarmati Riverfront Promenade
   city: Ahmedabad
   state: Gujarat
@@ -1629,6 +2661,20 @@ places:
   family_friendly: true
   description: Beautifully landscaped 11km two-tier waterfront promenade with flower
     parks, speedboats, and cycling plazas.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Sidi Saiyyed Mosque
   city: Ahmedabad
   state: Gujarat
@@ -1653,6 +2699,20 @@ places:
   family_friendly: true
   description: 1573 AD mosque celebrated worldwide for its ten intricately carved
     semi-circular stone lattice screens ('Tree of Life').
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Manek Chowk Night Food Market
   city: Ahmedabad
   state: Gujarat
@@ -1677,6 +2737,20 @@ places:
   family_friendly: true
   description: Old-city square that transforms after dark into a buzzing culinary
     carnival for chocolate sandwiches, gwalbhog, and pav bhaji.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 300.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: The Project Cafe Ambavadi
   city: Ahmedabad
   state: Gujarat
@@ -1701,6 +2775,20 @@ places:
   family_friendly: true
   description: Experiential art cafe in an old bungalow where furniture, art on the
     walls, cutlery, and gourmet dishes are curated design pieces.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 750.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Dumas Beach & Black Sand Sunset
   city: Surat
   state: Gujarat
@@ -1725,6 +2813,20 @@ places:
   family_friendly: true
   description: Coastal Arabian Sea beach renowned for dark volcanic sands, evening
     sea breeze, and spicy lashkari tomato bhajiya stalls.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Laxmi Vilas Palace
   city: Vadodara
   state: Gujarat
@@ -1732,7 +2834,7 @@ places:
   subcategory: palace
   lat: 22.2938
   lng: 73.1915
-  price_range: 2
+  price_range: 1
   average_cost: 250
   indoor_outdoor: both
   ambience:
@@ -1749,6 +2851,20 @@ places:
   family_friendly: true
   description: Four times the size of Buckingham Palace, this Indo-Saracenic Gaekwad
     royal residence boasts Venetian stained glass and armory.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 250.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Watson Museum & Jubilee Garden
   city: Rajkot
   state: Gujarat
@@ -1772,6 +2888,20 @@ places:
   family_friendly: true
   description: Colonial-era museum in Jubilee Garden housing Saurashtra archaeological
     artifacts, Harappan pottery, and royal textiles.
+  opening_hours:
+    mon: *id036
+    tue: *id037
+    wed: *id038
+    thu: *id039
+    fri: *id040
+    sat: *id041
+    sun: *id042
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Amber Fort
   city: Jaipur
   state: Rajasthan
@@ -1779,7 +2909,7 @@ places:
   subcategory: fort
   lat: 26.9855
   lng: 75.8513
-  price_range: 2
+  price_range: 1
   average_cost: 200
   indoor_outdoor: outdoor
   ambience:
@@ -1796,6 +2926,20 @@ places:
   family_friendly: true
   description: Majestic hilltop fort featuring mirror palace Sheesh Mahal, courtyard
     ramparts, and Maota Lake reflection.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: City Palace Jaipur
   city: Jaipur
   state: Rajasthan
@@ -1803,7 +2947,7 @@ places:
   subcategory: palace
   lat: 26.9258
   lng: 75.8236
-  price_range: 2
+  price_range: 1
   average_cost: 300
   indoor_outdoor: both
   ambience:
@@ -1820,6 +2964,20 @@ places:
   family_friendly: true
   description: Grand royal complex blending Rajasthani and Mughal architecture, with
     painted courtyards and textile museums.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 300.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Nahargarh Fort Sunset Point
   city: Jaipur
   state: Rajasthan
@@ -1844,6 +3002,20 @@ places:
   family_friendly: true
   description: Ridge fort on the edge of the Aravalli hills famous for open-air rooftop
     sunsets overlooking the entire Pink City.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Tapri The Tea House
   city: Jaipur
   state: Rajasthan
@@ -1868,6 +3040,34 @@ places:
   family_friendly: true
   description: Beloved rooftop cafe overlooking Central Park with hand-beaten cold
     coffee, kulhad masala chai, and artisanal snacks.
+  opening_hours:
+    mon:
+    - - 00:00
+      - '24:00'
+    tue:
+    - - 00:00
+      - '24:00'
+    wed:
+    - - 00:00
+      - '24:00'
+    thu:
+    - - 00:00
+      - '24:00'
+    fri:
+    - - 00:00
+      - '24:00'
+    sat:
+    - - 00:00
+      - '24:00'
+    sun:
+    - - 00:00
+      - '24:00'
+  opening_hours_source: osm
+  opening_hours_is_estimated: false
+  cost_for_two: 600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Bar Palladio
   city: Jaipur
   state: Rajasthan
@@ -1892,6 +3092,20 @@ places:
   family_friendly: false
   description: Exquisite royal blue Italian lounge in Narain Niwas Palace garden with
     tented daybeds, candelabras, and signature martinis.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 2200.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Lake Pichola Boat Cruise
   city: Udaipur
   state: Rajasthan
@@ -1916,6 +3130,20 @@ places:
   family_friendly: true
   description: Fairytale boat rides glinting past the floating Lake Palace, Jagmandir
     island, and the illuminated City Palace facade.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 400.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Ambrai Waterfront Restaurant
   city: Udaipur
   state: Rajasthan
@@ -1940,6 +3168,20 @@ places:
   family_friendly: true
   description: Premier candlelit ghat restaurant on Amet Haveli shores directly facing
     the glowing arches of City Palace across water.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 2400.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Mehrangarh Fort
   city: Jodhpur
   state: Rajasthan
@@ -1947,7 +3189,7 @@ places:
   subcategory: fort
   lat: 26.2978
   lng: 73.0185
-  price_range: 2
+  price_range: 1
   average_cost: 200
   indoor_outdoor: outdoor
   ambience:
@@ -1964,6 +3206,20 @@ places:
   family_friendly: true
   description: Colossal 15th-century cliff citadel rising 400 feet above the Blue
     City with opulent palatial galleries and zip-lining.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Stepwell Cafe (Toorji Ka Jhalra)
   city: Jodhpur
   state: Rajasthan
@@ -1988,6 +3244,20 @@ places:
   family_friendly: true
   description: Multi-level terrace cafe built into the red sandstone rims of the restored
     18th-century stepwell reservoir.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 700.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Jaisalmer Golden Fort (Sonar Qila)
   city: Jaisalmer
   state: Rajasthan
@@ -2012,6 +3282,20 @@ places:
   family_friendly: true
   description: Massive golden sandstone living fort housing bustling alleys, intricately
     sculpted Jain temples, and rooftop eateries.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Sam Sand Dunes Camel Safari
   city: Jaisalmer
   state: Rajasthan
@@ -2036,6 +3320,20 @@ places:
   family_friendly: true
   description: Rolling golden dunes of the Thar Desert offering sunset camel rides,
     4x4 dune bashing, and bonfire Rajasthani folk music.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1200.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Pushkar Sacred Lake & Ghats
   city: Pushkar
   state: Rajasthan
@@ -2060,6 +3358,20 @@ places:
   family_friendly: true
   description: Sacred desert lake encircled by 52 marble bathing ghats, whitewashed
     havelis, and sunset evening chants.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Fontainhas Latin Quarter
   city: Panaji
   state: Goa
@@ -2084,6 +3396,20 @@ places:
   family_friendly: true
   description: Picturesque heritage quarter with pastel-colored Portuguese villas,
     hanging wooden balconies, and tiny art galleries.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Joseph Bar Panaji
   city: Panaji
   state: Goa
@@ -2108,6 +3434,20 @@ places:
   family_friendly: false
   description: Nostalgic heritage watering hole in Fontainhas pouring artisanal feni
     cocktails, craft beers, and Goan sausage rolls.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 700.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Palolem Beach
   city: Margao
   state: Goa
@@ -2132,6 +3472,20 @@ places:
   family_friendly: true
   description: Idyllic crescent-shaped bay lined with coconut palms, gentle shallow
     waters, kayaking, and beachfront wooden shacks.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Martin's Corner Betalbatim
   city: Margao
   state: Goa
@@ -2156,6 +3510,20 @@ places:
   family_friendly: true
   description: Legendary South Goa dining institution renowned for butter garlic crab,
     pork vindaloo, and vibrant live music.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Cubbon Park
   city: Bengaluru
   state: Karnataka
@@ -2180,6 +3548,20 @@ places:
   family_friendly: true
   description: 300-acre green lung in central Bangalore with grand mahogany avenues,
     shaded picnic lawns, and heritage colonial libraries.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 20.0
 - name: Lalbagh Botanical Garden
   city: Bengaluru
   state: Karnataka
@@ -2204,6 +3586,20 @@ places:
   family_friendly: true
   description: Historic 240-acre botanical haven with a Victorian glasshouse, lotus
     lake, and centuries-old tropical trees.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Toit Brewpub
   city: Bengaluru
   state: Karnataka
@@ -2227,6 +3623,20 @@ places:
   family_friendly: false
   description: The iconic Indiranagar craft microbrewery with freshly brewed ales,
     woodfired pizzas, and buzzing multi-floor vibes.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1400.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Arbor Brewing Company
   city: Bengaluru
   state: Karnataka
@@ -2251,6 +3661,20 @@ places:
   family_friendly: false
   description: Legendary craft brewery on Magrath Road with cozy wood booths, artisanal
     IPA taps, and beer bites.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Windmills Craftworks
   city: Bengaluru
   state: Karnataka
@@ -2258,7 +3682,7 @@ places:
   subcategory: brewery
   lat: 12.9827
   lng: 77.7219
-  price_range: 4
+  price_range: 3
   average_cost: 2400
   indoor_outdoor: indoor
   ambience:
@@ -2276,6 +3700,20 @@ places:
   family_friendly: false
   description: Sophisticated microbrewery, jazz theatre, and curated library in Whitefield
     offering an intimate date ambiance.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 2400.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Nandi Hills Sunrise Fortress
   city: Nandi Hills
   state: Karnataka
@@ -2300,6 +3738,20 @@ places:
   family_friendly: true
   description: Ancient hill fortress at 4,800 feet famous for sea-of-clouds sunrise
     viewpoints and breezy morning drives.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Mysore Palace
   city: Mysuru
   state: Karnataka
@@ -2324,6 +3776,20 @@ places:
   family_friendly: true
   description: Magnificent Indo-Saracenic royal palace illuminated by 100,000 bulbs
     on weekend nights.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Brindavan Gardens
   city: Mysuru
   state: Karnataka
@@ -2348,6 +3814,20 @@ places:
   family_friendly: true
   description: Terraced gardens laid below the Krishnarajasagara dam featuring colorful
     illuminated musical water fountains.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Raja's Seat
   city: Coorg
   state: Karnataka
@@ -2372,6 +3852,20 @@ places:
   family_friendly: true
   description: Historic seasonal retreat of the Kings of Kodagu overlooking undulating
     green valleys, misty clouds, and sunsets.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 25.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Abbey Falls
   city: Coorg
   state: Karnataka
@@ -2396,6 +3890,20 @@ places:
   family_friendly: true
   description: Roaring waterfall tumbling 70 feet down volcanic rocks amidst lush
     coffee plantations and pepper vines.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Om Beach
   city: Gokarna
   state: Karnataka
@@ -2420,6 +3928,20 @@ places:
   family_friendly: true
   description: Natural Om-shaped twin crescent beach where rugged black rock bluffs
     meet the sparkling Arabian Sea.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Vittala Temple & Stone Chariot
   city: Hampi
   state: Karnataka
@@ -2444,6 +3966,20 @@ places:
   family_friendly: true
   description: 16th-century Vijayanagara architectural masterpiece with musical stone
     pillars and the iconic monolithic Garuda chariot.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 40.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Mullayanagiri Peak
   city: Chikmagalur
   state: Karnataka
@@ -2468,6 +4004,20 @@ places:
   family_friendly: true
   description: The highest peak in Karnataka (1,930 m) offering crisp mountain breeze,
     grass-covered ridges, and valley viewpoints.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Panambur Beach
   city: Mangaluru
   state: Karnataka
@@ -2492,6 +4042,20 @@ places:
   family_friendly: true
   description: Golden sand beach on the Arabian Sea famous for clean shorelines, jet
     skiing, camel rides, and fresh seafood stalls.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Malpe Beach & Sea Walk
   city: Udupi
   state: Karnataka
@@ -2516,6 +4080,20 @@ places:
   family_friendly: true
   description: Scenic beach featuring a 500-meter stone sea-walk path stretching into
     the ocean, plus ferries to volcanic St. Mary's Island.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Manjarabad Star Fort
   city: Sakleshpur
   state: Karnataka
@@ -2540,6 +4118,20 @@ places:
   family_friendly: true
   description: Unique 1792 AD octagonal eight-pointed star fort built by Tipu Sultan
     offering panoramic vistas across the Western Ghats.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Unkal Lake & Vivekananda Statue
   city: Hubballi
   state: Karnataka
@@ -2564,6 +4156,20 @@ places:
   family_friendly: true
   description: Historical water reservoir featuring a central island statue of Swami
     Vivekananda, lush garden promenade, and evening boating.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Belagavi Fort & Kamal Basti
   city: Belagavi
   state: Karnataka
@@ -2587,6 +4193,20 @@ places:
   family_friendly: true
   description: 13th-century stone fortification housing the delicately carved Kamal
     Basti Jain shrine and ancient moat bastions.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 15.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Marina Beach
   city: Chennai
   state: Tamil Nadu
@@ -2611,6 +4231,20 @@ places:
   family_friendly: true
   description: One of the world's longest natural urban beaches, famous for sea breezes,
     sundal stalls, and historic statues along the promenade.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Kapaleeshwarar Temple
   city: Chennai
   state: Tamil Nadu
@@ -2635,6 +4269,20 @@ places:
   family_friendly: true
   description: Magnificent 7th-century Dravidian temple in Mylapore with a 37-meter
     rainbow gopuram and a sacred temple tank.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Amethyst Cafe & Garden
   city: Chennai
   state: Tamil Nadu
@@ -2642,7 +4290,7 @@ places:
   subcategory: cafe
   lat: 13.0578
   lng: 80.2595
-  price_range: 3
+  price_range: 2
   average_cost: 1100
   indoor_outdoor: both
   ambience:
@@ -2659,6 +4307,20 @@ places:
   family_friendly: true
   description: Verandah cafe inside an old colonial bungalow surrounded by wild tropical
     greenery, antique chandeliers, and fresh bakes.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Besant Nagar Beach (Bessie)
   city: Chennai
   state: Tamil Nadu
@@ -2683,6 +4345,20 @@ places:
   family_friendly: true
   description: Relaxed youth beach with the Karl Schmidt memorial arch, beachfront
     cafes, artisan gelaterias, and evening walks.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Gedee Car Museum
   city: Coimbatore
   state: Tamil Nadu
@@ -2707,6 +4383,20 @@ places:
   family_friendly: true
   description: Fascinating vintage car collection showcasing rare classic motorcars
     from Britain, Germany, France, and early 20th-century America.
+  opening_hours:
+    mon: *id036
+    tue: *id037
+    wed: *id038
+    thu: *id039
+    fri: *id040
+    sat: *id041
+    sun: *id042
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 75.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Meenakshi Amman Temple
   city: Madurai
   state: Tamil Nadu
@@ -2731,6 +4421,20 @@ places:
   family_friendly: true
   description: World-renowned ancient Hindu temple complex on the Vaigai river featuring
     14 soaring sculptured gopurams and a thousand-pillar hall.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Government Botanical Garden Ooty
   city: Ooty
   state: Tamil Nadu
@@ -2755,6 +4459,20 @@ places:
   family_friendly: true
   description: 55-acre terraced British hill garden founded in 1848, with rare exotic
     flower beds, a fossilized tree trunk, and Italian terraces.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Earl's Secret Glasshouse Dining
   city: Ooty
   state: Tamil Nadu
@@ -2779,6 +4497,20 @@ places:
   family_friendly: true
   description: Glass conservatory dining room inside King's Cliff heritage hotel serving
     continental delicacies surrounded by misty hills.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1800.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Kodai Lake & Coaker's Walk
   city: Kodaikanal
   state: Tamil Nadu
@@ -2803,6 +4535,20 @@ places:
   family_friendly: true
   description: Star-shaped hill lake encircled by bicycle trails, rowing boats, and
     a narrow pedestrian promenade perched over mountain clouds.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Charminar & Laad Bazaar
   city: Hyderabad
   state: Telangana
@@ -2827,6 +4573,20 @@ places:
   family_friendly: true
   description: 1591 AD four-minaret monument at the heart of old Hyderabad, flanked
     by sparkling lacquer bangle markets and Irani chai stalls.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Hussain Sagar Lake Promenade
   city: Hyderabad
   state: Telangana
@@ -2851,6 +4611,20 @@ places:
   family_friendly: true
   description: Heart-shaped lake separating Hyderabad and Secunderabad, with a 350-ton
     monolithic Buddha statue and sunset boat rides.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 20.0
 - name: Golconda Fort Sound & Light Show
   city: Hyderabad
   state: Telangana
@@ -2875,6 +4649,20 @@ places:
   family_friendly: true
   description: Fortress citadel once famous for diamond trade with ingenious acoustic
     domes that transmit handclaps 1km away to the citadel summit.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 150.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Roastery Coffee House Banjara Hills
   city: Hyderabad
   state: Telangana
@@ -2898,6 +4686,20 @@ places:
   family_friendly: true
   description: Beautiful courtyard bungalow cafe nestled among trees, serving house-roasted
     monsoon malabar coffee and artisanal pasta.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 750.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Ironhill Brewery Madhapur
   city: Hyderabad
   state: Telangana
@@ -2922,6 +4724,20 @@ places:
   family_friendly: false
   description: One of India's largest microbreweries with indoor water ponds, outdoor
     cabanas, fresh craft beers on tap, and lively DJ tunes.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Thousand Pillar Temple
   city: Warangal
   state: Telangana
@@ -2946,6 +4762,20 @@ places:
   family_friendly: true
   description: 12th-century Kakatiya dynasty trikuta temple featuring exquisitely
     carved black basalt pillars and a monolithic Nandi bull.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: RK Beach & Submarine Museum
   city: Visakhapatnam
   state: Andhra Pradesh
@@ -2970,6 +4800,20 @@ places:
   family_friendly: true
   description: Sea-facing boulevard featuring INS Kursura, an authentic Soviet-built
     submarine preserved on the sands as a walk-through museum.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 70.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Kailasagiri Hilltop Park
   city: Visakhapatnam
   state: Andhra Pradesh
@@ -2994,6 +4838,20 @@ places:
   family_friendly: true
   description: Panoramic hilltop garden reached by coastal cable car ropeway, offering
     sweeping 360-degree views of the Bay of Bengal beaches.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Ironhill Brewery Siripuram
   city: Visakhapatnam
   state: Andhra Pradesh
@@ -3017,6 +4875,20 @@ places:
   family_friendly: false
   description: Popular Vizag craft brewery pouring fresh Belgian witbier, cider, and
     IPAs alongside woodfired coastal pizzas.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Bhavani Island River Resort
   city: Vijayawada
   state: Andhra Pradesh
@@ -3041,6 +4913,20 @@ places:
   family_friendly: true
   description: Lush 133-acre island in the middle of the Krishna River accessible
     by boat, featuring water sports, ziplines, and gardens.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 150.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Undavalli Rock-cut Caves
   city: Vijayawada
   state: Andhra Pradesh
@@ -3065,6 +4951,20 @@ places:
   family_friendly: true
   description: 7th-century solid sandstone monolithic rock-cut cave temples with a
     giant reclining statue of Lord Vishnu.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 25.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Chandragiri Fort & Light Show
   city: Tirupati
   state: Andhra Pradesh
@@ -3089,6 +4989,20 @@ places:
   family_friendly: true
   description: 11th-century Vijayanagara kingdom fortress with Raja Mahal palace,
     moat walls, and an evening sound and light performance.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Fort Kochi Beach & Chinese Fishing Nets
   city: Kochi
   state: Kerala
@@ -3113,6 +5027,20 @@ places:
   family_friendly: true
   description: Historic shores with 14th-century cantilevered Chinese fishing nets,
     sunset walkways, and colonial spice warehouses.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Kashi Art Cafe Fort Kochi
   city: Kochi
   state: Kerala
@@ -3137,6 +5065,20 @@ places:
   family_friendly: true
   description: Landmark art gallery cafe set in a restored heritage Dutch house, known
     for chocolate cake, coffee, and rotating contemporary art.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Kovalam Lighthouse Beach
   city: Thiruvananthapuram
   state: Kerala
@@ -3161,6 +5103,20 @@ places:
   family_friendly: true
   description: Crescent beach flanked by palm groves and a 30-meter red-and-white
     spiral lighthouse with sweeping views of the Arabian Sea.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Villa Maya Heritage Fine Dining
   city: Thiruvananthapuram
   state: Kerala
@@ -3185,6 +5141,20 @@ places:
   family_friendly: true
   description: Restored 18th-century Travancore royal palace with candlelit courtyards,
     lily ponds, and culinary traditions of the spice route.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 2800.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Paragon Restaurant
   city: Kozhikode
   state: Kerala
@@ -3209,6 +5179,20 @@ places:
   family_friendly: true
   description: World-famous culinary landmark since 1939, hailed globally for legendary
     Malabar dum biryani, fish mango curry, and appams.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Alleppey Backwater Houseboat & Canals
   city: Alappuzha
   state: Kerala
@@ -3233,6 +5217,20 @@ places:
   family_friendly: true
   description: Serene glide through palm-fringed lagoons, paddy fields below sea level,
     and rustic backwater villages on a thatched kettuvallam.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 2500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Mattupetty Dam & Tea Gardens
   city: Munnar
   state: Kerala
@@ -3257,6 +5255,20 @@ places:
   family_friendly: true
   description: Concrete gravity dam nestled amidst emerald tea estates and misty Shola
     forests, offering speedboating and elephant spottings.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 150.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Banasura Sagar Earth Dam
   city: Wayanad
   state: Kerala
@@ -3281,6 +5293,20 @@ places:
   family_friendly: true
   description: India's largest earthen dam, with tiny island hillocks scattered across
     reservoir waters framed by mist-shrouded Banasura peaks.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Promenade Beach (Rock Beach)
   city: Puducherry
   state: Puducherry
@@ -3305,6 +5331,20 @@ places:
   family_friendly: true
   description: 1.5-kilometer stone sea-wall boulevard closed to traffic every evening
     for strolls past the Gandhi statue and French war memorial.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Coromandel Cafe & Craft Cocktails
   city: Puducherry
   state: Puducherry
@@ -3329,6 +5369,20 @@ places:
   family_friendly: true
   description: Stunning pastel-pink French colonial mansion cafe in White Town featuring
     lush courtyard palms, artisan pastas, and brioche.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1400.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Victoria Memorial
   city: Kolkata
   state: West Bengal
@@ -3353,6 +5407,20 @@ places:
   family_friendly: true
   description: Majestic white Makrana marble monument and 64-acre landscaped gardens
     dedicated to art, colonial history, and evening walks.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 30.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Princep Ghat
   city: Kolkata
   state: West Bengal
@@ -3377,6 +5445,20 @@ places:
   family_friendly: true
   description: Palladian porch riverside ghat on the Hooghly with wooden country boat
     rides under the illuminated Vidyasagar Setu cable bridge.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Flurys Tearoom Park Street
   city: Kolkata
   state: West Bengal
@@ -3401,6 +5483,20 @@ places:
   family_friendly: true
   description: European tea room founded in 1927 on Park Street, legendary for English
     breakfasts, rum balls, and Darjeeling second flush tea.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 800.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Peter Cat Chelo Kebab
   city: Kolkata
   state: West Bengal
@@ -3425,6 +5521,20 @@ places:
   family_friendly: true
   description: Nostalgic dim-lit restaurant with red leather booths and turbaned stewards
     serving iconic Iranian Chelo Kebabs with butter.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1400.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Tiger Hill Sunrise
   city: Darjeeling
   state: West Bengal
@@ -3449,6 +5559,20 @@ places:
   family_friendly: true
   description: Summit at 8,482 feet famous for dawn illumination of the twin peaks
     of Mount Kanchenjunga turning from pale pink to blazing gold.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Glenary's Bakery, Cafe & Pub
   city: Darjeeling
   state: West Bengal
@@ -3473,6 +5597,20 @@ places:
   family_friendly: true
   description: 130-year-old colonial bakery and terrace cafe on Nehru Road serving
     chocolate eclairs, apple pies, and craft beers with mountain views.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 700.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Lingaraj Temple
   city: Bhubaneswar
   state: Odisha
@@ -3497,6 +5635,20 @@ places:
   family_friendly: true
   description: 11th-century Kalinga architectural masterpiece standing 180 feet high
     with intricate sandstone carvings in the temple city.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Udayagiri and Khandagiri Caves
   city: Bhubaneswar
   state: Odisha
@@ -3521,6 +5673,20 @@ places:
   family_friendly: true
   description: Partly natural and rock-carved Jain hermit monk cells dating back to
     the 2nd century BC with Hathigumpha royal inscriptions.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 25.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Puri Golden Beach & Blue Flag Boardwalk
   city: Puri
   state: Odisha
@@ -3545,6 +5711,20 @@ places:
   family_friendly: true
   description: Certified Blue Flag eco-beach with golden sands, clean swimming zones,
     wooden sun deck boardwalks, and sunset sand art.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Konark Sun Temple
   city: Puri
   state: Odisha
@@ -3569,6 +5749,20 @@ places:
   family_friendly: true
   description: 13th-century UNESCO marvel sculpted as a colossal 24-wheeled chariot
     of Surya drawn by seven spirited stone horses.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 40.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Bihar Museum
   city: Patna
   state: Bihar
@@ -3593,6 +5787,20 @@ places:
   family_friendly: true
   description: World-class Japanese-designed contemporary museum housing the 2,300-year-old
     Didarganj Yakshi and historic Mauryan treasures.
+  opening_hours:
+    mon: *id036
+    tue: *id037
+    wed: *id038
+    thu: *id039
+    fri: *id040
+    sat: *id041
+    sun: *id042
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Marine Drive Ganga Pathway Patna
   city: Patna
   state: Bihar
@@ -3617,6 +5825,20 @@ places:
   family_friendly: true
   description: Vibrant riverside expressway promenade on the banks of the Ganges,
     popular for evening breezes, kulhad chai, and street snacks.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 20.0
 - name: Mahabodhi Temple & Bodhi Tree
   city: Bodh Gaya
   state: Bihar
@@ -3641,6 +5863,20 @@ places:
   family_friendly: true
   description: UNESCO World Heritage Buddhist shrine marking the exact sacred spot
     where Siddhartha Gautama attained enlightenment beneath the Bodhi tree.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Hundru Falls
   city: Ranchi
   state: Jharkhand
@@ -3665,6 +5901,20 @@ places:
   family_friendly: true
   description: Dramatic 320-foot waterfall formed by the Subarnarekha River cascading
     over rocks into a frothy natural pool.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 30.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Patratu Valley Viewpoint
   city: Ranchi
   state: Jharkhand
@@ -3689,6 +5939,20 @@ places:
   family_friendly: true
   description: Stunning serpentine ghat road winding through green hills with aerial
     viewpoints overlooking Patratu Dam reservoir.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Jubilee Park & Laser Fountains
   city: Jamshedpur
   state: Jharkhand
@@ -3713,6 +5977,20 @@ places:
   family_friendly: true
   description: 200-acre city park modeled after Mysore's Brindavan Gardens, gifted
     to the Steel City by Tata Steel with rose gardens and Jayanti Lake.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Telibandha Lake Marine Drive
   city: Raipur
   state: Chhattisgarh
@@ -3737,6 +6015,20 @@ places:
   family_friendly: true
   description: Clean urban lake promenade with India's monumental national flag mast,
     jogging tracks, street food stalls, and evening lights.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 20.0
 - name: Purkhouti Muktangan Cultural Park
   city: Raipur
   state: Chhattisgarh
@@ -3761,6 +6053,20 @@ places:
   family_friendly: true
   description: Expansive open-air cultural park showcasing authentic tribal folk art,
     Bastar terracotta sculptures, and traditional Chhattisgarh huts.
+  opening_hours:
+    mon: *id036
+    tue: *id037
+    wed: *id038
+    thu: *id039
+    fri: *id040
+    sat: *id041
+    sun: *id042
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 30.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Upper Lake (Bhojtal) & Boat Club
   city: Bhopal
   state: Madhya Pradesh
@@ -3785,6 +6091,20 @@ places:
   family_friendly: true
   description: 11th-century lake created by Raja Bhoj, offering cruise boats, kayaking,
     and sunset viewpoints along VIP Road.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Bharat Bhavan Multi-Arts Complex
   city: Bhopal
   state: Madhya Pradesh
@@ -3809,6 +6129,20 @@ places:
   family_friendly: true
   description: Charles Correa-designed terraced arts museum overlooking Bhojtal lake
     with tribal art galleries, sculpture courtyards, and poetry halls.
+  opening_hours:
+    mon: *id036
+    tue: *id037
+    wed: *id038
+    thu: *id039
+    fri: *id040
+    sat: *id041
+    sun: *id042
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Sarafa Bazaar Midnight Street Food
   city: Indore
   state: Madhya Pradesh
@@ -3833,6 +6167,20 @@ places:
   family_friendly: true
   description: Jewelry market by day that turns into an electrifying midnight street
     food haven serving Bhutte ka Kees, Garadu, and Dahi Vada.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 300.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: 56 Dukan (Chappan Dukan)
   city: Indore
   state: Madhya Pradesh
@@ -3857,6 +6205,20 @@ places:
   family_friendly: true
   description: Spotless open pedestrian food street of 56 legendary specialty snack
     shops serving crispy poha jalebi, kachoris, and hot dogs.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 250.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Gwalior Fort & Man Singh Palace
   city: Gwalior
   state: Madhya Pradesh
@@ -3881,6 +6243,20 @@ places:
   family_friendly: true
   description: Hilltop medieval fortress described by Babur as 'the pearl amongst
     fortresses in Hind', featuring vibrant turquoise glazed ceramic tilework.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 75.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Bhedaghat Marble Rocks & Dhuandhar
   city: Jabalpur
   state: Madhya Pradesh
@@ -3905,6 +6281,20 @@ places:
   family_friendly: true
   description: 100-foot soaring white marble river canyons along the Narmada River
     leading to the thunderous smoke-mist Dhuandhar waterfall.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Kamakhya Temple Nilachal Hill
   city: Guwahati
   state: Assam
@@ -3929,6 +6319,20 @@ places:
   family_friendly: true
   description: Ancient Shakti Peeth perched atop Nilachal Hill with beehive-shaped
     shikhara and sweeping views of the mighty Brahmaputra river.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Alfresco Grand Brahmaputra Cruise
   city: Guwahati
   state: Assam
@@ -3936,7 +6340,7 @@ places:
   subcategory: cruise
   lat: 26.1925
   lng: 91.7485
-  price_range: 3
+  price_range: 2
   average_cost: 1200
   indoor_outdoor: both
   ambience:
@@ -3953,6 +6357,20 @@ places:
   family_friendly: true
   description: Luxury river cruiser with open sundeck sunset sailings, Assamese folk
     dance performances, and candlelight dinner buffets.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1200.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Cafe Hendrix
   city: Guwahati
   state: Assam
@@ -3977,6 +6395,20 @@ places:
   family_friendly: false
   description: Northeast India's premier live blues and classic rock bar, famous for
     home-style Naga pork, craft brews, and indie jam nights.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 900.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Kaziranga National Park Rhino Safari
   city: Kaziranga
   state: Assam
@@ -4001,6 +6433,20 @@ places:
   family_friendly: true
   description: UNESCO World Heritage sanctuary home to two-thirds of the world's great
     one-horned rhinoceroses in tall elephant grass marshes.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1800.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Ward's Lake
   city: Shillong
   state: Meghalaya
@@ -4025,6 +6471,20 @@ places:
   family_friendly: true
   description: Horseshoe-shaped colonial lake surrounded by cherry blossom trees,
     wooden footbridges, swan pedal boats, and flower gardens.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Dylan's Cafe
   city: Shillong
   state: Meghalaya
@@ -4049,6 +6509,20 @@ places:
   family_friendly: true
   description: Bob Dylan-themed boutique cafe in Risa Colony filled with vinyl records,
     cozy cushion booths, chocolate fudge, and pancake stacks.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 650.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Umiam Lake (Barapani)
   city: Shillong
   state: Meghalaya
@@ -4073,6 +6547,20 @@ places:
   family_friendly: true
   description: Expansive emerald reservoir framed by pine hills, offering sunset kayaking,
     speedboats, and peaceful picnic viewpoints.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Double Decker Living Root Bridge
   city: Cherrapunji
   state: Meghalaya
@@ -4097,6 +6585,20 @@ places:
   family_friendly: false
   description: Bio-engineering marvel in Nongriat grown over centuries by Khasi tribes
     from living rubber tree roots across tropical stream gorges.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Nohkalikai Falls
   city: Cherrapunji
   state: Meghalaya
@@ -4121,6 +6623,20 @@ places:
   family_friendly: true
   description: India's tallest plunge waterfall (1,115 feet) dropping dramatically
     into a crystal turquoise plunge pool from verdant plateau cliffs.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 30.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: MG Marg Walking Promenade
   city: Gangtok
   state: Sikkim
@@ -4128,7 +6644,7 @@ places:
   subcategory: promenade
   lat: 27.3315
   lng: 88.6135
-  price_range: 1
+  price_range: 2
   average_cost: 0
   indoor_outdoor: outdoor
   ambience:
@@ -4145,6 +6661,34 @@ places:
   family_friendly: true
   description: Spotless vehicle-free pedestrian boulevard lined with Victorian lampposts,
     park benches, Himalayan cafes, and momo parlors.
+  opening_hours:
+    mon: &id043
+    - - '10:30'
+      - '22:00'
+    tue: &id044
+    - - '10:30'
+      - '22:00'
+    wed: &id045
+    - - '10:30'
+      - '22:00'
+    thu: &id046
+    - - '10:30'
+      - '22:00'
+    fri: &id047
+    - - '10:30'
+      - '22:00'
+    sat: &id048
+    - - '10:30'
+      - '22:00'
+    sun: &id049
+    - - '10:30'
+      - '22:00'
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1000.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 0.0
 - name: Rumtek Monastery
   city: Gangtok
   state: Sikkim
@@ -4169,6 +6713,20 @@ places:
   family_friendly: true
   description: Historic seat of the Karma Kagyu lineage, decorated with vibrant Tibetan
     murals, golden stupas, and green valley views.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Cafe Fiction & Rachna Books
   city: Gangtok
   state: Sikkim
@@ -4193,6 +6751,20 @@ places:
   family_friendly: true
   description: Award-winning independent bookstore and balcony cafe serving pour-over
     Sikkim coffee, handmade pastries, and regional literature.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Ganga Lake (Gyakar Sinyi)
   city: Itanagar
   state: Arunachal Pradesh
@@ -4217,6 +6789,20 @@ places:
   family_friendly: true
   description: Tranquil emerald-green forest lake enclosed by ancient virgin jungle,
     tree ferns, and wooden picnic walkways.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Tawang Monastery
   city: Tawang
   state: Arunachal Pradesh
@@ -4241,6 +6827,20 @@ places:
   family_friendly: true
   description: The second largest Buddhist monastery in the world, founded in 1680,
     perched like a fortress 10,000 feet high in the Himalayas.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Loktak Lake & Floating Phumdis
   city: Imphal
   state: Manipur
@@ -4265,6 +6865,20 @@ places:
   family_friendly: true
   description: Largest freshwater lake in Northeast India, famous for floating circular
     biomass islands (phumdis) and the Keibul Lamjao deer park.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Durtlang Hills Sunset Viewpoint
   city: Aizawl
   state: Mizoram
@@ -4289,6 +6903,20 @@ places:
   family_friendly: true
   description: High hilltop ridge providing sweeping panoramic vistas over the stepped
     colorful hill town of Aizawl and sunset skies.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Kohima War Cemetery
   city: Kohima
   state: Nagaland
@@ -4312,6 +6940,20 @@ places:
   family_friendly: true
   description: Meticulously maintained Commonwealth memorial on Garrison Hill, honoring
     Allied and Indian soldiers of the Battle of Kohima.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Ujjayanta Palace
   city: Agartala
   state: Tripura
@@ -4336,6 +6978,20 @@ places:
   family_friendly: true
   description: Neoclassical royal white palace set amidst Mughal-style formal water
     gardens, now serving as the state museum of Northeast culture.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Cellular Jail National Memorial
   city: Port Blair
   state: Andaman and Nicobar Islands
@@ -4360,6 +7016,20 @@ places:
   family_friendly: true
   description: Historic colonial penal fortress ('Kala Pani') with seven radial wings,
     martyr galleries, and an evocative evening sound-and-light show.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 30.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Radhanagar Beach (Beach No. 7)
   city: Havelock Island
   state: Andaman and Nicobar Islands
@@ -4384,6 +7054,20 @@ places:
   family_friendly: true
   description: Ranked among Asia's best beaches, famed for blinding white sands, turquoise
     calm waters, and dramatic rainforest sunset silhouettes.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Something Different - A Beachside Cafe
   city: Havelock Island
   state: Andaman and Nicobar Islands
@@ -4391,7 +7075,7 @@ places:
   subcategory: cafe
   lat: 12.0125
   lng: 92.9815
-  price_range: 3
+  price_range: 2
   average_cost: 1200
   indoor_outdoor: both
   ambience:
@@ -4408,6 +7092,20 @@ places:
   family_friendly: true
   description: Colorful seaside cafe on Vijaynagar Beach with beach swings, craft
     cocktails, freshly baked woodfired pizzas, and live acoustic music.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1200.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Anand Bhavan Heritage Museum
   city: Prayagraj
   state: Uttar Pradesh
@@ -4432,6 +7130,20 @@ places:
   family_friendly: true
   description: Historic ancestral home of the Nehru family set within landscaped gardens,
     showcasing memorabilia of India's freedom struggle.
+  opening_hours:
+    mon: *id036
+    tue: *id037
+    wed: *id038
+    thu: *id039
+    fri: *id040
+    sat: *id041
+    sun: *id042
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Allahabad Fort & Akshayavat
   city: Prayagraj
   state: Uttar Pradesh
@@ -4456,6 +7168,20 @@ places:
   family_friendly: true
   description: 1583 AD Mughal fortress commissioned by Akbar at the Sangam confluence,
     housing the Ashoka Pillar and sacred Akshayavat fig tree.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: El Chico Restaurant Civil Lines
   city: Prayagraj
   state: Uttar Pradesh
@@ -4463,7 +7189,7 @@ places:
   subcategory: fine_dining
   lat: 25.4525
   lng: 81.8345
-  price_range: 3
+  price_range: 2
   average_cost: 1200
   indoor_outdoor: indoor
   ambience:
@@ -4480,6 +7206,20 @@ places:
   family_friendly: true
   description: Legendary Civil Lines fine dining restaurant and patisserie dating
     back to 1964, famous for continental bakes and Indian classics.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1200.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Pavilion Mall & Rooftop Cafes
   city: Ludhiana
   state: Punjab
@@ -4504,6 +7244,20 @@ places:
   family_friendly: true
   description: Premier shopping and leisure destination with international boutiques,
     cinema halls, and rooftop specialty coffee lounges.
+  opening_hours:
+    mon: *id043
+    tue: *id044
+    wed: *id045
+    thu: *id046
+    fri: *id047
+    sat: *id048
+    sun: *id049
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 700.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Underdoggs Brewery & Sports Bar
   city: Ludhiana
   state: Punjab
@@ -4528,6 +7282,20 @@ places:
   family_friendly: false
   description: High-energy microbrewery and gaming bar featuring fresh craft beer
     on tap, pool tables, live sports screens, and pub food.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Baba Chicken Model Town
   city: Ludhiana
   state: Punjab
@@ -4552,6 +7320,20 @@ places:
   family_friendly: true
   description: The birthplace of Ludhiana's famous Butter Chicken with silky spiced
     gravy and tandoori naans, loved by generations of foodies.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 650.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Snow View Point Cable Car
   city: Nainital
   state: Uttarakhand
@@ -4576,6 +7358,20 @@ places:
   family_friendly: true
   description: Vantage peak at 7,450 feet reachable by aerial ropeway, commanding
     awe-inspiring panoramas of snow-capped Nanda Devi and Trishul.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 150.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Cafe Chica Heritage Garden
   city: Nainital
   state: Uttarakhand
@@ -4600,6 +7396,20 @@ places:
   family_friendly: true
   description: Enchanting garden cafe at Abbotsford estate tucked inside pine-covered
     hills, serving baked tarts, fresh quiches, and estate teas.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 750.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Highlands Park Retro Ski Lounge
   city: Gulmarg
   state: Jammu and Kashmir
@@ -4624,6 +7434,20 @@ places:
   family_friendly: true
   description: Legendary 1960s wooden ski-chalet lounge with vintage log fireplaces,
     walnut furniture, hot toddies, and snowy pine views.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Strawberry Valley Meadows
   city: Gulmarg
   state: Jammu and Kashmir
@@ -4648,6 +7472,20 @@ places:
   family_friendly: true
   description: Pristine emerald meadow hidden behind hills, dotted with wild strawberries
     in summer and soft powdery snowfields in winter.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 20.0
 - name: Amar Mahal Palace Museum
   city: Jammu
   state: Jammu and Kashmir
@@ -4672,6 +7510,20 @@ places:
   family_friendly: true
   description: French chateau-style red sandstone palace built in the 19th century
     overlooking the Tawi river, housing a 120kg pure gold throne.
+  opening_hours:
+    mon: *id036
+    tue: *id037
+    wed: *id038
+    thu: *id039
+    fri: *id040
+    sat: *id041
+    sun: *id042
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Raghunath Temple & Heritage Bazaar
   city: Jammu
   state: Jammu and Kashmir
@@ -4696,6 +7548,20 @@ places:
   family_friendly: true
   description: One of the largest temple complexes in Northern India, adorned with
     gold-plated interiors and surrounded by dry fruit bazaars.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Falak Revolving Restaurant
   city: Jammu
   state: Jammu and Kashmir
@@ -4720,6 +7586,20 @@ places:
   family_friendly: true
   description: Rooftop revolving restaurant offering 360-degree vistas of Jammu city
     and the Tawi valley paired with authentic Kashmiri Wazwan.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1400.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Deekshabhoomi Sacred Stupa
   city: Nagpur
   state: Maharashtra
@@ -4744,6 +7624,20 @@ places:
   family_friendly: true
   description: Asia's largest hollow Buddhist stupa, an architectural wonder with
     serene green lawns and intricate stone carvings.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Corridor Seven Coffee Roasters
   city: Nagpur
   state: Maharashtra
@@ -4768,6 +7662,29 @@ places:
   family_friendly: true
   description: Nationally celebrated specialty coffee roastery with industrial-chic
     aesthetics, single-origin manual brews, and craft bagels.
+  opening_hours:
+    mon:
+    - &id050
+      - 09:00
+      - '22:00'
+    tue:
+    - *id050
+    wed:
+    - *id050
+    thu:
+    - *id050
+    fri:
+    - *id050
+    sat:
+    - *id050
+    sun:
+    - *id050
+  opening_hours_source: osm
+  opening_hours_is_estimated: false
+  cost_for_two: 650.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Maharajbagh Zoo & Botanical Gardens
   city: Nagpur
   state: Maharashtra
@@ -4792,6 +7709,20 @@ places:
   family_friendly: true
   description: Historical garden built by Bhosle rulers in central Nagpur, with botanical
     herb gardens, tree-lined walking tracks, and wildlife.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 30.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Pandavleni Buddhist Caves
   city: Nashik
   state: Maharashtra
@@ -4816,6 +7747,20 @@ places:
   family_friendly: true
   description: 24 rock-cut Hinayana Buddhist caves dating to the 3rd century BC carved
     into the Trirashmi Hills with sweeping city views.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 25.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: York Winery & Tasting Cellar
   city: Nashik
   state: Maharashtra
@@ -4837,6 +7782,20 @@ places:
   family_friendly: false
   description: Boutique winery right on Gangapur Lake's edge, celebrated for sunset
     tastings on an open terrace and artisanal cheese boards.
+  opening_hours:
+    mon: *id008
+    tue: *id009
+    wed: *id010
+    thu: *id011
+    fri: *id012
+    sat: *id013
+    sun: *id014
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1400.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Trimbakeshwar Shiva Temple
   city: Nashik
   state: Maharashtra
@@ -4861,6 +7820,20 @@ places:
   family_friendly: true
   description: Ancient Jyotirlinga temple at the foothills of Brahmagiri mountain,
     where the holy Godavari river originates.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Bhushi Dam Cascades
   city: Lonavala
   state: Maharashtra
@@ -4885,6 +7858,20 @@ places:
   family_friendly: true
   description: Popular masonry dam where overflow cascades over tiered stone steps,
     surrounded by misty hill peaks and hot pakora stalls.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: German Bakery Wunderbar
   city: Lonavala
   state: Maharashtra
@@ -4909,6 +7896,20 @@ places:
   family_friendly: true
   description: Vibrant garden cafe famed for artisanal German rye breads, warm apple
     strudel, creamy cheesecakes, and outdoor fairy lights.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 800.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Karla & Bhaja Ancient Caves
   city: Lonavala
   state: Maharashtra
@@ -4933,6 +7934,20 @@ places:
   family_friendly: true
   description: 2nd-century BC rock-cut Buddhist shrines with India's largest rock-carved
     chaitya prayer hall and original wooden roof ribs.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 30.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Daulatabad Fort & Dark Labyrinth
   city: Chhatrapati Sambhajinagar
   state: Maharashtra
@@ -4957,6 +7972,20 @@ places:
   family_friendly: true
   description: Impregnable triangular hilltop fortress with steep moats, pitch-black
     subterranean trap passages (Andhari), and hilltop cannon views.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Ellora Caves - Kailasa Temple
   city: Chhatrapati Sambhajinagar
   state: Maharashtra
@@ -4981,6 +8010,20 @@ places:
   family_friendly: true
   description: The world's largest monolithic rock-cut structure (Cave 16), carved
     entirely top-down from a single basalt volcanic cliff.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 40.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Green Olive Restaurant
   city: Chhatrapati Sambhajinagar
   state: Maharashtra
@@ -5005,6 +8048,20 @@ places:
   family_friendly: true
   description: Elegant city dining room specializing in fragrant regional Biryanis,
     rich Mughlai gravies, and continental starters.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 850.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Surat Castle & Tapi Riverfront
   city: Surat
   state: Gujarat
@@ -5029,6 +8086,20 @@ places:
   family_friendly: true
   description: 16th-century fortress built by Khudawand Khan along the Tapi river,
     featuring moat drawbridges and historical exhibits.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 40.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Kansar Gujarati Thali Institution
   city: Surat
   state: Gujarat
@@ -5053,6 +8124,20 @@ places:
   family_friendly: true
   description: Iconic dining hall serving boundless traditional Surti Gujarati thalis
     with undhiyu, farsan, rotlis, and mango ras.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 450.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Gopi Talav Urban Lake
   city: Surat
   state: Gujarat
@@ -5077,6 +8162,20 @@ places:
   family_friendly: true
   description: Restored 15th-century historical stepped lake with illuminated water
     fountains, pedal boating, and walking promenades.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Sayaji Baug (Kamati Baug)
   city: Vadodara
   state: Gujarat
@@ -5101,6 +8200,20 @@ places:
   family_friendly: true
   description: 113-acre royal garden dedicated by Maharaja Sayajirao III in 1879,
     with a floral clock, vintage toy train ride, and river zoo.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Baroda Museum & Picture Gallery
   city: Vadodara
   state: Gujarat
@@ -5125,6 +8238,20 @@ places:
   family_friendly: true
   description: Victorian-era museum modeled after London's Victoria and Albert Museum,
     housing Japanese art, European masters, and an Egyptian mummy.
+  opening_hours:
+    mon: *id036
+    tue: *id037
+    wed: *id038
+    thu: *id039
+    fri: *id040
+    sat: *id041
+    sun: *id042
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 30.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Mandap Heritage Restaurant
   city: Vadodara
   state: Gujarat
@@ -5149,6 +8276,20 @@ places:
   family_friendly: true
   description: Renowned for traditional Kathiawadi hospitality inside a fabric-canopied
     dining tent, serving authentic seasonal Gujarati delicacies.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Pradhyuman Zoological Park & Lake
   city: Rajkot
   state: Gujarat
@@ -5173,6 +8314,20 @@ places:
   family_friendly: true
   description: 137-acre modern nature park on the edge of Lalpari Lake with Asiatic
     lions, leopards, migratory birds, and battery car tours.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 40.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: The Grand Thakar Heritage Thali
   city: Rajkot
   state: Gujarat
@@ -5197,6 +8352,20 @@ places:
   family_friendly: true
   description: Rajkot's most famous culinary institution since 1960 serving elaborate
     Gujarati thalis with puran poli and hot farsan.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 450.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Brahma Temple Pushkar
   city: Pushkar
   state: Rajasthan
@@ -5221,6 +8390,20 @@ places:
   family_friendly: true
   description: One of very few existing temples dedicated to Lord Brahma in the world,
     built of marble slabs with a red shikhara spire.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Sunset Cafe Pushkar Lake
   city: Pushkar
   state: Rajasthan
@@ -5245,6 +8428,20 @@ places:
   family_friendly: true
   description: Charming lakeside stone cafe directly overlooking Jaipur Ghat, famous
     for evening drum circles, fresh falafels, and masala chai.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 350.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Savitri Devi Temple Ropeway
   city: Pushkar
   state: Rajasthan
@@ -5269,6 +8466,20 @@ places:
   family_friendly: true
   description: Ratnagiri hilltop temple reachable by cable car, offering 360-degree
     aerial views over Pushkar town, lake, and sand dunes.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 120.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Bhoga Nandeeshwara Temple Base
   city: Nandi Hills
   state: Karnataka
@@ -5293,6 +8504,20 @@ places:
   family_friendly: true
   description: Exquisite 9th-century Nolamba-Chola-Hoysala temple at Nandi village
     base with a magnificent stepped stone kalyani water tank.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Discovery Village Hillside Diner
   city: Nandi Hills
   state: Karnataka
@@ -5317,6 +8542,20 @@ places:
   family_friendly: true
   description: Lush hillside garden retreat with open verandas, mountain breezes,
     regional South Indian breakfasts, and adventure rope bridges.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 850.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Kudle Beach Sunset & Shacks
   city: Gokarna
   state: Karnataka
@@ -5341,6 +8580,20 @@ places:
   family_friendly: true
   description: Wide crescent bay flanked by hillocks, beloved for gentle swimming
     waves, beachfront candlelit cafes, and sunset drum circles.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Namaste Cafe Om Beach
   city: Gokarna
   state: Karnataka
@@ -5365,6 +8618,20 @@ places:
   family_friendly: true
   description: Cliffside terrace cafe perched over the breaking surf of Om Beach,
     serving fresh catch, Israeli breakfast, and cold coffees.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 650.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Virupaksha Temple & Hampi Bazaar
   city: Hampi
   state: Karnataka
@@ -5389,6 +8656,20 @@ places:
   family_friendly: true
   description: Living 7th-century Dravidian temple complex on the Tungabhadra River
     with a 160-foot gopuram and ancient columned bazaar street.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 25.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Mango Tree Restaurant Hampi
   city: Hampi
   state: Karnataka
@@ -5413,6 +8694,20 @@ places:
   family_friendly: true
   description: Beloved Bohemian garden eatery with floor cushion seating, serving
     nutritious South Indian thalis, Israeli platters, and banoffee pie.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Baba Budangiri Mountain Ridge
   city: Chikmagalur
   state: Karnataka
@@ -5437,6 +8732,20 @@ places:
   family_friendly: true
   description: Crescent mountain range named after the Sufi saint who first brought
     coffee to India, with mystic caves and misty cliff trails.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Coffee Yatra Museum & Estate Brews
   city: Chikmagalur
   state: Karnataka
@@ -5461,6 +8770,20 @@ places:
   family_friendly: true
   description: Interactive museum by the Coffee Board of India charting coffee history
     and processing, paired with fresh single-estate tastings.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Town Canteen Heritage Dosa
   city: Chikmagalur
   state: Karnataka
@@ -5485,6 +8808,20 @@ places:
   family_friendly: true
   description: Beloved retro diner since the 1960s famous for crisp Golden Butter
     Masala Dosa and strong Malnad chicory filter coffee.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 150.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Tannirbhavi Beach & Pine Tree Park
   city: Mangaluru
   state: Karnataka
@@ -5509,6 +8846,20 @@ places:
   family_friendly: true
   description: Serene shoreline accessible by Gurupura river ferry, featuring a tree
     park with casuarina groves and uncrowded golden sands.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Giri Manja's Seafood Kitchen
   city: Mangaluru
   state: Karnataka
@@ -5533,6 +8884,20 @@ places:
   family_friendly: true
   description: Legendary tiled-roof old Mangalore home turned seafood haven, acclaimed
     for tawa fried kingfish (anjal) and prawn ghee roast.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Pabbas Ideal Cafe
   city: Mangaluru
   state: Karnataka
@@ -5557,6 +8922,20 @@ places:
   family_friendly: true
   description: Cult dessert institution since 1975, birthplace of the legendary Gadbad
     ice cream layered with jelly, nuts, and fresh fruits.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 250.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: St. Mary's Island Basalt Rock Formations
   city: Udupi
   state: Karnataka
@@ -5581,6 +8960,20 @@ places:
   family_friendly: true
   description: National Geological Monument reachable by boat from Malpe, showcasing
     hexagonal columnar basalt lava cliffs formed 88 million years ago.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 350.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Sri Krishna Matha & Kanakana Kindi
   city: Udupi
   state: Karnataka
@@ -5605,6 +8998,20 @@ places:
   family_friendly: true
   description: 13th-century Dvaita monastery founded by Madhvacharya, where Lord Krishna
     is viewed through a nine-holed silver window (Kanakana Kindi).
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Mitra Samaj Heritage Diner
   city: Udupi
   state: Karnataka
@@ -5629,6 +9036,20 @@ places:
   family_friendly: true
   description: Century-old culinary landmark adjoining Car Street, famous for authentic
     Udupi sambar, goli baje, and crisp masala dosa.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 150.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Bisle Ghat Biodiversity Viewpoint
   city: Sakleshpur
   state: Karnataka
@@ -5653,6 +9074,20 @@ places:
   family_friendly: true
   description: Breathtaking panoramic platform commanding endless unbroken vistas
     of three Western Ghats ranges (Kumara Parvatha, Pushpagiri, Dodda Betta).
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Magajahalli (Hanbal) Falls
   city: Sakleshpur
   state: Karnataka
@@ -5677,6 +9112,20 @@ places:
   family_friendly: true
   description: 20-foot cascading mountain waterfall surrounded by cardamom estates
     and natural rock pools ideal for a relaxing dip.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Nrupatunga Betta Hill Viewpoint
   city: Hubballi
   state: Karnataka
@@ -5701,6 +9150,20 @@ places:
   family_friendly: true
   description: Elevated hillock offering sweeping sunset vistas over Hubballi-Dharwad,
     with paved walkway tracks and garden sitting areas.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Chandramouleshwara Temple
   city: Hubballi
   state: Karnataka
@@ -5725,6 +9188,20 @@ places:
   family_friendly: true
   description: 900-year-old Badami Chalukyan black granite stone temple with intricately
     sculpted four-door sanctums and ornamental carvings.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Gokak Falls & Suspension Bridge
   city: Belagavi
   state: Karnataka
@@ -5749,6 +9226,20 @@ places:
   family_friendly: true
   description: 170-foot horseshoe waterfall resembling Niagara on the Ghataprabha
     River, spanned by a 200-meter hanging pedestrian suspension bridge.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Military Mahadeva Temple & Gardens
   city: Belagavi
   state: Karnataka
@@ -5773,6 +9264,20 @@ places:
   family_friendly: true
   description: Beautiful stone Shiva temple managed by the Maratha Light Infantry,
     enclosed by manicured gardens and quiet walking alleys.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Marudhamalai Murugan Hill Temple
   city: Coimbatore
   state: Tamil Nadu
@@ -5797,6 +9302,20 @@ places:
   family_friendly: true
   description: 12th-century hill shrine atop Western Ghats slopes, surrounded by rare
     medicinal herbs and offering panoramic valley vistas.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Sree Annapoorna Sambar Vadai
   city: Coimbatore
   state: Tamil Nadu
@@ -5821,6 +9340,20 @@ places:
   family_friendly: true
   description: Legendary Coimbatore vegetarian food institution famed across South
     India for piping hot sambar vadai, roast dosas, and filter coffee.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 250.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Brookefields Mall & Entertainment
   city: Coimbatore
   state: Tamil Nadu
@@ -5845,6 +9378,20 @@ places:
   family_friendly: true
   description: Major urban shopping center featuring international retail, multiplex
     cinemas, family entertainment zones, and diverse food court.
+  opening_hours:
+    mon: *id043
+    tue: *id044
+    wed: *id045
+    thu: *id046
+    fri: *id047
+    sat: *id048
+    sun: *id049
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 800.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Thirumalai Nayakkar Mahal
   city: Madurai
   state: Tamil Nadu
@@ -5869,6 +9416,20 @@ places:
   family_friendly: true
   description: 1636 AD palace blending Italian and Dravidian architecture, with massive
     circular pillars, grand stuccowork domes, and sound-and-light shows.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Murugan Idli Shop & Famous Jigarthanda
   city: Madurai
   state: Tamil Nadu
@@ -5893,6 +9454,20 @@ places:
   family_friendly: true
   description: World-famous idli diner known for melt-in-mouth steamed rice cakes
     with four chutneys, finished with chilled sweet Madurai Jigarthanda.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 250.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Pillar Rocks & Guna Caves
   city: Kodaikanal
   state: Tamil Nadu
@@ -5917,6 +9492,20 @@ places:
   family_friendly: true
   description: Three vertical granite rock pillars rising 400 feet into the clouds,
     with mist-covered forested gorges and deep cavern views.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Cloud Street Cafe Kodaikanal
   city: Kodaikanal
   state: Tamil Nadu
@@ -5941,6 +9530,20 @@ places:
   family_friendly: true
   description: Charming hillside wooden cafe with woodfired sourdough pizza ovens,
     warm chocolate brownies, cozy fire pits, and garden tables.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 650.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Warangal Fort & Kakatiya Kala Thoranam
   city: Warangal
   state: Telangana
@@ -5965,6 +9568,20 @@ places:
   family_friendly: true
   description: 13th-century capital fort ruins featuring four massive ornamental granite
     gateway arches that inspired Telangana's official emblem.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 25.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Bhadrakali Lake Promenade
   city: Warangal
   state: Telangana
@@ -5989,6 +9606,20 @@ places:
   family_friendly: true
   description: Scenic lakefront promenade with historic temple vistas, illuminated
     night pathways, landscaped lawns, and bird watching.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 20.0
 - name: Tirumala Srivari Mettu & Footpath Trail
   city: Tirupati
   state: Andhra Pradesh
@@ -6013,6 +9644,20 @@ places:
   family_friendly: true
   description: Scenic hill walking stairway through Seshachalam Biosphere Reserve,
     climbing to the sacred Tirumala shrine with forest breeze.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Silathoranam Natural Stone Arch
   city: Tirupati
   state: Andhra Pradesh
@@ -6037,6 +9682,20 @@ places:
   family_friendly: true
   description: Rare natural rock arch of Precambrian quartzite, one of only three
     such geological formations in the world, set in gardens.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Kozhikode Beach & Old Pier
   city: Kozhikode
   state: Kerala
@@ -6061,6 +9720,20 @@ places:
   family_friendly: true
   description: Historic Malabar beach famous for 150-year-old crumbling sea piers,
     sunset walks, and Kallummakkaya (stuffed mussels) stalls.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Hug a Mug Cafe Kozhikode
   city: Kozhikode
   state: Kerala
@@ -6085,6 +9758,20 @@ places:
   family_friendly: true
   description: Youthful contemporary cafe with quirky wall murals, thick chocolate
     milkshakes, gourmet waffles, and board games.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Marari Beach Golden Sands
   city: Alappuzha
   state: Kerala
@@ -6109,6 +9796,20 @@ places:
   family_friendly: true
   description: Tranquil fishing village beach dotted with swaying coconut palms, soft
     golden sands, Ayurvedic resorts, and gentle waves.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Cafe Catamaran Beachfront
   city: Alappuzha
   state: Kerala
@@ -6133,6 +9834,20 @@ places:
   family_friendly: true
   description: Beachfront balcony cafe serving European breakfast, freshly caught
     grilled fish, cold coffees, and sunset Arabian Sea views.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 600.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Eravikulam National Park Nilgiri Tahr
   city: Munnar
   state: Kerala
@@ -6140,7 +9855,7 @@ places:
   subcategory: nature
   lat: 10.1515
   lng: 77.0625
-  price_range: 2
+  price_range: 1
   average_cost: 250
   indoor_outdoor: outdoor
   ambience:
@@ -6157,6 +9872,20 @@ places:
   family_friendly: true
   description: 97 sq km high-altitude sanctuary on the slopes of Anamudi (South India's
     highest peak), home to the friendly Nilgiri Tahr mountain goat.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 250.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Rapsy Restaurant Munnar Town
   city: Munnar
   state: Kerala
@@ -6181,6 +9910,20 @@ places:
   family_friendly: true
   description: Legendary backpacker haven in Munnar town serving flaky Kerala parottas,
     beef fry, Spanish omelettes, and spiced chai.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 300.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Edakkal Prehistoric Rock Caves
   city: Wayanad
   state: Kerala
@@ -6205,6 +9948,20 @@ places:
   family_friendly: true
   description: Neolithic rock shelters at 4,000 feet containing petroglyphic carvings
     dating from 6000 BC, reached by a scenic uphill climb.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Wilton Restaurant Sultan Bathery
   city: Wayanad
   state: Kerala
@@ -6229,6 +9986,20 @@ places:
   family_friendly: true
   description: Popular multi-cuisine hub renowned for Malabar dum biryani, bamboo
     chicken, and appams with spiced mutton stew.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Great Buddha 80-Foot Statue
   city: Bodh Gaya
   state: Bihar
@@ -6253,6 +10024,20 @@ places:
   family_friendly: true
   description: Colossal 25-meter statue of Lord Buddha carved in red sandstone and
     granite by 12,000 stonemasons, set in floral gardens.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Be Happy Cafe Bodh Gaya
   city: Bodh Gaya
   state: Bihar
@@ -6277,6 +10062,20 @@ places:
   family_friendly: true
   description: Peaceful garden and rooftop cafe famous for handmade thin-crust Italian
     pizzas, apple crumbles, organic herbal teas, and salads.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 550.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Dimna Lake & Dalma Foothills
   city: Jamshedpur
   state: Jharkhand
@@ -6301,6 +10100,20 @@ places:
   family_friendly: true
   description: Picturesque reservoir lake nestled beneath the forested Dalma mountain
     range, offering boating, jet skiing, and sunrise drives.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Cafe Regal Heritage Jamshedpur
   city: Jamshedpur
   state: Jharkhand
@@ -6325,6 +10138,20 @@ places:
   family_friendly: true
   description: Vintage tearoom and cafe in a restored heritage building with period
     decor, artisanal sandwiches, pastries, and French press coffee.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 650.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Jai Vilas Palace & Scindia Museum
   city: Gwalior
   state: Madhya Pradesh
@@ -6332,7 +10159,7 @@ places:
   subcategory: palace
   lat: 26.2045
   lng: 78.1675
-  price_range: 2
+  price_range: 1
   average_cost: 250
   indoor_outdoor: both
   ambience:
@@ -6349,6 +10176,20 @@ places:
   family_friendly: true
   description: European-styled palace featuring the world's largest pair of chandeliers
     (3.5 tons each) and a silver electric toy train serving dinner guests.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 250.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Silver Saloon Heritage Dining
   city: Gwalior
   state: Madhya Pradesh
@@ -6373,6 +10214,20 @@ places:
   family_friendly: true
   description: Opulent restaurant inside Taj Usha Kiran Palace serving royal Maratha
     and Gwalior culinary specialties amidst courtyards.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1800.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Dhuandhar Waterfall Narmada
   city: Jabalpur
   state: Madhya Pradesh
@@ -6397,6 +10252,20 @@ places:
   family_friendly: true
   description: Roaring waterfall where the Narmada River plunges 98 feet into a cloud
     of mist ('smoke cascade'), crossed by an aerial ropeway.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Indian Coffee House Sadar
   city: Jabalpur
   state: Madhya Pradesh
@@ -6421,6 +10290,20 @@ places:
   family_friendly: true
   description: Classic worker-cooperative coffee house with uniformed staff, serving
     traditional mutton cutlets, dosa, and piping hot filter coffee.
+  opening_hours:
+    mon: *id015
+    tue: *id016
+    wed: *id017
+    thu: *id018
+    fri: *id019
+    sat: *id020
+    sun: *id021
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 250.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Kaziranga Orchid & Biodiversity Park
   city: Kaziranga
   state: Assam
@@ -6445,6 +10328,20 @@ places:
   family_friendly: true
   description: Northeast India's largest botanical park housing 500+ wild orchid species,
     indigenous fish ponds, and traditional Bihu dance shows.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Mai-Hang Assamese Traditional Dining
   city: Kaziranga
   state: Assam
@@ -6469,6 +10366,20 @@ places:
   family_friendly: true
   description: Authentic bamboo-structured ethnic restaurant serving traditional Assamese
     thalis on bell-metal plates with bamboo shoot pork.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 550.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Ita Fort Historic Brick Citadel
   city: Itanagar
   state: Arunachal Pradesh
@@ -6493,6 +10404,20 @@ places:
   family_friendly: true
   description: 14th-century fortress built of 8 million ancient bricks that gives
     Itanagar its name, perched on a hill ridge overlooking the valley.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Jawaharlal Nehru State Museum
   city: Itanagar
   state: Arunachal Pradesh
@@ -6517,6 +10442,20 @@ places:
   family_friendly: true
   description: Rich ethnological museum displaying authentic tribal cane hats, hand-loomed
     textiles, musical instruments, and woodcarvings.
+  opening_hours:
+    mon: *id036
+    tue: *id037
+    wed: *id038
+    thu: *id039
+    fri: *id040
+    sat: *id041
+    sun: *id042
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Sela Pass 13,700ft & Paradise Lake
   city: Tawang
   state: Arunachal Pradesh
@@ -6541,6 +10480,20 @@ places:
   family_friendly: true
   description: High Himalayan motorable pass adorned with Tibetan prayer flags and
     frozen twin alpine lakes surrounded by snow peaks.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Woodland Restaurant Tawang
   city: Tawang
   state: Arunachal Pradesh
@@ -6565,6 +10518,20 @@ places:
   family_friendly: true
   description: Warm wooden diner in Tawang market famous for piping hot thukpa, hand-folded
     momos, gyathuk noodles, and butter tea.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 350.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Kangla Fort Royal Citadel
   city: Imphal
   state: Manipur
@@ -6589,6 +10556,20 @@ places:
   family_friendly: true
   description: Ancient seat of Meitei rulers on the banks of Imphal river, featuring
     moat walls, the sacred Kangla Sha dragons, and royal gardens.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Ima Keithel (Mother's Market)
   city: Imphal
   state: Manipur
@@ -6596,7 +10577,7 @@ places:
   subcategory: market
   lat: 24.8075
   lng: 93.9355
-  price_range: 1
+  price_range: 2
   average_cost: 0
   indoor_outdoor: both
   ambience:
@@ -6613,6 +10594,20 @@ places:
   family_friendly: true
   description: A 500-year-old market run entirely by over 5,000 married women traders,
     selling handloom phaneks, spices, fresh produce, and local crafts.
+  opening_hours:
+    mon: *id043
+    tue: *id044
+    wed: *id045
+    thu: *id046
+    fri: *id047
+    sat: *id048
+    sun: *id049
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 1000.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 0.0
 - name: Solomon's Temple Chawlhhmun
   city: Aizawl
   state: Mizoram
@@ -6637,6 +10632,20 @@ places:
   family_friendly: true
   description: Grand white marble church situated on a peaceful plateau with four
     corner towers and natural pine forest walks.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Chopstyx Restaurant Chanmari
   city: Aizawl
   state: Mizoram
@@ -6661,6 +10670,20 @@ places:
   family_friendly: true
   description: Trendy city-center restaurant serving Pan-Asian cuisine, Korean ramen
     bowls, traditional smoked pork, and herbal teas.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 500.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Kisama Naga Heritage Village
   city: Kohima
   state: Nagaland
@@ -6685,6 +10708,20 @@ places:
   family_friendly: true
   description: Open-air living museum showcasing traditional Morung dormitories of
     all 16 Naga tribes, home to the global Hornbill Festival.
+  opening_hours:
+    mon: *id036
+    tue: *id037
+    wed: *id038
+    thu: *id039
+    fri: *id040
+    sat: *id041
+    sun: *id042
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Dzukou Valley Trek Base
   city: Kohima
   state: Nagaland
@@ -6709,6 +10746,20 @@ places:
   family_friendly: false
   description: Renowned high-altitude valley of rolling bamboo-carpeted hills, crystal-clear
     streams, and rare seasonal Dzukou lilies.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Neermahal Water Palace Rudrasagar
   city: Agartala
   state: Tripura
@@ -6733,6 +10784,20 @@ places:
   family_friendly: true
   description: Enchanting royal water palace floating in the middle of Rudrasagar
     Lake, reached by boat and illuminated by night.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 60.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Heritage Park Agartala
   city: Agartala
   state: Tripura
@@ -6757,6 +10822,20 @@ places:
   family_friendly: true
   description: Landscaped urban eco-park with miniature replicas of Tripura's architectural
     monuments, bamboo groves, and amphitheatre.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Ross Island (Netaji Subhash Bose Island)
   city: Port Blair
   state: Andaman and Nicobar Islands
@@ -6781,6 +10860,20 @@ places:
   family_friendly: true
   description: Atmospheric island ruins of the British colonial capital reclaimed
     by wild banyan tree roots, tame spotted deer, and peacocks.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Corbyn's Cove Beach & Water Sports
   city: Port Blair
   state: Andaman and Nicobar Islands
@@ -6805,6 +10898,20 @@ places:
   family_friendly: true
   description: Coconut-palm fringed crescent beach closest to the city center, offering
     jet skiing, speedboat rides, and seaside shacks.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Elephant Beach Snorkeling & Reef
   city: Havelock Island
   state: Andaman and Nicobar Islands
@@ -6829,6 +10936,20 @@ places:
   family_friendly: true
   description: Turquoise shallow reef reachable by boat or jungle trek, famous for
     sea walks, vibrant coral gardens, and snorkeling.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 800.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Brahmaputra Market Street Food
   city: Noida
   state: Uttar Pradesh
@@ -6853,6 +10974,20 @@ places:
   family_friendly: true
   description: Buzzing open-air food market in Sector 29 known for authentic Kolkata
     kathi rolls, galouti kebabs, momos, and fresh fruit chaat.
+  opening_hours:
+    mon: *id029
+    tue: *id030
+    wed: *id031
+    thu: *id032
+    fri: *id033
+    sat: *id034
+    sun: *id035
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 250.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Bhagsu Waterfall & Shiva Cafe
   city: Dharamshala
   state: Himachal Pradesh
@@ -6877,6 +11012,20 @@ places:
   family_friendly: true
   description: 20-meter mountain cascade reached by an easy stone trail, crowned by
     the legendary Bohemian Shiva Cafe perched among rocks.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 300.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Sahastradhara Sulphur Springs
   city: Dehradun
   state: Uttarakhand
@@ -6901,6 +11050,20 @@ places:
   family_friendly: true
   description: '''Thousand-fold spring'' where sulfur-rich mineral water cascades
     over limestone stalactites, with a ropeway to a hilltop temple.'
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Kempty Falls Cascades
   city: Mussoorie
   state: Uttarakhand
@@ -6925,6 +11088,20 @@ places:
   family_friendly: true
   description: Famous 40-foot mountain waterfall tumbling into natural pools at the
     bottom of a deep valley, surrounded by green hills.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Sajjangarh Monsoon Palace
   city: Udaipur
   state: Rajasthan
@@ -6949,6 +11126,20 @@ places:
   family_friendly: true
   description: Hilltop white marble palace perched high on Bansdara mountain, built
     to watch monsoon clouds and famed for dramatic sunset views.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Jaswant Thada White Marble Cenotaph
   city: Jodhpur
   state: Rajasthan
@@ -6973,6 +11164,20 @@ places:
   family_friendly: true
   description: '''Taj Mahal of Marwar'', a 19th-century royal cenotaph built of carved
     sheets of translucent marble that glow in the sun.'
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 30.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Gadisar Lake & Heritage Ghats
   city: Jaisalmer
   state: Rajasthan
@@ -6997,6 +11202,20 @@ places:
   family_friendly: true
   description: 14th-century artificial rainwater lake encircled by delicately carved
     yellow sandstone temples, chhatris, and evening boat rides.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 100.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Miramar Beach & Sunset Boulevard
   city: Panaji
   state: Goa
@@ -7021,6 +11240,20 @@ places:
   family_friendly: true
   description: Urban beach where the Mandovi River enters the Arabian Sea, featuring
     soft silver sands, casuarina trees, and sunset walks.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Colva Beach Promenade
   city: Margao
   state: Goa
@@ -7045,6 +11278,20 @@ places:
   family_friendly: true
   description: 24-kilometer stretch of powdery white sand lined with coconut palms,
     beach shacks, parasailing, and sea-view seafood eateries.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Chamundi Hill & Monolithic Nandi
   city: Mysuru
   state: Karnataka
@@ -7069,6 +11316,20 @@ places:
   family_friendly: true
   description: Hill shrine at 3,300 feet featuring a 16-foot monolithic black granite
     Nandi bull and sweeping panoramic views of Mysore palace city.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Dubare Elephant Camp & River Rafting
   city: Coorg
   state: Karnataka
@@ -7093,6 +11354,20 @@ places:
   family_friendly: true
   description: Eco-tourism camp on the Kaveri river banks where visitors can observe
     Asiatic elephants bathing and enjoy calm river rafting.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 150.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Doddabetta Peak & Telescope House
   city: Ooty
   state: Tamil Nadu
@@ -7117,6 +11392,20 @@ places:
   family_friendly: true
   description: Highest mountain in the Nilgiri Hills (8,650 feet) surrounded by sub-alpine
     Shola woods, offering binoculars viewing chambers.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 30.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Kanaka Durga Temple Indrakeeladri
   city: Vijayawada
   state: Andhra Pradesh
@@ -7141,6 +11430,20 @@ places:
   family_friendly: true
   description: Ancient hilltop temple on Indrakeeladri hill overlooking the Krishna
     River and Prakasam Barrage, central to Vijayawada's identity.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Mattancherry Palace & Jew Town
   city: Kochi
   state: Kerala
@@ -7165,6 +11468,20 @@ places:
   family_friendly: true
   description: 1555 AD Portuguese-built Dutch Palace famous for Ramayana murals, adjoining
     Jew Town's narrow lanes filled with antique shops.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 25.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Sree Padmanabhaswamy Temple
   city: Thiruvananthapuram
   state: Kerala
@@ -7189,6 +11506,20 @@ places:
   family_friendly: true
   description: World-famous Dravidian temple dedicated to Lord Vishnu reclining on
     Anantha, featuring a 100-foot gopuram and golden mandapams.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Auroville Matrimandir & Peace Area
   city: Puducherry
   state: Puducherry
@@ -7213,6 +11544,20 @@ places:
   family_friendly: true
   description: Golden geodesic dome situated in the experimental township of Auroville,
     surrounded by 12 tranquil petals gardens and amphitheatre.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Batasia Loop & War Memorial
   city: Darjeeling
   state: West Bengal
@@ -7237,6 +11582,20 @@ places:
   family_friendly: true
   description: Spiral railway engineering loop of the Darjeeling Toy Train passing
     through manicured gardens with 360-degree Kanchenjunga panoramas.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Ekamra Haat Arts & Crafts Village
   city: Bhubaneswar
   state: Odisha
@@ -7261,6 +11620,20 @@ places:
   family_friendly: true
   description: Open-air handicraft village of thatched huts selling authentic Odishan
     Pattachitra paintings, silver filigree, and ethnic delicacies.
+  opening_hours:
+    mon: *id043
+    tue: *id044
+    wed: *id045
+    thu: *id046
+    fri: *id047
+    sat: *id048
+    sun: *id049
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 0.0
 - name: Jagannath Temple Sacred Complex
   city: Puri
   state: Odisha
@@ -7285,6 +11658,20 @@ places:
   family_friendly: true
   description: 12th-century Kalinga-style holy temple complex of the Char Dham pilgrimage,
     home to the world's largest traditional temple kitchen (Ananda Bazar).
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: category_default
+  pricing_is_estimated: true
+  entry_fee: 50.0
 - name: Golghar Granary & Panoramic View
   city: Patna
   state: Bihar
@@ -7309,6 +11696,20 @@ places:
   family_friendly: true
   description: Massive 1786 beehive-shaped British granary with 145 twin spiral stone
     steps ascending to the top for views over the Ganges and city.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Tagore Hill Viewpoint
   city: Ranchi
   state: Jharkhand
@@ -7333,6 +11734,20 @@ places:
   family_friendly: true
   description: 300-foot rocky hillock associated with Rabindranath Tagore's brother
     Jyotirindranath Tagore, offering tranquil sunset vistas over Ranchi.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 10.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Nandan Van Jungle Safari
   city: Raipur
   state: Chhattisgarh
@@ -7340,7 +11755,7 @@ places:
   subcategory: zoo
   lat: 21.1885
   lng: 81.5685
-  price_range: 2
+  price_range: 1
   average_cost: 200
   indoor_outdoor: outdoor
   ambience:
@@ -7357,6 +11772,20 @@ places:
   family_friendly: true
   description: 800-acre man-made safari park featuring open-enclosure tiger, lion,
     and bear safaris beside the scenic Khandwa reservoir.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 200.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Van Vihar National Park Safari
   city: Bhopal
   state: Madhya Pradesh
@@ -7381,6 +11810,20 @@ places:
   family_friendly: true
   description: Open zoological national park stretching 5km along Bhojtal lake, popular
     for rented bicycle rides past free-roaming herbivores.
+  opening_hours:
+    mon: *id022
+    tue: *id023
+    wed: *id024
+    thu: *id025
+    fri: *id026
+    sat: *id027
+    sun: *id028
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 50.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 20.0
 - name: Rajwada Royal Palace & Light Show
   city: Indore
   state: Madhya Pradesh
@@ -7405,6 +11848,20 @@ places:
   family_friendly: true
   description: Seven-story Holkar dynasty royal palace built in 1766 combining Maratha
     and French styles, facing a garden square and musical fountains.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 20.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0
 - name: Mawsmai Limestone Cave
   city: Cherrapunji
   state: Meghalaya
@@ -7429,3 +11886,17 @@ places:
   family_friendly: true
   description: Natural lighted limestone cave system displaying spectacular hanging
     stalactites and rising stalagmites carved over millions of years.
+  opening_hours:
+    mon: *id001
+    tue: *id002
+    wed: *id003
+    thu: *id004
+    fri: *id005
+    sat: *id006
+    sun: *id007
+  opening_hours_source: category_default
+  opening_hours_is_estimated: true
+  cost_for_two: 30.0
+  pricing_source: repo_curated
+  pricing_is_estimated: false
+  entry_fee: 50.0

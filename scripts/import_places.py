@@ -81,6 +81,18 @@ def generate_mock_places(city: str, state: str, count: int, start_index: int = 1
         cat, subcat, cost, in_out, amb, tags, couple_f, friends_f, family_f = categories[i % len(categories)]
         lat_offset = round(random.uniform(-0.03, 0.03), 4)
         lng_offset = round(random.uniform(-0.03, 0.03), 4)
+
+        try:
+            from hours_pricing import get_category_default, compute_price_tier
+            cat_def = get_category_default(cat)
+            hours = dict(cat_def["hours"])
+            tier = compute_price_tier(float(cost))
+            entry_fee = 50.0 if cat in ("attraction", "museum") else (20.0 if cat == "park" else 0.0)
+        except Exception:
+            hours = {}
+            tier = (i % 3) + 1
+            entry_fee = 0.0
+
         mock_places.append({
             "name": f"{city} {subcat.capitalize()} Spot {idx}",
             "city": city,
@@ -89,8 +101,15 @@ def generate_mock_places(city: str, state: str, count: int, start_index: int = 1
             "subcategory": subcat,
             "lat": round(base_lat + lat_offset, 4),
             "lng": round(base_lng + lng_offset, 4),
-            "price_range": (i % 3) + 1,
+            "price_range": tier,
             "average_cost": cost,
+            "cost_for_two": float(cost),
+            "entry_fee": entry_fee,
+            "opening_hours": hours,
+            "opening_hours_source": "category_default",
+            "opening_hours_is_estimated": True,
+            "pricing_source": "category_default",
+            "pricing_is_estimated": True,
             "indoor_outdoor": in_out,
             "ambience": list(amb),
             "tags": list(tags),

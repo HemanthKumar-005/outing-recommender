@@ -17,9 +17,11 @@ def create_place(tenant_id: str, payload: dict[str, Any]) -> dict:
                 tenant_id, name, category, subcategory, price_range, average_cost,
                 rating, review_count, lat, lng, city, state, indoor_outdoor, ambience, tags,
                 description, family_friendly, couple_friendly, friends_friendly,
-                opening_hours
+                opening_hours, opening_hours_source, opening_hours_is_estimated,
+                entry_fee, cost_for_two, pricing_source, pricing_is_estimated
             ) VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                %s, %s, %s, %s, %s, %s, %s
             ) RETURNING *
             """,
             (
@@ -43,6 +45,12 @@ def create_place(tenant_id: str, payload: dict[str, Any]) -> dict:
                 payload.get("couple_friendly", False),
                 payload.get("friends_friendly", False),
                 Json(payload.get("opening_hours") or {}),
+                payload.get("opening_hours_source", "category_default"),
+                payload.get("opening_hours_is_estimated", True),
+                payload.get("entry_fee", 0.0),
+                payload.get("cost_for_two") or payload.get("average_cost"),
+                payload.get("pricing_source", "category_default"),
+                payload.get("pricing_is_estimated", True),
             ),
         )
         return cur.fetchone()
