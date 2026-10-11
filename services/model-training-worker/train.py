@@ -29,13 +29,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-# Add shared directory (works both inside Docker container and on local host/IDE)
-ROOT = Path(__file__).resolve().parents[2]
-SHARED_DIR = ROOT / "shared"
-if str(SHARED_DIR) not in sys.path and SHARED_DIR.is_dir():
-    sys.path.insert(0, str(SHARED_DIR))
 if os.path.isdir("/shared") and "/shared" not in sys.path:
     sys.path.insert(0, "/shared")
+for _p in Path(__file__).resolve().parents:
+    if (_p / "shared").is_dir():
+        _sp = str(_p / "shared")
+        if _sp not in sys.path:
+            sys.path.insert(0, _sp)
+        break
 
 try:
     # pyrefly: ignore [missing-import]

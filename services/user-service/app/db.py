@@ -10,7 +10,7 @@ def create_user(tenant_id: str, name: str, email: str, budget_min: int, budget_m
                  home_lat: float | None, home_lng: float | None,
                  age_group: str | None = None, preferred_distance_km: float = 10,
                  preferred_outing_type: str = "friends",
-                 preferred_occasions: list = None, preferred_duration: str = "4-6 hours") -> dict:
+                 preferred_occasions: list | None = None, preferred_duration: str = "4-6 hours") -> dict:
     if preferred_occasions is None:
         preferred_occasions = []
     with tenant_cursor(tenant_id) as cur:

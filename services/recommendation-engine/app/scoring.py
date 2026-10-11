@@ -1,8 +1,17 @@
 import math
+import os
 import sys
 from datetime import datetime
+from pathlib import Path
 
-sys.path.insert(0, "/shared")
+if os.path.isdir("/shared") and "/shared" not in sys.path:
+    sys.path.insert(0, "/shared")
+for _p in Path(__file__).resolve().parents:
+    if (_p / "shared").is_dir():
+        _sp = str(_p / "shared")
+        if _sp not in sys.path:
+            sys.path.insert(0, _sp)
+        break
 from ranking_config import load_config  # noqa: E402
 
 
@@ -97,13 +106,6 @@ def weather_suitability(place: dict, context: dict) -> float:
     return 0.8
 
 
-from pathlib import Path
-_ROOT = Path(__file__).resolve().parents[3]
-if (_ROOT / "shared").is_dir():
-    sys.path.insert(0, str(_ROOT / "shared"))
-
-sys.path.insert(0, "/shared")
-from ranking_config import load_config  # noqa: E402
 from hours_pricing import evaluate_place_hours  # noqa: E402
 
 

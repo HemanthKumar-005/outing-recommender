@@ -17,11 +17,14 @@ from fastapi import Depends, FastAPI
 from pydantic import BaseModel, Field
 from pathlib import Path
 
-_ROOT = Path(__file__).resolve().parents[3]
-if (_ROOT / "shared").is_dir() and str(_ROOT / "shared") not in sys.path:
-    sys.path.insert(0, str(_ROOT / "shared"))
 if os.path.isdir("/shared") and "/shared" not in sys.path:
     sys.path.insert(0, "/shared")
+for _p in Path(__file__).resolve().parents:
+    if (_p / "shared").is_dir():
+        _sp = str(_p / "shared")
+        if _sp not in sys.path:
+            sys.path.insert(0, _sp)
+        break
 
 from config_loader import list_occasions_public, ranking_config  # noqa: E402
 from features import build_feature_vector  # noqa: E402

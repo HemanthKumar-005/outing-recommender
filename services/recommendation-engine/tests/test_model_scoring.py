@@ -23,8 +23,11 @@ for p in (str(SHARED_DIR), str(ENGINE_APP_DIR)):
     if p not in sys.path and os.path.isdir(p):
         sys.path.insert(0, p)
 
-from features import FEATURE_NAMES, FEATURE_VERSION, build_feature_vector  # noqa: E402
-from model import ModelManager  # noqa: E402
+try:
+    from shared.features import FEATURE_NAMES, FEATURE_VERSION, build_feature_vector  # type: ignore # noqa: E402
+except ImportError:
+    from features import FEATURE_NAMES, FEATURE_VERSION, build_feature_vector  # type: ignore # noqa: E402
+from model import ModelManager  # type: ignore # noqa: E402
 
 
 class TestModelScoringIntegration(unittest.TestCase):

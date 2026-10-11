@@ -1,13 +1,27 @@
+import os
 import sys
+from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
-sys.path.insert(0, "/shared")
-from eventbus import publish  # noqa: E402
-from tenant import require_tenant  # noqa: E402
+if os.path.isdir("/shared") and "/shared" not in sys.path:
+    sys.path.insert(0, "/shared")
+for _p in Path(__file__).resolve().parents:
+    if (_p / "shared").is_dir():
+        _sp = str(_p / "shared")
+        if _sp not in sys.path:
+            sys.path.insert(0, _sp)
+        break
 
-from app import db
+try:
+    from shared.eventbus import publish  # type: ignore # noqa: E402
+    from shared.tenant import require_tenant  # type: ignore # noqa: E402
+except ImportError:
+    from eventbus import publish  # type: ignore # noqa: E402
+    from tenant import require_tenant  # type: ignore # noqa: E402
+
+from . import db
 
 app = FastAPI(title="Interaction Tracking Service")
 
@@ -15,7 +29,8 @@ app = FastAPI(title="Interaction Tracking Service")
 class InteractionCreate(BaseModel):
     user_id: int
     place_id: int
-    type: str
+    type: str | None = None
+    event_type: str | None = None
     rating: float | None = Field(None, ge=0, le=5)
     context: dict = {}  # snapshot of context at interaction time (weather, time_of_day, etc.)
 
@@ -36,13 +51,19 @@ def ready(tenant_id: str = Depends(require_tenant)):
 
 @app.post("/interactions", status_code=201)
 def create_interaction(payload: InteractionCreate, tenant_id: str = Depends(require_tenant)):
-    if payload.type not in db.VALID_TYPES:
+    interaction_type = payload.type or payload.event_type
+    if not interaction_type or interaction_type not in db.VALID_TYPES:
         raise HTTPException(status_code=400, detail=f"type must be one of {sorted(db.VALID_TYPES)}")
     interaction = db.create_interaction(
-        tenant_id, payload.user_id, payload.place_id, payload.type, payload.rating, payload.context,
+        tenant_id, payload.user_id, payload.place_id, interaction_type, payload.rating, payload.context,
     )
     publish("interactions", interaction)
     return interaction
+
+
+@app.post("/events", status_code=201)
+def create_event(payload: InteractionCreate, tenant_id: str = Depends(require_tenant)):
+    return create_interaction(payload, tenant_id)
 
 
 @app.get("/users/{user_id}/interactions")
