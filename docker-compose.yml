@@ -223,9 +223,11 @@ services:
       args:
         NEXT_PUBLIC_API_URL: http://localhost:8000/api
         NEXT_PUBLIC_API_KEY: demo-key
+        NEXT_PUBLIC_GOOGLE_MAPS_KEY: ${NEXT_PUBLIC_GOOGLE_MAPS_KEY:-AIzaSyDG2G6jj3m3VG-RQCWbYjb-wDm00VCMTEE}
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8000/api
       NEXT_PUBLIC_API_KEY: demo-key
+      NEXT_PUBLIC_GOOGLE_MAPS_KEY: ${NEXT_PUBLIC_GOOGLE_MAPS_KEY:-AIzaSyDG2G6jj3m3VG-RQCWbYjb-wDm00VCMTEE}
     depends_on:
       - api-gateway
     ports:

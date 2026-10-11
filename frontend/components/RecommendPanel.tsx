@@ -4,6 +4,7 @@ import { useState } from "react";
 import LocationPicker, { type LocationSelection } from "./LocationPicker";
 import { apiFetch, type RecommendResponse, type Recommendation } from "../lib/api";
 import RecommendationCard from "./RecommendationCard";
+import GoogleMapView, { type MapPlace } from "./GoogleMapView";
 
 type RecommendPanelProps = {
   location?: LocationSelection | null;
@@ -31,6 +32,7 @@ export default function RecommendPanel({
   const [openNow, setOpenNow] = useState(false);
   const [budget, setBudget] = useState("");
   const [sortBy, setSortBy] = useState("match"); // "match" | "distance" | "price"
+  const [viewMode, setViewMode] = useState<"cards" | "split" | "map">("cards");
 
   const location = controlledLocation !== undefined ? controlledLocation : internalLocation;
   const setLocation = (loc: LocationSelection) => {
@@ -349,9 +351,39 @@ export default function RecommendPanel({
               {result.context.time_of_day || "Current time"} · {result.context.day_of_week || "Today"} ·{" "}
               {result.context.weather?.condition ? `${result.context.weather.condition}, ${result.context.weather.temp_c}°C` : "Kolkata Time (IST)"}
             </span>
-            <span style={{ color: "var(--muted, #6b7280)", fontSize: "0.85rem" }}>
-              {visible.length} venue{visible.length === 1 ? "" : "s"} found
-            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+              <span style={{ color: "var(--muted, #6b7280)", fontSize: "0.85rem" }}>
+                {visible.length} venue{visible.length === 1 ? "" : "s"} found
+              </span>
+              {visible.length > 0 && (
+                <div className="view-mode-pill" role="tablist" aria-label="Recommendation view layout">
+                  <button
+                    type="button"
+                    className={`view-mode-btn ${viewMode === "cards" ? "active" : ""}`}
+                    onClick={() => setViewMode("cards")}
+                    aria-label="Cards list view"
+                  >
+                    ☰ Cards
+                  </button>
+                  <button
+                    type="button"
+                    className={`view-mode-btn ${viewMode === "split" ? "active" : ""}`}
+                    onClick={() => setViewMode("split")}
+                    aria-label="Split cards and map view"
+                  >
+                    ◫ Split
+                  </button>
+                  <button
+                    type="button"
+                    className={`view-mode-btn ${viewMode === "map" ? "active" : ""}`}
+                    onClick={() => setViewMode("map")}
+                    aria-label="Full map view"
+                  >
+                    🗺️ Map
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Empty State with Helpful Next Steps */}
@@ -401,39 +433,129 @@ export default function RecommendPanel({
             </div>
           )}
 
-          {/* Recommendation Cards List */}
-          {visible.map((rec) => (
-            <RecommendationCard
-              key={rec.place.id}
-              name={rec.place.name}
-              category={rec.place.category}
-              match={Math.round(rec.score * 100)}
-              rating={rec.place.rating}
-              distance_km={rec.place.distance_km}
-              price_range={rec.place.price_range}
-              cost_for_two={rec.place.cost_for_two}
-              entry_fee={rec.place.entry_fee}
-              cost_text={rec.place.cost_text}
-              entry_text={rec.place.entry_text}
-              price_symbols={rec.place.price_symbols}
-              pricing_is_estimated={rec.place.pricing_is_estimated}
-              open_now={rec.place.open_now}
-              hours_status={rec.place.hours_status}
-              hours_detail={rec.place.hours_detail}
-              today_hours={rec.place.today_hours}
-              weekly_hours={rec.place.weekly_hours || rec.place.opening_hours}
-              lat={rec.place.lat}
-              lng={rec.place.lng}
-              city={rec.place.city || location?.city}
-              reason={rec.reasons?.[0]}
-              reasons={rec.reasons}
-              showWhy={expandedId === rec.place.id}
-              whyContent={JSON.stringify(rec.score_breakdown, null, 2)}
-              onLike={() => sendFeedback(rec.place.id, "like")}
-              onSkip={() => sendFeedback(rec.place.id, "skip")}
-              onWhy={() => setExpandedId(expandedId === rec.place.id ? null : rec.place.id)}
-            />
-          ))}
+          {/* Map Only View */}
+          {visible.length > 0 && viewMode === "map" && (
+            <div className="fade-in" style={{ marginTop: 14 }}>
+              <GoogleMapView
+                places={visible.map((rec) => ({
+                  id: rec.place.id,
+                  name: rec.place.name,
+                  category: rec.place.category,
+                  lat: rec.place.lat,
+                  lng: rec.place.lng,
+                  match: Math.round(rec.score * 100),
+                  rating: rec.place.rating,
+                  price_range: rec.place.price_range,
+                  cost_for_two: rec.place.cost_for_two,
+                  open_now: rec.place.open_now,
+                  city: rec.place.city || location?.city,
+                }))}
+                center={location ? { lat: location.lat, lng: location.lng } : undefined}
+                selectedId={expandedId}
+                onSelectPlace={(id) => setExpandedId(id)}
+                height={560}
+              />
+            </div>
+          )}
+
+          {/* Split Cards + Sticky Map View */}
+          {visible.length > 0 && viewMode === "split" && (
+            <div className="recommend-split-grid fade-in" style={{ marginTop: 14 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                {visible.map((rec) => (
+                  <RecommendationCard
+                    key={rec.place.id}
+                    name={rec.place.name}
+                    category={rec.place.category}
+                    match={Math.round(rec.score * 100)}
+                    rating={rec.place.rating}
+                    distance_km={rec.place.distance_km}
+                    price_range={rec.place.price_range}
+                    cost_for_two={rec.place.cost_for_two}
+                    entry_fee={rec.place.entry_fee}
+                    cost_text={rec.place.cost_text}
+                    entry_text={rec.place.entry_text}
+                    price_symbols={rec.place.price_symbols}
+                    pricing_is_estimated={rec.place.pricing_is_estimated}
+                    open_now={rec.place.open_now}
+                    hours_status={rec.place.hours_status}
+                    hours_detail={rec.place.hours_detail}
+                    today_hours={rec.place.today_hours}
+                    weekly_hours={rec.place.weekly_hours || rec.place.opening_hours}
+                    lat={rec.place.lat}
+                    lng={rec.place.lng}
+                    city={rec.place.city || location?.city}
+                    reason={rec.reasons?.[0]}
+                    reasons={rec.reasons}
+                    showWhy={expandedId === rec.place.id}
+                    whyContent={JSON.stringify(rec.score_breakdown, null, 2)}
+                    onLike={() => sendFeedback(rec.place.id, "like")}
+                    onSkip={() => sendFeedback(rec.place.id, "skip")}
+                    onWhy={() => setExpandedId(expandedId === rec.place.id ? null : rec.place.id)}
+                  />
+                ))}
+              </div>
+              <div className="map-sticky-container">
+                <GoogleMapView
+                  places={visible.map((rec) => ({
+                    id: rec.place.id,
+                    name: rec.place.name,
+                    category: rec.place.category,
+                    lat: rec.place.lat,
+                    lng: rec.place.lng,
+                    match: Math.round(rec.score * 100),
+                    rating: rec.place.rating,
+                    price_range: rec.place.price_range,
+                    cost_for_two: rec.place.cost_for_two,
+                    open_now: rec.place.open_now,
+                    city: rec.place.city || location?.city,
+                  }))}
+                  center={location ? { lat: location.lat, lng: location.lng } : undefined}
+                  selectedId={expandedId}
+                  onSelectPlace={(id) => setExpandedId(id)}
+                  height={540}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Cards Only View */}
+          {visible.length > 0 && viewMode === "cards" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 14 }}>
+              {visible.map((rec) => (
+                <RecommendationCard
+                  key={rec.place.id}
+                  name={rec.place.name}
+                  category={rec.place.category}
+                  match={Math.round(rec.score * 100)}
+                  rating={rec.place.rating}
+                  distance_km={rec.place.distance_km}
+                  price_range={rec.place.price_range}
+                  cost_for_two={rec.place.cost_for_two}
+                  entry_fee={rec.place.entry_fee}
+                  cost_text={rec.place.cost_text}
+                  entry_text={rec.place.entry_text}
+                  price_symbols={rec.place.price_symbols}
+                  pricing_is_estimated={rec.place.pricing_is_estimated}
+                  open_now={rec.place.open_now}
+                  hours_status={rec.place.hours_status}
+                  hours_detail={rec.place.hours_detail}
+                  today_hours={rec.place.today_hours}
+                  weekly_hours={rec.place.weekly_hours || rec.place.opening_hours}
+                  lat={rec.place.lat}
+                  lng={rec.place.lng}
+                  city={rec.place.city || location?.city}
+                  reason={rec.reasons?.[0]}
+                  reasons={rec.reasons}
+                  showWhy={expandedId === rec.place.id}
+                  whyContent={JSON.stringify(rec.score_breakdown, null, 2)}
+                  onLike={() => sendFeedback(rec.place.id, "like")}
+                  onSkip={() => sendFeedback(rec.place.id, "skip")}
+                  onWhy={() => setExpandedId(expandedId === rec.place.id ? null : rec.place.id)}
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
