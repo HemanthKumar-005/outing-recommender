@@ -1,13 +1,27 @@
+import os
 import sys
+from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel, EmailStr, Field
 
-sys.path.insert(0, "/shared")
-from eventbus import publish  # noqa: E402
-from tenant import require_tenant  # noqa: E402
+if os.path.isdir("/shared") and "/shared" not in sys.path:
+    sys.path.insert(0, "/shared")
+for _p in Path(__file__).resolve().parents:
+    if (_p / "shared").is_dir():
+        _sp = str(_p / "shared")
+        if _sp not in sys.path:
+            sys.path.insert(0, _sp)
+        break
 
-from app import db
+try:
+    from shared.eventbus import publish  # type: ignore # noqa: E402
+    from shared.tenant import require_tenant  # type: ignore # noqa: E402
+except ImportError:
+    from eventbus import publish  # type: ignore # noqa: E402
+    from tenant import require_tenant  # type: ignore # noqa: E402
+
+from . import db
 
 app = FastAPI(title="User Service")
 

@@ -1,18 +1,22 @@
 """Place catalog service — CRUD + surprise sampling."""
 from __future__ import annotations
 
+import os
 import sys
+from pathlib import Path
 from typing import Any
 
 from fastapi import Depends, FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from pathlib import Path
-_ROOT = Path(__file__).resolve().parents[3]
-if (_ROOT / "shared").is_dir():
-    sys.path.insert(0, str(_ROOT / "shared"))
-
-sys.path.insert(0, "/shared")
+if os.path.isdir("/shared") and "/shared" not in sys.path:
+    sys.path.insert(0, "/shared")
+for _p in Path(__file__).resolve().parents:
+    if (_p / "shared").is_dir():
+        _sp = str(_p / "shared")
+        if _sp not in sys.path:
+            sys.path.insert(0, _sp)
+        break
 from config_loader import (  # noqa: E402
     default_search_radius_km,
     list_cities,

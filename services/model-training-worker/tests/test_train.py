@@ -23,8 +23,11 @@ for p in (str(SHARED_DIR), str(WORKER_DIR)):
         sys.path.insert(0, p)
 
 import numpy as np  # noqa: E402
-import train  # noqa: E402
-from features import FEATURE_NAMES, FEATURE_VERSION  # noqa: E402
+import train  # type: ignore # noqa: E402
+try:
+    from shared.features import FEATURE_NAMES, FEATURE_VERSION  # type: ignore # noqa: E402
+except ImportError:
+    from features import FEATURE_NAMES, FEATURE_VERSION  # type: ignore # noqa: E402
 
 
 class TestModelTrainingWorker(unittest.TestCase):
