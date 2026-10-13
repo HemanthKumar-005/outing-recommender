@@ -79,7 +79,8 @@ jobs:
 
       - name: Install Test Dependencies
         run: |
-          pip install pytest httpx fastapi pydantic pyyaml redis xgboost numpy scikit-learn
+          pip install pytest httpx fastapi pydantic pyyaml redis xgboost numpy scikit-learn "psycopg[binary]" psycopg-pool pika
+
 
       - name: Run Pytest Test Suite
         run: |
