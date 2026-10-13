@@ -64,3 +64,24 @@ jobs:
         run: |
           npm ci
           npm run build
+
+  test-services:
+    name: Run Python Microservice Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Test Dependencies
+        run: |
+          pip install pytest httpx fastapi pydantic pyyaml redis xgboost numpy scikit-learn
+
+      - name: Run Pytest Test Suite
+        run: |
+          python -m pytest services/
+

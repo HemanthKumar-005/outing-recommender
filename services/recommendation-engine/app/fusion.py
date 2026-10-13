@@ -26,6 +26,7 @@ def fuse_candidate(
     *,
     occasion: str | None,
     n_positive_interactions: int = 0,
+    weight_overrides: dict[str, float] | None = None,
 ) -> tuple[float, list[str], dict[str, float]]:
     """
     components: precomputed content, collaborative, ml, context, distance,
@@ -33,6 +34,15 @@ def fuse_candidate(
     Returns (final_score, reasons, breakdown).
     """
     weights = profile_weights(n_positive_interactions)
+    if weight_overrides:
+        merged = dict(weights)
+        for k, v in weight_overrides.items():
+            if k in merged and isinstance(v, (int, float)):
+                merged[k] = max(0.0, min(1.0, float(v)))
+        tot = sum(merged.values())
+        if tot > 0:
+            weights = {k: v / tot for k, v in merged.items()}
+
     occ_s, occ_reasons = occasion_score(place, occasion)
     breakdown = {**components, "occasion": occ_s}
 
@@ -48,3 +58,4 @@ def fuse_candidate(
 
     reasons = list(occ_reasons)
     return fused, reasons, breakdown
+

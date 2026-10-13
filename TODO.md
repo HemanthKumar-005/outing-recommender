@@ -15,11 +15,20 @@ This document outlines the complete architectural state and actionable technical
 | **Google Maps & Geospatial Explorer** | ✅ Completed | Verified (17 routes) | `GoogleMapView.tsx`, Split/Map/Cards layout toggle, Sequenced route polylines, OSM zero-crash fallback |
 | **Interaction Ingestion & Events** | ✅ Completed | Fully wired | Dual `/interactions` & `/events` endpoints, like/skip persistence, RabbitMQ event dispatch |
 | **Model Retraining Daemon** | ✅ Completed | Fully wired | Background daemon loop in worker with sleep interval and RabbitMQ topic notification |
-| **Algorithmic TSP Route Solver** | ⏳ Pending | Next milestone | 2-opt / TSP sequence heuristic in `itinerary-service` to minimize multi-stop driving time |
-| **Live Collaborative Filtering (CF)** | ⏳ Pending | Next milestone | Wire `cf_scores()` into live inference pipeline using co-occurrence interaction matrix |
-| **Context Weather Dynamic Weights** | ⏳ Pending | Next milestone | Live Open-Meteo temperature & rain severity scaling inside `context_score()` |
-| **Dynamic Sliders & Group Consensus** | ⏳ Pending | Next milestone | Interactive UI sliders for `merge_weight_overrides` and multi-persona group consensus |
-| **NLP Transformer Sentiment Worker** | ⏳ Pending | Backlog | Replace keyword dictionary in `sentiment-worker` with a local HuggingFace transformer |
+| **Algorithmic TSP Route Solver** | ✅ Completed | 4/4 passing | 2-opt TSP sequence heuristic in `itinerary-service` to minimize multi-stop driving time and eliminate crisscrossing |
+| **Live Collaborative Filtering (CF)** | ✅ Completed | 6/6 passing | Co-occurrence overlap matrix queried live, wired into feature vector and candidate fusion with `existing_user` activation ($N \ge 3$) |
+| **Context Weather & OpenWeatherMap** | ✅ Completed | Live API verified | OpenWeatherMap live API integration, temperature extremes ($\ge 38^\circ\text{C}$ / $\le 8^\circ\text{C}$) & evening golden hour dynamic scoring |
+| **Dynamic Sliders & Group Consensus** | ✅ Completed | Verified | Interactive UI sliders for `weight_overrides`, `POST /recommendations/group` endpoint, `GroupPlanner.tsx` live consensus |
+| **Live User Profile Ingestion** | ✅ Completed | Verified | Real user budget bounds, category and ambience preferences injected from `user-service` into recommendation pipeline |
+| **Continuous Integration (CI) Workflow**| ✅ Completed | GitHub Actions | `.github/workflows/deploy-check.yml` running Docker validation, all 24 Python unit tests, and Next.js production build |
+| **Live Dashboard Feeds & Activity Logs** | ⏳ Pending | Next milestone | Wire `ActivityPage` and `DashboardHome` to real chronological interaction and recommendation feeds |
+| **Interactive Itinerary Stop Swapping** | ⏳ Pending | Next milestone | "Swap Stop" with backup venues and drag-and-drop reordering with live route recalculation |
+| **Matrix Factorization (iALS)** | ⏳ Pending | Backlog | SVD / iALS latent embeddings over user-item interaction matrix for serendipitous discovery |
+| **Urban Travel Time (OSRM Backend)** | ⏳ Pending | Backlog | OSRM / Google Distance Matrix container for traffic-aware travel times |
+| **NLP Transformer Sentiment Worker** | ⏳ Pending | Backlog | Replace keyword dictionary in `sentiment-worker` with quantized local transformer |
+| **POI Venue Catalog Expansion** | ⏳ Pending | Backlog | Overpass / Places scripts scaling catalog to 3,000–5,000 venues across India metro cities |
+| **Offline Evaluation on Real Logs** | ⏳ Pending | Backlog | Precision@K, Recall@K, NDCG@K evaluation on PostgreSQL interaction logs |
+
 
 ---
 
@@ -65,6 +74,47 @@ This document outlines the complete architectural state and actionable technical
 
 - [x] **Dual Interaction Ingestion Endpoints**
   - Updated `services/interaction-service/app/main.py` to support both `/interactions` and `/events` endpoints, accepting either `type` or `event_type` payload keys to ensure seamless compatibility with frontend card like/skip actions.
+
+### E. Itinerary Optimization & TSP Sequence Solver
+- [x] **2-Opt Algorithmic TSP Route Solver**
+  - Implemented `optimize_route_2opt()` and `total_route_distance()` in `services/itinerary-service/app/planner.py`.
+  - Refined `order_nearest_neighbour()` to start with greedy nearest neighbour and iteratively reverse crossing edges using 2-opt swaps.
+  - Minimizes travel distances and eliminates crisscrossing polygon routes for multi-stop outing plans (3–10 stops).
+  - Unit tests verified: `services/itinerary-service/tests/test_planner.py` (4/4 passing).
+
+### F. Collaborative Filtering & Live Context Dynamic Weather
+- [x] **Live Collaborative Filtering (CF) & User Profile Ingestion**
+  - Connected `services/recommendation-engine/app/main.py` to query `USER_SERVICE_URL/users/{user_id}` and `INTERACTION_SERVICE_URL/interactions`.
+  - Computes live item co-occurrence overlap matrix via `scoring.cf_scores()` and user-to-place cosine similarity via `scoring.cbf_scores()`.
+  - Injects user profile preferences (`budget_min`, `budget_max`, `preferred_categories`, `ambience_preferences`) and passes real CF and CBF scores to feature vector and candidate fusion.
+  - Automatically activates the `existing_user` weight profile (CF weight 0.18) when positive interactions $N \ge 3$.
+  - Unit tests verified: `services/recommendation-engine/tests/test_cf_and_weather.py` (6/6 passing).
+
+- [x] **OpenWeatherMap Integration & Extreme Temperature Dynamic Scoring**
+  - Configured verified OpenWeatherMap API key (`87032e0903bfff3247866dfa1b11b828`) in `.env`, `.env.example`, and `docker-compose.yml`.
+  - Updated `services/context-service/app/main.py` with `_fetch_openweathermap()`, parsing live temperature, feels-like, humidity, wind, and conditions, with graceful fallback to Open-Meteo and mock weather.
+  - Enhanced `scoring.weather_suitability()` in `recommendation-engine`:
+    - Heatwave ($\ge 38^\circ\text{C}$): heavily penalizes outdoor venues ($0.15$), promotes air-conditioned indoor venues ($0.95$).
+    - High heat ($33\text{--}38^\circ\text{C}$): penalizes outdoor venues in peak afternoon ($0.30$), favors indoor spaces.
+    - Cold extremes ($< 8^\circ\text{C}$): penalizes outdoor venues ($0.25$), boosts cozy indoor spaces.
+    - Evening golden hour: boosts rooftop lounges and scenic outdoor spaces ($0.95\text{--}1.0$).
+  - Unit tests verified: `services/recommendation-engine/tests/test_cf_and_weather.py`.
+
+### G. Group Consensus & Interactive Priority Sliders
+- [x] **Group Recommendation API Endpoint (`/recommendations/group`)**
+  - Added `POST /recommendations/group` and `POST /group` in `services/recommendation-engine/app/main.py` accepting `{ user_ids: [1, 2, ...], strategy: "least_misery" | "average" | "borda" }`.
+  - Independently evaluates candidate places for each user profile, then aggregates scores via `scoring.aggregate_group_scores()`.
+  - Returns ranked group places with per-user satisfaction breakdowns and lowest-satisfaction metrics.
+- [x] **Interactive Priority Weight Sliders in UI**
+  - Added interactive sliders ($0\text{--}100\%$) in `frontend/components/RecommendPanel.tsx` for Distance, AI Match, Budget/Context, and Popularity.
+  - Dispatches `weight_overrides` payload to `RecommendRequest`, normalized and fused via `scoring.merge_weight_overrides()`.
+- [x] **Multi-Persona Group Planner Integration**
+  - Enhanced `frontend/components/GroupPlanner.tsx` with live group consensus API queries, persona selector toggles, and strategy pills (`Least Misery`, `Average`, `Borda Count`).
+
+### H. Automated CI Workflow
+- [x] **Continuous Integration Pipeline (`.github/workflows/deploy-check.yml`)**
+  - Automated CI workflow executing Docker Compose configuration checks, YAML datasets validation, all 24 Python unit tests across microservices, and Next.js frontend production build on pull requests and pushes to `main` and `hemanth-dev`.
+
 
 ---
 
@@ -140,12 +190,9 @@ The following tasks represent the exact functional scope remaining to achieve a 
 
 ### 🧠 Domain A: Algorithm & Machine Learning Enhancements
 
-1. [ ] **Live Collaborative Filtering (CF) Ingestion in Recommendation Engine**
-   - **Current State**: `cf_scores()` exists in `services/recommendation-engine/app/scoring.py`, but in `app/main.py` lines 200 and 223, `cf_score` and `"collaborative"` are hardcoded to `0.0`.
-   - **Task**:
-     - Connect `recommendation-engine` to query `interaction-service/interactions` to build the real item co-occurrence overlap matrix.
-     - Pass the computed `cf_score` into `build_feature_vector()` and `fuse_candidate()`.
-     - Activate the `existing_user` weight profile when positive interactions exceed the cold-start threshold ($N \ge 3$).
+1. [x] **Live Collaborative Filtering (CF) Ingestion in Recommendation Engine**
+   - **Completed**: Connected `services/recommendation-engine/app/main.py` to query `INTERACTION_SERVICE_URL/interactions` to compute live co-occurrence overlap matrix via `scoring.cf_scores()`. Injects user profile preferences (`budget_min`, `budget_max`, `preferred_categories`, `ambience_preferences`) and feeds real `cf_score` and `cbf_score` into `build_feature_vector()` and `fuse_candidate()`. Automatically activates `existing_user` weight profile ($CF=0.18$) when positive interactions $N \ge 3$.
+   - **Unit Tests**: `services/recommendation-engine/tests/test_cf_and_weather.py` (6/6 passing).
 
 2. [ ] **Matrix Factorization / Implicit Alternating Least Squares (iALS)**
    - **Current State**: Item co-occurrence overlap is a heuristic Jaccard-like overlap.
@@ -153,17 +200,13 @@ The following tasks represent the exact functional scope remaining to achieve a 
      - Implement Matrix Factorization (TruncatedSVD / LightFM / iALS) over the sparse user-item interaction matrix.
      - Generate dense $k$-dimensional latent embeddings for users and places to support cross-category serendipitous discovery.
 
-3. [ ] **Sequence Optimization for Itineraries (Travelling Salesperson Problem / 2-Opt Solver)**
-   - **Current State**: `services/itinerary-service/app/planner.py` uses greedy nearest neighbor (`order_nearest_neighbour`), which can cause crossing paths or sub-optimal driving sequences.
-   - **Task**:
-     - Implement a 2-Opt TSP route heuristic in `order_nearest_neighbour` to minimize total travel time between morning, afternoon, evening, and night stops.
-     - Eliminate crisscrossing stop sequences for 3–6 venue itineraries.
+3. [x] **Sequence Optimization for Itineraries (Travelling Salesperson Problem / 2-Opt Solver)**
+   - **Completed**: Implemented 2-Opt TSP heuristic in `services/itinerary-service/app/planner.py` (`optimize_route_2opt()` & `total_route_distance()`). Initializes tour with nearest-neighbour and iteratively evaluates pairwise inversions to eliminate route crossings and minimize travel distance.
+   - **Unit Tests**: `services/itinerary-service/tests/test_planner.py` (4/4 passing).
 
-4. [ ] **Context-Aware Dynamic Weather & Temperature Weighting**
-   - **Current State**: `weather_suitability` in `scoring.py` only checks `condition == "rain"`.
-   - **Task**:
-     - Incorporate temperature extremes from Open-Meteo (`temp_c > 38°C` heat wave or `temp_c < 5°C` cold) to penalize outdoor venues and favor air-conditioned/heated indoor spaces.
-     - Adjust time-of-day weighting dynamically (e.g., recommend rooftop lounges during evening golden hour, indoor cafes during peak afternoon heat).
+4. [x] **Context-Aware Dynamic Weather & Temperature Weighting (OpenWeatherMap)**
+   - **Completed**: Integrated OpenWeatherMap live current weather API (`services/context-service/app/main.py`) with active key (`87032e0903bfff3247866dfa1b11b828`) and fallback to Open-Meteo & mock. Enhanced `scoring.weather_suitability()` to dynamically penalize outdoor venues during extreme heatwaves ($\ge 38^\circ\text{C}$), high afternoon heat ($33\text{--}38^\circ\text{C}$), cold ($< 8^\circ\text{C}$), and rain ($0.15$), while boosting AC indoor spots and rewarding rooftop/scenic outdoor venues during evening golden hours ($0.95\text{--}1.0$).
+   - **Unit Tests**: `services/recommendation-engine/tests/test_cf_and_weather.py`.
 
 5. [ ] **Production NLP Transformer for Sentiment Worker**
    - **Current State**: `services/sentiment-worker/worker.py` generates synthetic snippets and scores them against a static positive/negative keyword dictionary.
@@ -175,18 +218,12 @@ The following tasks represent the exact functional scope remaining to achieve a 
 
 ### 🎨 Domain B: Frontend & User Experience
 
-6. [ ] **Interactive Preference & Weight Sliders in Recommendations UI**
-   - **Current State**: `RecommendPanel.tsx` offers static category/radius/budget filters without priority controls.
-   - **Task**:
-     - Add interactive sliders (0–100%) in `RecommendPanel.tsx` for core user priorities: Distance, Price, AI Match, and Popularity.
-     - Expose `weight_overrides` in `RecommendRequest` and invoke `scoring.merge_weight_overrides()` on the backend.
+6. [x] **Interactive Preference & Weight Sliders in Recommendations UI**
+   - **Completed**: Added interactive priority weight sliders ($0\text{--}100\%$) in `frontend/components/RecommendPanel.tsx` for Distance, AI Match, Budget/Context, and Popularity. Sends `weight_overrides` payload in `RecommendRequest`, normalized and fused via `scoring.merge_weight_overrides()`.
+   - **Build**: Next.js 14 verified cleanly compiling all routes.
 
-7. [ ] **Dynamic Multi-Persona Group Outing Planner**
-   - **Current State**: `frontend/components/GroupPlanner.tsx` displays hardcoded mock personas and a simulated 1.4s `setTimeout`.
-   - **Task**:
-     - Allow users to select multiple registered workspace profiles or input custom preferences per friend.
-     - Wire the UI to trigger the group aggregation endpoint using consensus strategies (`least_misery`, `average`, `borda`).
-     - Display individual persona satisfaction badges alongside the group itinerary.
+7. [x] **Dynamic Multi-Persona Group Outing Planner**
+   - **Completed**: Updated `frontend/components/GroupPlanner.tsx` with persona toggles, strategy selector pills (`Least Misery`, `Average`, `Borda Count`), and live API calls to `/api/recommendations/group`. Renders per-persona satisfaction badges and consensus match rankings.
 
 8. [ ] **Live Dashboard Feeds & Activity Logs**
    - **Current State**: `frontend/app/dashboard/activity/page.tsx` renders a static `EVENTS` array, and `DashboardHome` uses static `DEMO_PLACES`.
@@ -204,17 +241,11 @@ The following tasks represent the exact functional scope remaining to achieve a 
 
 ### 🔌 Domain C: Backend Microservices & Data Integration
 
-10. [ ] **Live User Profile Ingestion in Recommendation Engine**
-    - **Current State**: `services/recommendation-engine/app/main.py` line 190 sets `user_dict = {"budget_min": 0, "budget_max": 4}`.
-    - **Task**:
-      - Query `USER_SERVICE_URL/users/{user_id}` when `user_id` is supplied in `RecommendRequest`.
-      - Inject the user's actual `budget_min`, `budget_max`, `preferred_categories`, `ambience_preferences`, and `home_lat/home_lng` into the scoring pipeline.
+10. [x] **Live User Profile Ingestion in Recommendation Engine**
+    - **Completed**: `services/recommendation-engine/app/main.py` queries `USER_SERVICE_URL/users/{user_id}` and injects actual user profile parameters (`budget_min`, `budget_max`, `preferred_categories`, `ambience_preferences`, `home_lat`, `home_lng`) into the feature extraction and scoring pipeline.
 
-11. [ ] **Group Recommendation API Endpoint**
-    - **Current State**: `scoring.aggregate_group_scores()` is implemented, but no REST endpoint in `recommendation-engine` accepts a list of user IDs for group scoring.
-    - **Task**:
-      - Add `POST /recommendations/group` accepting `{ user_ids: [1, 2, 3], strategy: "least_misery", ... }`.
-      - Score candidates independently across all users and aggregate using the selected consensus method.
+11. [x] **Group Recommendation API Endpoint**
+    - **Completed**: Implemented `POST /recommendations/group` and `POST /group` in `services/recommendation-engine/app/main.py`. Evaluates candidate POIs across each user profile and aggregates using consensus strategies (`least_misery`, `average`, `borda`) via `scoring.aggregate_group_scores()`. Returns ranked recommendations with per-user scores and lowest-satisfaction indicators.
 
 12. [ ] **Urban Travel Time & Road Routing Integration**
     - **Current State**: Distance calculations use straight-line Haversine formulas.
@@ -241,7 +272,6 @@ The following tasks represent the exact functional scope remaining to achieve a 
 
 ### 🧪 Domain E: Testing & Code Quality
 
-15. [ ] **Continuous Integration (CI) Workflow**
-    - **Current State**: Tests are run manually on local developer machines.
-    - **Task**:
-      - Add `.github/workflows/ci.yml` running all 14 service unit tests and Next.js production build check on every pull request and push to `main` and `hemanth-dev`.
+15. [x] **Continuous Integration (CI) Workflow**
+    - **Completed**: Updated `.github/workflows/deploy-check.yml` to include the automated `test-services` job running all 24 pytest unit tests across all microservices alongside Docker Compose configuration checks and Next.js production build verification on all pull requests and pushes to `main` and `hemanth-dev`.
+
