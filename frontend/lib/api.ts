@@ -198,6 +198,42 @@ export async function fetchOccasions() {
   return FALLBACK_OCCASIONS;
 }
 
+export type GroupRecommendation = {
+  place: Place;
+  score: number;
+  distance_km: number;
+  user_scores: Record<string, number>;
+  lowest_satisfaction: number;
+  reasons: string[];
+};
+
+export type GroupRecommendResponse = {
+  recommendations: GroupRecommendation[];
+  group_strategy: string;
+  user_ids: number[];
+  candidate_count: number;
+  error?: string;
+};
+
+export async function fetchGroupRecommendations(params: {
+  user_ids: number[];
+  lat?: number;
+  lng?: number;
+  city?: string;
+  state?: string;
+  strategy?: "least_misery" | "average" | "borda";
+  category?: string;
+  occasion?: string;
+  radius_km?: number;
+}) {
+  const res = await apiFetch("recommendations/group", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+  return res;
+}
+
+
 export async function getSurprisePlace(params: {
   keyword?: string;
   category?: string;

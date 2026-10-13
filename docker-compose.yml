@@ -76,6 +76,7 @@ services:
     environment:
       <<: *python-env
       REDIS_URL: redis://redis:6379/0
+      OPENWEATHERMAP_API_KEY: ${OPENWEATHERMAP_API_KEY:-}
     depends_on:
       - redis
     ports:

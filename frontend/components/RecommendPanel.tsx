@@ -34,6 +34,13 @@ export default function RecommendPanel({
   const [sortBy, setSortBy] = useState("match"); // "match" | "distance" | "price"
   const [viewMode, setViewMode] = useState<"cards" | "split" | "map">("cards");
 
+  // Priority weight sliders
+  const [showWeightSliders, setShowWeightSliders] = useState(false);
+  const [weightDistance, setWeightDistance] = useState(50);
+  const [weightPrice, setWeightPrice] = useState(50);
+  const [weightAI, setWeightAI] = useState(80);
+  const [weightPopularity, setWeightPopularity] = useState(40);
+
   const location = controlledLocation !== undefined ? controlledLocation : internalLocation;
   const setLocation = (loc: LocationSelection) => {
     if (onLocationChange) onLocationChange(loc);
@@ -75,6 +82,14 @@ export default function RecommendPanel({
         open_now: activeOpenNow || undefined,
         budget: activeBudget || undefined,
         sort_by: sortBy || undefined,
+        weight_overrides: showWeightSliders
+          ? {
+              distance: weightDistance / 100,
+              ml: weightAI / 100,
+              popularity: weightPopularity / 100,
+              context: weightPrice / 100,
+            }
+          : undefined,
         limit: 10,
       };
       const res = await apiFetch("recommendations/recommendations", {
@@ -290,6 +305,106 @@ export default function RecommendPanel({
               <option value="price">Price (Lowest first)</option>
             </select>
           </div>
+        </div>
+
+        {/* Priority Weights Sliders (Uniqueness & User Control) */}
+        <div style={{ marginTop: 12 }}>
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            style={{
+              fontSize: "0.82rem",
+              padding: "5px 12px",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              background: showWeightSliders ? "rgba(212, 175, 55, 0.12)" : "transparent",
+              borderColor: showWeightSliders ? "var(--brass, #d4af37)" : "var(--hairline, #444)",
+              color: showWeightSliders ? "var(--brass, #d4af37)" : "inherit",
+              cursor: "pointer",
+            }}
+            onClick={() => setShowWeightSliders(!showWeightSliders)}
+          >
+            <span>🎛️ Priority Weights</span>
+            <span style={{ fontSize: "0.72rem", opacity: 0.8 }}>
+              {showWeightSliders ? "▲ Close" : "▼ Customise"}
+            </span>
+          </button>
+
+          {showWeightSliders && (
+            <div
+              className="fade-in"
+              style={{
+                marginTop: 10,
+                padding: "14px 16px",
+                background: "rgba(0, 0, 0, 0.2)",
+                border: "1px solid var(--hairline, #444)",
+                borderRadius: "var(--radius, 8px)",
+              }}
+            >
+              <div style={{ fontSize: "0.82rem", color: "var(--slate, #9ca3af)", marginBottom: 12 }}>
+                Fine-tune the scoring engine weights in real-time:
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14 }}>
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", marginBottom: 4 }}>
+                    <span>📍 Proximity / Distance</span>
+                    <span style={{ fontFamily: "monospace", color: "var(--brass, #d4af37)" }}>{weightDistance}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={weightDistance}
+                    onChange={(e) => setWeightDistance(parseInt(e.target.value, 10))}
+                    style={{ width: "100%", accentColor: "var(--brass, #d4af37)", cursor: "pointer" }}
+                  />
+                </div>
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", marginBottom: 4 }}>
+                    <span>🤖 AI Model Match</span>
+                    <span style={{ fontFamily: "monospace", color: "var(--brass, #d4af37)" }}>{weightAI}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={weightAI}
+                    onChange={(e) => setWeightAI(parseInt(e.target.value, 10))}
+                    style={{ width: "100%", accentColor: "var(--brass, #d4af37)", cursor: "pointer" }}
+                  />
+                </div>
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", marginBottom: 4 }}>
+                    <span>💰 Budget &amp; Context</span>
+                    <span style={{ fontFamily: "monospace", color: "var(--brass, #d4af37)" }}>{weightPrice}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={weightPrice}
+                    onChange={(e) => setWeightPrice(parseInt(e.target.value, 10))}
+                    style={{ width: "100%", accentColor: "var(--brass, #d4af37)", cursor: "pointer" }}
+                  />
+                </div>
+                <div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", marginBottom: 4 }}>
+                    <span>🔥 Popularity &amp; Buzz</span>
+                    <span style={{ fontFamily: "monospace", color: "var(--brass, #d4af37)" }}>{weightPopularity}%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={weightPopularity}
+                    onChange={(e) => setWeightPopularity(parseInt(e.target.value, 10))}
+                    style={{ width: "100%", accentColor: "var(--brass, #d4af37)", cursor: "pointer" }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <button

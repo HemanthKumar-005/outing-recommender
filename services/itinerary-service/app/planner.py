@@ -34,8 +34,48 @@ def _haversine_km(a: dict, b: dict) -> float:
     return 2 * r * math.asin(math.sqrt(h))
 
 
+def total_route_distance(route: list[dict], start: dict) -> float:
+    """Calculate total travel distance starting from user location through all stops in sequence."""
+    if not route:
+        return 0.0
+    dist = _haversine_km(start, route[0])
+    for idx in range(len(route) - 1):
+        dist += _haversine_km(route[idx], route[idx + 1])
+    return dist
+
+
+def optimize_route_2opt(route: list[dict], start_lat: float, start_lng: float) -> list[dict]:
+    """2-Opt TSP heuristic to eliminate route crossings and minimize travel distance (Review §18)."""
+    if len(route) < 3:
+        return list(route)
+    start = {"lat": start_lat, "lng": start_lng}
+    best_route = list(route)
+    best_dist = total_route_distance(best_route, start)
+
+    improved = True
+    iterations = 0
+    max_iterations = 50
+    while improved and iterations < max_iterations:
+        improved = False
+        iterations += 1
+        n = len(best_route)
+        for i in range(n):
+            for j in range(i + 1, n):
+                # Reverse subsegment between i and j
+                candidate = best_route[:i] + best_route[i : j + 1][::-1] + best_route[j + 1:]
+                candidate_dist = total_route_distance(candidate, start)
+                if candidate_dist < best_dist - 1e-5:
+                    best_route = candidate
+                    best_dist = candidate_dist
+                    improved = True
+                    break
+            if improved:
+                break
+    return best_route
+
+
 def order_nearest_neighbour(places: list[dict], start_lat: float, start_lng: float) -> list[dict]:
-    """Greedy NN tour — efficient for small stop counts (≤ max_stops)."""
+    """Greedy NN tour initialized and refined with 2-Opt TSP optimization (Review §18)."""
     if not places:
         return []
     remaining = list(places)
@@ -46,7 +86,8 @@ def order_nearest_neighbour(places: list[dict], start_lat: float, start_lng: flo
         nxt = remaining.pop(0)
         ordered.append(nxt)
         current = nxt
-    return ordered
+    return optimize_route_2opt(ordered, start_lat, start_lng)
+
 
 
 def estimate_budget(places: list[dict], band_id: str) -> str:

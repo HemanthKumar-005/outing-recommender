@@ -91,19 +91,76 @@ def cf_scores(user_id: int, places: list, all_interactions: list) -> tuple:
 # ---------------------------------------------------------------------------
 
 def weather_suitability(place: dict, context: dict) -> float:
+    """Dynamic context-aware weather & temperature suitability scoring.
+    Penalizes outdoor venues in rain and temperature extremes (>38°C heatwave or <8°C cold).
+    Favors AC indoor venues during peak afternoon heat and outdoor/rooftop venues during
+    pleasant evening golden hours."""
     weather = context.get("weather", {}) or {}
     condition = weather.get("condition")
+    temp_c = weather.get("temp_c")
+    time_of_day = context.get("time_of_day")
+    if not time_of_day and context.get("datetime"):
+        try:
+            h = datetime.fromisoformat(context["datetime"]).hour
+            time_of_day = "morning" if 5 <= h < 11 else ("afternoon" if 11 <= h < 17 else ("evening" if 17 <= h < 21 else "night"))
+        except Exception:
+            time_of_day = "afternoon"
+
     indoor_outdoor = place.get("indoor_outdoor", "indoor")
+    tags = set(place.get("tags") or [])
+    ambience = set(place.get("ambience") or [])
+
+    # 1. Rainy / Precipitation condition
     if condition == "rain":
         if indoor_outdoor == "outdoor":
             return 0.15
         if indoor_outdoor == "both":
             return 0.55
-        return 0.95  # indoor place, rain doesn't matter much
-    # clear/clouds: outdoor places get a small boost, indoor stays neutral-good
+        return 0.95  # indoor venue is comfortable and sheltered
+
+    # 2. Extreme Heatwave (> 38°C)
+    if temp_c is not None and temp_c >= 38.0:
+        if indoor_outdoor == "outdoor":
+            return 0.15  # unsafe/stifling heat outdoors
+        if indoor_outdoor == "both":
+            return 0.45
+        return 0.95  # air-conditioned indoor haven
+
+    # 3. High Heat (33°C - 38°C)
+    if temp_c is not None and temp_c >= 33.0:
+        if indoor_outdoor == "outdoor":
+            return 0.30 if time_of_day == "afternoon" else 0.55
+        if indoor_outdoor == "both":
+            return 0.60
+        return 0.92  # indoor AC preferred
+
+    # 4. Extreme Cold (< 8°C)
+    if temp_c is not None and temp_c < 8.0:
+        if indoor_outdoor == "outdoor":
+            return 0.25
+        if indoor_outdoor == "both":
+            return 0.55
+        return 0.95  # heated/cozy indoor space
+
+    # 5. Pleasant / Mild / Clear Weather (8°C - 32°C)
     if indoor_outdoor == "outdoor":
-        return 0.9
-    return 0.8
+        # Evening golden hour boost for outdoor, rooftop, and scenic venues
+        if time_of_day == "evening":
+            if "rooftop" in tags or "scenic" in ambience:
+                return 1.0
+            return 0.95
+        if time_of_day == "afternoon" and temp_c is not None and temp_c > 29.0:
+            return 0.75  # slightly warm afternoon
+        return 0.90
+
+    if indoor_outdoor == "both":
+        return 0.90
+
+    # Indoor places in pleasant weather
+    if time_of_day == "afternoon":
+        return 0.88  # good daytime cafe / activity
+    return 0.82
+
 
 
 from hours_pricing import evaluate_place_hours  # noqa: E402
