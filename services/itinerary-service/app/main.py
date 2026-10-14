@@ -15,7 +15,7 @@ from config_loader import list_occasions_public  # noqa: E402
 from tenant import require_tenant  # noqa: E402
 
 from . import db
-from .planner import generate_plan
+from .planner import generate_plan, resequence_plan
 
 app = FastAPI(title="Itinerary Service")
 
@@ -42,6 +42,15 @@ class RefineRequest(BaseModel):
     occasion: str | None = None
     duration: str | None = None
     budget: str | None = None
+
+
+class ReorderRequest(BaseModel):
+    place_ids: list[int]
+
+
+class SwapRequest(BaseModel):
+    old_place_id: int
+    new_place_id: int
 
 
 def _headers(tenant_id: str) -> dict[str, str]:
@@ -234,3 +243,129 @@ def get_itinerary(itinerary_id: int, tenant_id: str = Depends(require_tenant)):
         raise HTTPException(status_code=404, detail="not found")
     items = db.list_items(tenant_id, itinerary_id)
     return {**row, "items": items}
+
+
+@app.post("/itineraries/{itinerary_id}/reorder")
+async def reorder_itinerary(
+    itinerary_id: int,
+    body: ReorderRequest,
+    tenant_id: str = Depends(require_tenant),
+):
+    existing = db.get_itinerary(tenant_id, itinerary_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="itinerary not found")
+
+    places = await _fetch_places(tenant_id, body.place_ids)
+    if not places:
+        raise HTTPException(status_code=400, detail="no valid places provided for reordering")
+
+    places_by_id = {p["id"]: p for p in places}
+    ordered_places = [places_by_id[pid] for pid in body.place_ids if pid in places_by_id]
+    if len(ordered_places) != len(body.place_ids):
+        raise HTTPException(status_code=400, detail="some places could not be loaded")
+
+    start = existing.get("start_time")
+    if isinstance(start, str):
+        start = datetime.fromisoformat(start.replace("Z", "+00:00"))
+
+    pool = await _fetch_places(tenant_id, None)
+    plan = resequence_plan(
+        places=ordered_places,
+        candidate_pool=pool,
+        occasion=existing.get("occasion"),
+        duration=existing.get("duration") or "4-6 hours",
+        budget=existing.get("budget_estimate") or "medium",
+        start_time=start if isinstance(start, datetime) else None,
+        area_label="your area",
+    )
+
+    db.update_plan_fields(
+        tenant_id,
+        itinerary_id,
+        {
+            "start_time": plan["start_time"],
+            "end_time": plan["end_time"],
+            "timeline_meta": plan["timeline_meta"],
+            "includes_breweries": plan["includes_breweries"],
+        },
+    )
+    items_out = db.replace_items(tenant_id, itinerary_id, plan["items"])
+    return {
+        "success": True,
+        "data": {
+            **plan,
+            "itinerary_id": itinerary_id,
+            "items": items_out,
+        },
+    }
+
+
+@app.post("/itineraries/{itinerary_id}/swap")
+async def swap_itinerary_stop(
+    itinerary_id: int,
+    body: SwapRequest,
+    tenant_id: str = Depends(require_tenant),
+):
+    existing = db.get_itinerary(tenant_id, itinerary_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="itinerary not found")
+
+    current_items = db.list_items(tenant_id, itinerary_id)
+    place_ids = [it["place_id"] for it in current_items]
+    if body.old_place_id not in place_ids:
+        raise HTTPException(status_code=400, detail=f"Stop {body.old_place_id} is not in this itinerary")
+
+    new_place_ids = [body.new_place_id if pid == body.old_place_id else pid for pid in place_ids]
+    places = await _fetch_places(tenant_id, new_place_ids)
+    places_by_id = {p["id"]: p for p in places}
+    ordered_places = [places_by_id[pid] for pid in new_place_ids if pid in places_by_id]
+
+    start = existing.get("start_time")
+    if isinstance(start, str):
+        start = datetime.fromisoformat(start.replace("Z", "+00:00"))
+
+    pool = await _fetch_places(tenant_id, None)
+    plan = resequence_plan(
+        places=ordered_places,
+        candidate_pool=pool,
+        occasion=existing.get("occasion"),
+        duration=existing.get("duration") or "4-6 hours",
+        budget=existing.get("budget_estimate") or "medium",
+        start_time=start if isinstance(start, datetime) else None,
+        area_label="your area",
+    )
+
+    db.update_plan_fields(
+        tenant_id,
+        itinerary_id,
+        {
+            "start_time": plan["start_time"],
+            "end_time": plan["end_time"],
+            "timeline_meta": plan["timeline_meta"],
+            "includes_breweries": plan["includes_breweries"],
+        },
+    )
+    items_out = db.replace_items(tenant_id, itinerary_id, plan["items"])
+    return {
+        "success": True,
+        "data": {
+            **plan,
+            "itinerary_id": itinerary_id,
+            "items": items_out,
+        },
+    }
+
+
+@app.get("/itineraries/{itinerary_id}/backups")
+async def get_itinerary_backups(
+    itinerary_id: int,
+    tenant_id: str = Depends(require_tenant),
+):
+    existing = db.get_itinerary(tenant_id, itinerary_id)
+    if not existing:
+        raise HTTPException(status_code=404, detail="itinerary not found")
+    items = db.list_items(tenant_id, itinerary_id)
+    current_ids = {it["place_id"] for it in items}
+    pool = await _fetch_places(tenant_id, None)
+    backups = [p for p in pool if p.get("id") not in current_ids][:12]
+    return {"success": True, "backups": backups}

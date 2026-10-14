@@ -111,3 +111,23 @@ def test_group_consensus_aggregation():
     assert avg[101] == pytest.approx(0.85)
     assert avg[102] == pytest.approx(0.65)
     assert avg[103] == pytest.approx(0.60)
+
+
+def test_matrix_factorization_scores():
+    all_interactions = [
+        {"user_id": 1, "place_id": 10, "type": "save"},
+        {"user_id": 1, "place_id": 20, "type": "visit"},
+        {"user_id": 2, "place_id": 10, "type": "save"},
+        {"user_id": 2, "place_id": 30, "type": "rating", "rating": 5.0},
+        {"user_id": 3, "place_id": 20, "type": "save"},
+        {"user_id": 3, "place_id": 30, "type": "visit"},
+    ]
+    candidate_places = [{"id": 10}, {"id": 20}, {"id": 30}, {"id": 40}]
+    mf_scores = scoring.matrix_factorization_scores(1, candidate_places, all_interactions, k=2)
+
+    assert isinstance(mf_scores, dict)
+    assert 10 in mf_scores and 20 in mf_scores and 30 in mf_scores
+    # Place 30 should have positive latent affinity with User 1 via User 2 & User 3
+    assert mf_scores[30] > 0.0
+    # Place 40 is not in the interaction matrix
+    assert mf_scores[40] == 0.0

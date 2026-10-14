@@ -18,6 +18,9 @@ from planner import (  # noqa: E402
     total_route_distance,
     optimize_route_2opt,
     order_nearest_neighbour,
+    compute_route_routing,
+    generate_plan,
+    resequence_plan,
 )
 
 
@@ -83,3 +86,35 @@ def test_order_nearest_neighbour_places():
     assert len(ordered) == 3
     # Nearest stop should be visited first
     assert ordered[0]["id"] == 11
+
+
+def test_compute_route_routing():
+    p1 = {"id": 1, "lat": 12.9716, "lng": 77.5946, "name": "MG Road"}
+    p2 = {"id": 2, "lat": 12.9352, "lng": 77.6245, "name": "Koramangala"}
+    routing = compute_route_routing([p1, p2])
+    assert routing is not None
+    assert routing["total_distance_km"] > 0
+    assert routing["total_duration_min"] > 0
+    assert len(routing["legs"]) == 1
+    assert routing["provider"] in ("locationiq", "haversine_estimate")
+
+
+def test_resequence_and_generate_plan_routing():
+    p1 = {"id": 1, "lat": 12.9716, "lng": 77.5946, "name": "Place 1", "category": "cafe"}
+    p2 = {"id": 2, "lat": 12.9352, "lng": 77.6245, "name": "Place 2", "category": "restaurant"}
+    p3 = {"id": 3, "lat": 12.9780, "lng": 77.6400, "name": "Place 3", "category": "park"}
+
+    # Resequence plan maintains exact order
+    plan = resequence_plan(
+        places=[p3, p1, p2],
+        occasion="romantic",
+        duration="4-6 hours",
+        budget="medium",
+        start_time=None,
+    )
+    assert [p["id"] for p in plan["places"]] == [3, 1, 2]
+    assert "routing" in plan
+    assert len(plan["routing"]["legs"]) == 2
+    # Verify travel_to_next on items and timeline
+    assert "travel_to_next" in plan["items"][0]
+    assert plan["items"][0]["travel_to_next"]["distance_km"] > 0

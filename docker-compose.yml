@@ -149,6 +149,7 @@ services:
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
       PLACE_SERVICE_URL: http://place-service:8000
       CONTEXT_SERVICE_URL: http://context-service:8000
+      LOCATIONIQ_API_KEY: ${LOCATIONIQ_API_KEY:-}
     depends_on:
       postgres:
         condition: service_healthy

@@ -54,6 +54,77 @@ def cbf_scores(user: dict, places: list) -> dict:
     return scores
 
 
+def matrix_factorization_scores(user_id: int, places: list, all_interactions: list, k: int = 8) -> dict[int, float]:
+    """Compute dense latent factor user-item affinities using TruncatedSVD Matrix Factorization.
+    Generates k-dimensional latent embeddings for users and places to support
+    cross-category serendipitous discovery."""
+    if not all_interactions or not places:
+        return {p["id"]: 0.0 for p in places}
+
+    try:
+        import numpy as np
+        from sklearn.decomposition import TruncatedSVD
+
+        user_ids = sorted(list({int(it["user_id"]) for it in all_interactions if "user_id" in it}))
+        place_ids = sorted(list({int(it["place_id"]) for it in all_interactions if "place_id" in it}))
+
+        if user_id not in user_ids or len(user_ids) < 2 or len(place_ids) < 2:
+            return {p["id"]: 0.0 for p in places}
+
+        u_map = {u: idx for idx, u in enumerate(user_ids)}
+        p_map = {p: idx for idx, p in enumerate(place_ids)}
+
+        R = np.zeros((len(user_ids), len(place_ids)), dtype=np.float32)
+        weight_map = {
+            "save": 3.0,
+            "visit": 4.0,
+            "share": 2.5,
+            "like": 3.0,
+            "view": 1.0,
+            "click": 1.0,
+            "skip": -0.5,
+        }
+        for it in all_interactions:
+            uid = it.get("user_id")
+            pid = it.get("place_id")
+            if uid in u_map and pid in p_map:
+                itype = it.get("type") or it.get("event_type")
+                rating = it.get("rating")
+                if rating is not None and itype == "rating":
+                    w = float(rating)
+                else:
+                    w = weight_map.get(itype, 2.0)
+                R[u_map[uid], p_map[pid]] += w
+
+        n_components = max(1, min(k, len(user_ids) - 1, len(place_ids) - 1))
+        svd = TruncatedSVD(n_components=n_components, random_state=42)
+        user_factors = svd.fit_transform(R)
+        item_factors = svd.components_.T
+
+        user_vec = user_factors[u_map[user_id]]
+        user_norm = float(np.linalg.norm(user_vec))
+        if user_norm == 0.0:
+            return {p["id"]: 0.0 for p in places}
+
+        scores = {}
+        for place in places:
+            pid = place.get("id")
+            if pid in p_map:
+                p_vec = item_factors[p_map[pid]]
+                p_norm = float(np.linalg.norm(p_vec))
+                if p_norm > 0:
+                    cos_sim = float(np.dot(user_vec, p_vec) / (user_norm * p_norm))
+                    # Only positive cosine similarity represents positive latent affinity
+                    scores[pid] = max(0.0, min(1.0, cos_sim)) if cos_sim > 0.0 else 0.0
+                else:
+                    scores[pid] = 0.0
+            else:
+                scores[pid] = 0.0
+        return scores
+    except Exception:
+        return {p["id"]: 0.0 for p in places}
+
+
 def cf_scores(user_id: int, places: list, all_interactions: list) -> tuple:
     """Lightweight item-based collaborative filtering via co-occurrence overlap
     (Review §8). For a candidate place p, the score is the fraction of users
@@ -61,12 +132,12 @@ def cf_scores(user_id: int, places: list, all_interactions: list) -> tuple:
     Returns (scores_dict, prior_positive_interaction_count)."""
     place_to_users: dict = {}
     for it in all_interactions:
-        if it.get("type") in ("save", "visit", "rating", "share"):
+        if it.get("type") in ("save", "visit", "rating", "share", "like"):
             place_to_users.setdefault(it["place_id"], set()).add(it["user_id"])
 
     user_liked_places = {
         it["place_id"] for it in all_interactions
-        if it["user_id"] == user_id and it.get("type") in ("save", "visit", "rating", "share")
+        if it["user_id"] == user_id and it.get("type") in ("save", "visit", "rating", "share", "like")
     }
     users_who_like_similar_places: set = set()
     for pid in user_liked_places:

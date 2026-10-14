@@ -10,7 +10,53 @@ from tenant import tenant_headers  # noqa: E402
 PLACE_SERVICE_URL = os.environ.get("PLACE_SERVICE_URL", "http://place-service:8000")
 CONTEXT_SERVICE_URL = os.environ.get("CONTEXT_SERVICE_URL", "http://context-service:8000")
 
-_client = httpx.Client(timeout=5.0)
+LOCATIONIQ_API_KEY = os.environ.get("LOCATIONIQ_API_KEY", "")
+
+_client = httpx.Client(timeout=6.0)
+
+
+def fetch_road_directions(coordinates: list[tuple[float, float]]) -> dict | None:
+    """
+    Fetch urban road directions, distance matrix, and driving duration from LocationIQ (OSRM).
+    coordinates: list of (lat, lng) points in sequential travel order.
+    Returns parsed route summary or None on failure/missing key.
+    """
+    if not LOCATIONIQ_API_KEY or len(coordinates) < 2:
+        return None
+    try:
+        # LocationIQ / OSRM expects: lon,lat;lon,lat;...
+        coords_param = ";".join(f"{lng},{lat}" for lat, lng in coordinates)
+        url = f"https://us1.locationiq.com/v1/directions/driving/{coords_param}"
+        params = {
+            "key": LOCATIONIQ_API_KEY,
+            "overview": "full",
+            "geometries": "geojson",
+            "steps": "false",
+        }
+        resp = _client.get(url, params=params, headers={"User-Agent": "OutingPlanner/1.0"})
+        if resp.status_code != 200:
+            return None
+        data = resp.json()
+        if data.get("code") != "Ok" or not data.get("routes"):
+            return None
+
+        route = data["routes"][0]
+        legs = [
+            {
+                "distance_km": round(float(leg.get("distance", 0.0)) / 1000.0, 2),
+                "duration_min": round(float(leg.get("duration", 0.0)) / 60.0, 1),
+            }
+            for leg in route.get("legs", [])
+        ]
+        return {
+            "provider": "locationiq",
+            "total_distance_km": round(float(route.get("distance", 0.0)) / 1000.0, 2),
+            "total_duration_min": round(float(route.get("duration", 0.0)) / 60.0, 1),
+            "legs": legs,
+            "geometry": route.get("geometry", {}),
+        }
+    except Exception:
+        return None
 
 
 def get_context(lat: float, lng: float) -> dict:
@@ -37,3 +83,4 @@ def notify(tenant_id: str, user_id: int, title: str, body: str) -> None:
     publish("notification.send", {
         "tenant_id": tenant_id, "user_id": user_id, "title": title, "body": body, "channel": "push",
     })
+
