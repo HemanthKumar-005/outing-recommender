@@ -242,9 +242,10 @@ async def recommend(body: RecommendRequest, tenant_id: str = Depends(require_ten
             continue
         candidates.append((place, dist))
 
-    # Compute Content-Based (CBF) and Collaborative Filtering (CF) scores
+    # Compute Content-Based (CBF) and Collaborative Filtering (CF + Matrix Factorization) scores
     cbf_map = {}
     cf_map = {}
+    mf_map = {}
     if candidates:
         candidate_places = [p for p, _ in candidates]
         if user_dict.get("preferred_categories") or user_dict.get("ambience_preferences"):
@@ -258,6 +259,10 @@ async def recommend(body: RecommendRequest, tenant_id: str = Depends(require_ten
                 n_positive_interactions = max(n_positive_interactions, cf_pos_count)
             except Exception:
                 cf_map = {}
+            try:
+                mf_map = scoring.matrix_factorization_scores(body.user_id, candidate_places, all_interactions)
+            except Exception:
+                mf_map = {}
 
     # Build features and predict in ONE batched call across all candidates
     feature_rows = []
@@ -265,7 +270,11 @@ async def recommend(body: RecommendRequest, tenant_id: str = Depends(require_ten
         place_with_dist = {**place, "distance_km": dist}
         rating = float(place.get("rating") or 3.5) / 5.0
         cbf_val = cbf_map.get(place["id"], rating)
-        cf_val = cf_map.get(place["id"], 0.0)
+        raw_cf = cf_map.get(place["id"], 0.0)
+        raw_mf = mf_map.get(place["id"], 0.0)
+        # Latent factor embeddings support cross-category serendipitous discovery
+        cf_val = round(max(raw_cf, 0.6 * raw_cf + 0.4 * raw_mf) if raw_cf > 0 else (0.5 * raw_mf if raw_mf > 0 else 0.0), 4)
+
         vec = build_feature_vector(
             place=place_with_dist,
             context=env_context,

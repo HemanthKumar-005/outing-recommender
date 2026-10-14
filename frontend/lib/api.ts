@@ -66,11 +66,19 @@ export function isOnboarded(): boolean {
   return localStorage.getItem("nearby_onboarded") === "true";
 }
 
-export function getUserInfo() {
+export function getUserInfo(): {
+  id: number;
+  name: string;
+  workspace: string;
+  email: string;
+  tenantId?: string;
+} {
   if (typeof window === "undefined") {
-    return { name: "Guest", workspace: "Demo", email: "" };
+    return { id: 1, name: "Guest", workspace: "Demo", email: "" };
   }
+  const storedId = localStorage.getItem("nearby_user_id");
   return {
+    id: storedId ? parseInt(storedId, 10) || 1 : 1,
     name: localStorage.getItem("nearby_user_name") || "Guest",
     workspace: localStorage.getItem("nearby_workspace") || "Demo workspace",
     email: localStorage.getItem("nearby_email") || "",
@@ -317,10 +325,34 @@ export type DatePlan = {
     place_name?: string;
     place_id?: number;
     category?: string;
+    travel_to_next?: {
+      distance_km: number;
+      duration_min: number;
+    };
   }>;
   includes_breweries?: boolean;
-  items?: unknown[];
-  places?: Array<{ id: number; name: string; category: string }>;
+  items?: Array<{
+    id?: number;
+    place_id: number;
+    name: string;
+    category?: string;
+    lat: number;
+    lng: number;
+    arrival: string;
+    departure: string;
+    travel_to_next?: {
+      distance_km: number;
+      duration_min: number;
+    };
+  }>;
+  places?: Array<{ id: number; name: string; category: string; lat?: number; lng?: number }>;
+  routing?: {
+    provider: string;
+    total_distance_km: number;
+    total_duration_min: number;
+    legs: Array<{ distance_km: number; duration_min: number }>;
+    geometry?: any;
+  };
 };
 
 
@@ -365,4 +397,31 @@ export async function fetchItineraries(userId?: number) {
   const res = await apiFetch(`itinerary/itineraries${q}`);
   if (!res.ok) throw new Error(await res.text());
   return res.json();
+}
+
+export async function reorderPlan(itineraryId: number, placeIds: number[]) {
+  const res = await apiFetch(`itinerary/itineraries/${itineraryId}/reorder`, {
+    method: "POST",
+    body: JSON.stringify({ place_ids: placeIds }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json() as Promise<{ success: boolean; data: DatePlan }>;
+}
+
+export async function swapPlanStop(itineraryId: number, oldPlaceId: number, newPlaceId: number) {
+  const res = await apiFetch(`itinerary/itineraries/${itineraryId}/swap`, {
+    method: "POST",
+    body: JSON.stringify({ old_place_id: oldPlaceId, new_place_id: newPlaceId }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json() as Promise<{ success: boolean; data: DatePlan }>;
+}
+
+export async function fetchItineraryBackups(itineraryId: number) {
+  const res = await apiFetch(`itinerary/itineraries/${itineraryId}/backups`);
+  if (!res.ok) throw new Error(await res.text());
+  return res.json() as Promise<{
+    success: boolean;
+    backups: Array<{ id: number; name: string; category: string; rating?: number; cost_for_two?: number }>;
+  }>;
 }

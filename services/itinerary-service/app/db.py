@@ -125,3 +125,15 @@ def update_plan_fields(tenant_id: str, itinerary_id: int, fields: dict[str, Any]
             params,
         )
         return cur.fetchone()
+
+
+def replace_items(tenant_id: str, itinerary_id: int, items: list[dict[str, Any]]) -> list[dict]:
+    with tenant_cursor(tenant_id) as cur:
+        cur.execute(
+            "DELETE FROM itineraries.itinerary_items WHERE itinerary_id = %s",
+            (itinerary_id,),
+        )
+    inserted = []
+    for item in items:
+        inserted.append(add_item(tenant_id, itinerary_id, item))
+    return inserted

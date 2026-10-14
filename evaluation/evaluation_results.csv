@@ -1,0 +1,10 @@
+strategy,precision@k,recall@k,ndcg@k,map,ild@k
+hybrid (full),0.9377,0.3002,0.979,0.9144,0.127
+ablate: -ml,0.9206,0.2945,0.9657,0.9034,0.1169
+ablate: -content,0.9234,0.2956,0.9731,0.9122,0.1344
+ablate: -collaborative,0.9343,0.2994,0.9742,0.9133,0.1331
+ablate: -distance,0.9217,0.2947,0.9657,0.906,0.1074
+ablate: -sentiment,0.936,0.2997,0.9773,0.9141,0.1307
+ablate: -popularity,0.9326,0.2983,0.978,0.9141,0.1302
+baseline: popularity-only,0.8251,0.2627,0.8492,0.8384,0.0853
+baseline: random,0.7943,0.2523,0.8236,0.823,0.0845

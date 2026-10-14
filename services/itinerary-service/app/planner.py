@@ -24,6 +24,15 @@ from config_loader import (  # noqa: E402
 )
 from occasion_scoring import rank_by_occasion  # noqa: E402
 
+try:
+    from clients import fetch_road_directions
+except ImportError:
+    try:
+        from .clients import fetch_road_directions
+    except ImportError:
+        def fetch_road_directions(coordinates):  # type: ignore
+            return None
+
 
 def _haversine_km(a: dict, b: dict) -> float:
     r = 6371.0
@@ -32,6 +41,48 @@ def _haversine_km(a: dict, b: dict) -> float:
     dlat, dlon = lat2 - lat1, lon2 - lon1
     h = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
     return 2 * r * math.asin(math.sqrt(h))
+
+
+def compute_route_routing(places: list[dict]) -> dict:
+    """Compute urban road directions (via LocationIQ / OSRM) with Haversine fallback."""
+    if len(places) < 2:
+        return {
+            "provider": "none",
+            "total_distance_km": 0.0,
+            "total_duration_min": 0.0,
+            "legs": [],
+            "geometry": None,
+        }
+
+    try:
+        coords = [(float(p["lat"]), float(p["lng"])) for p in places]
+        road = fetch_road_directions(coords)
+        if road and road.get("legs"):
+            return road
+    except Exception:
+        pass
+
+    # Fallback: Straight-line Haversine with 25 km/h urban traffic speed + 3 min buffer
+    legs = []
+    total_dist = 0.0
+    total_dur = 0.0
+    for idx in range(len(places) - 1):
+        dist_km = round(_haversine_km(places[idx], places[idx + 1]), 2)
+        dur_min = round(max(6.0, (dist_km / 25.0) * 60.0 + 3.0), 1)
+        legs.append({"distance_km": dist_km, "duration_min": dur_min})
+        total_dist += dist_km
+        total_dur += dur_min
+
+    return {
+        "provider": "haversine_estimate",
+        "total_distance_km": round(total_dist, 2),
+        "total_duration_min": round(total_dur, 1),
+        "legs": legs,
+        "geometry": {
+            "type": "LineString",
+            "coordinates": [[float(p["lng"]), float(p["lat"])] for p in places],
+        },
+    }
 
 
 def total_route_distance(route: list[dict], start: dict) -> float:
@@ -151,6 +202,7 @@ def build_timeline(
     duration: str,
     occasion: str | None,
     gap_minutes: int,
+    legs: list[dict] | None = None,
 ) -> list[dict[str, Any]]:
     template = timeline_for(duration, occasion)
     timeline: list[dict[str, Any]] = []
@@ -160,32 +212,34 @@ def build_timeline(
         for i, step in enumerate(template):
             place = ordered[i % len(ordered)]
             t = start + timedelta(minutes=int(step.get("offset_min", i * gap_minutes)))
-            timeline.append(
-                {
-                    "time": t.strftime("%I:%M %p").lstrip("0") if hasattr(t, "strftime") else str(t),
-                    "time_iso": t.isoformat(),
-                    "activity": step.get("activity") or "Visit",
-                    "role": step.get("role"),
-                    "place_id": place.get("id"),
-                    "place_name": place.get("name"),
-                    "category": place.get("category"),
-                }
-            )
+            entry: dict[str, Any] = {
+                "time": t.strftime("%I:%M %p").lstrip("0") if hasattr(t, "strftime") else str(t),
+                "time_iso": t.isoformat(),
+                "activity": step.get("activity") or "Visit",
+                "role": step.get("role"),
+                "place_id": place.get("id"),
+                "place_name": place.get("name"),
+                "category": place.get("category"),
+            }
+            if legs and i < len(legs):
+                entry["travel_to_next"] = legs[i]
+            timeline.append(entry)
     else:
         # Fallback: equal spacing
         for i, place in enumerate(ordered):
             t = start + timedelta(minutes=i * gap_minutes)
-            timeline.append(
-                {
-                    "time": t.strftime("%I:%M %p").lstrip("0"),
-                    "time_iso": t.isoformat(),
-                    "activity": f"Visit {place.get('name')}",
-                    "role": "stop",
-                    "place_id": place.get("id"),
-                    "place_name": place.get("name"),
-                    "category": place.get("category"),
-                }
-            )
+            entry = {
+                "time": t.strftime("%I:%M %p").lstrip("0"),
+                "time_iso": t.isoformat(),
+                "activity": f"Visit {place.get('name')}",
+                "role": "stop",
+                "place_id": place.get("id"),
+                "place_name": place.get("name"),
+                "category": place.get("category"),
+            }
+            if legs and i < len(legs):
+                entry["travel_to_next"] = legs[i]
+            timeline.append(entry)
     return timeline
 
 
@@ -194,25 +248,30 @@ def schedule_items(
     start: datetime,
     gap_minutes: int,
     dwell_minutes: int = 75,
+    legs: list[dict] | None = None,
 ) -> list[dict[str, Any]]:
     items = []
     cursor = start
-    for place in ordered:
+    for idx, place in enumerate(ordered):
         arrival = cursor
         departure = arrival + timedelta(minutes=dwell_minutes)
-        items.append(
-            {
-                "place_id": place["id"],
-                "name": place["name"],
-                "category": place.get("category") or "attraction",
-                "indoor_outdoor": place.get("indoor_outdoor") or "indoor",
-                "lat": place["lat"],
-                "lng": place["lng"],
-                "arrival": arrival.isoformat(),
-                "departure": departure.isoformat(),
-            }
-        )
-        cursor = departure + timedelta(minutes=max(15, gap_minutes // 4))
+        item: dict[str, Any] = {
+            "place_id": place["id"],
+            "name": place["name"],
+            "category": place.get("category") or "attraction",
+            "indoor_outdoor": place.get("indoor_outdoor") or "indoor",
+            "lat": place["lat"],
+            "lng": place["lng"],
+            "arrival": arrival.isoformat(),
+            "departure": departure.isoformat(),
+        }
+        if legs and idx < len(legs):
+            item["travel_to_next"] = legs[idx]
+            transit_minutes = max(8, int(round(legs[idx]["duration_min"])))
+        else:
+            transit_minutes = max(15, gap_minutes // 4)
+        items.append(item)
+        cursor = departure + timedelta(minutes=transit_minutes)
     return items
 
 
@@ -248,9 +307,11 @@ def generate_plan(
     ranked = rank_by_occasion(places, occasion)
     selected = [p for p, _, _ in ranked][:max_stops]
     ordered = order_nearest_neighbour(selected, lat, lng)
+    routing = compute_route_routing(ordered)
+    legs = routing.get("legs", [])
 
-    timeline = build_timeline(ordered, start_time, duration, occasion, gap)
-    items = schedule_items(ordered, start_time, gap)
+    timeline = build_timeline(ordered, start_time, duration, occasion, gap, legs=legs)
+    items = schedule_items(ordered, start_time, gap, legs=legs)
     end_time = (
         datetime.fromisoformat(items[-1]["departure"]) if items else start_time + timedelta(hours=4)
     )
@@ -292,4 +353,77 @@ def generate_plan(
         "includes_breweries": includes_breweries,
         "items": items,
         "places": ordered,
+        "routing": routing,
+    }
+
+
+def resequence_plan(
+    *,
+    places: list[dict],
+    candidate_pool: list[dict] | None = None,
+    occasion: str | None,
+    duration: str,
+    budget: str,
+    start_time: datetime | None,
+    area_label: str = "your area",
+) -> dict[str, Any]:
+    """
+    Rebuild schedule, timeline, and road routing for an explicitly ordered sequence
+    of places without sorting or modifying their order (supports stop reordering & swaps).
+    """
+    constraints = constraints_for(occasion)
+    gap = int(constraints.get("min_gap_minutes") or 60)
+    strategy = constraints.get("backup_strategy") or "alternate_category"
+
+    if start_time is None:
+        now = datetime.now(timezone.utc).astimezone()
+        start_time = now.replace(hour=10, minute=0, second=0, microsecond=0)
+
+    routing = compute_route_routing(places)
+    legs = routing.get("legs", [])
+
+    timeline = build_timeline(places, start_time, duration, occasion, gap, legs=legs)
+    items = schedule_items(places, start_time, gap, legs=legs)
+    end_time = (
+        datetime.fromisoformat(items[-1]["departure"]) if items else start_time + timedelta(hours=4)
+    )
+
+    selected_ids = {p["id"] for p in places}
+    pool = candidate_pool or places
+    backup = pick_backup(pool, selected_ids, occasion, strategy)
+    backup_text = None
+    if backup:
+        backup_text = (
+            f"If plans change, try {backup.get('name')} "
+            f"({backup.get('category')}) nearby as a substitute."
+        )
+
+    includes_breweries = any(
+        (p.get("category") == "bar")
+        or (p.get("subcategory") == "brewery")
+        or ("brewery" in (p.get("tags") or []))
+        for p in places
+    )
+
+    tips = tips_for(occasion)
+    if includes_breweries:
+        note = brewery_safety_note()
+        if note and note not in tips:
+            tips = list(tips) + [note]
+
+    return {
+        "start_time": start_time.isoformat(),
+        "end_time": end_time.isoformat() if isinstance(end_time, datetime) else str(end_time),
+        "occasion": occasion,
+        "duration": duration,
+        "title": title_for(occasion, area_label),
+        "description": description_for(occasion, duration),
+        "budget_estimate": estimate_budget(places, budget),
+        "romantic_tips": tips,
+        "backup_plan": backup_text,
+        "timeline_meta": timeline,
+        "includes_breweries": includes_breweries,
+        "items": items,
+        "places": places,
+        "routing": routing,
     }

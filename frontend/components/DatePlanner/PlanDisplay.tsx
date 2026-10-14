@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { DatePlan } from "../../lib/api";
-import { refinePlan } from "../../lib/api";
+import { refinePlan, reorderPlan, swapPlanStop, fetchItineraryBackups } from "../../lib/api";
 import GoogleMapView, { type MapPlace } from "../GoogleMapView";
 
 type Props = {
@@ -24,6 +24,10 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
   const [refining, setRefining] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [swappingStopId, setSwappingStopId] = useState<number | null>(null);
+  const [backups, setBackups] = useState<Array<{ id: number; name: string; category: string; rating?: number; cost_for_two?: number }>>([]);
+  const [loadingBackups, setLoadingBackups] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const refine = async (customText?: string) => {
     const text = (customText ?? feedback).trim();
@@ -38,6 +42,59 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
       setError(e instanceof Error ? e.message : "Plan refinement failed. Please try again.");
     } finally {
       setRefining(false);
+    }
+  };
+
+  const handleMoveStop = async (index: number, direction: -1 | 1) => {
+    if (!plan.itinerary_id) return;
+    const items = (plan.items as Array<{ place_id: number }>) || [];
+    const placeIds = items.map((it) => it.place_id);
+    const targetIdx = index + direction;
+    if (targetIdx < 0 || targetIdx >= placeIds.length) return;
+
+    const newIds = [...placeIds];
+    const temp = newIds[index];
+    newIds[index] = newIds[targetIdx];
+    newIds[targetIdx] = temp;
+
+    setActionLoading(true);
+    setError("");
+    try {
+      const res = await reorderPlan(plan.itinerary_id, newIds);
+      if (res.data && onRefined) onRefined(res.data);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to reorder stops.");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleOpenSwap = async (placeId: number) => {
+    setSwappingStopId(placeId);
+    if (!plan.itinerary_id || backups.length > 0) return;
+    setLoadingBackups(true);
+    try {
+      const res = await fetchItineraryBackups(plan.itinerary_id);
+      if (res.backups) setBackups(res.backups);
+    } catch {
+      // Gracefully continue with any local alternatives
+    } finally {
+      setLoadingBackups(false);
+    }
+  };
+
+  const handleSelectSwap = async (oldPlaceId: number, newPlaceId: number) => {
+    if (!plan.itinerary_id) return;
+    setActionLoading(true);
+    setError("");
+    try {
+      const res = await swapPlanStop(plan.itinerary_id, oldPlaceId, newPlaceId);
+      if (res.data && onRefined) onRefined(res.data);
+      setSwappingStopId(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Failed to swap stop.");
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -139,7 +196,7 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
         </div>
       )}
 
-      {/* Interactive Google Maps Route */}
+      {/* Interactive Google Maps Route & Road Navigation */}
       {(() => {
         const mapPlaces: MapPlace[] = (((plan.items as any[]) || []))
           .filter((it) => it && it.lat && it.lng)
@@ -164,60 +221,246 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
                 {mapPlaces.length} sequenced stops
               </span>
             </div>
+
+            {plan.routing && plan.routing.total_distance_km > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexWrap: "wrap",
+                  gap: 8,
+                  padding: "10px 14px",
+                  marginBottom: 12,
+                  borderRadius: "var(--radius)",
+                  background: "rgba(59, 130, 246, 0.08)",
+                  border: "1px solid rgba(59, 130, 246, 0.2)",
+                  fontSize: "0.85rem",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span>🚗</span>
+                  <span style={{ fontWeight: 600, color: "var(--slate-strong)" }}>
+                    Urban Road Navigation: {plan.routing.total_distance_km} km total driving · ~{Math.round(plan.routing.total_duration_min)} mins drive time
+                  </span>
+                </div>
+                <span
+                  style={{
+                    fontSize: "0.75rem",
+                    padding: "2px 8px",
+                    borderRadius: 999,
+                    background: "rgba(59, 130, 246, 0.15)",
+                    color: "#3b82f6",
+                    fontWeight: 600,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  {plan.routing.provider === "locationiq" ? "⚡ LocationIQ OSRM" : "📍 Traffic Model"}
+                </span>
+              </div>
+            )}
+
             <GoogleMapView places={mapPlaces} routeMode={true} height={320} />
           </div>
         );
       })()}
 
-      {/* Timeline Stops */}
+      {/* Timeline Stops with Reordering and Swapping */}
       {plan.timeline_meta && plan.timeline_meta.length > 0 && (
         <div style={{ margin: "28px 0" }}>
-          <h3 style={{ fontSize: "1.25rem", fontWeight: 700, marginBottom: 16, color: "var(--slate-strong)" }}>
-            🗓️ Date Schedule & Stops
-          </h3>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <h3 style={{ fontSize: "1.25rem", fontWeight: 700, margin: 0, color: "var(--slate-strong)" }}>
+              🗓️ Date Schedule & Interactive Stops
+            </h3>
+            {actionLoading && (
+              <span style={{ fontSize: "0.85rem", color: "var(--brass-bright)" }}>
+                Recalculating route & schedule...
+              </span>
+            )}
+          </div>
+
           <div className="timeline">
             {plan.timeline_meta.map((stop, i) => (
-              <div className="timeline-item" key={`${stop.time}-${i}`}>
-                <div className="timeline-dot" />
-                <div className="timeline-time">{stop.time}</div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-                  <div>
-                    <div className="timeline-place" style={{ fontWeight: 700, fontSize: "1.1rem" }}>
-                      {stop.place_name || stop.activity}
+              <div key={`${stop.time}-${i}`} style={{ marginBottom: 16 }}>
+                <div className="timeline-item">
+                  <div className="timeline-dot" />
+                  <div className="timeline-time">{stop.time}</div>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12, flexWrap: "wrap" }}>
+                    <div>
+                      <div className="timeline-place" style={{ fontWeight: 700, fontSize: "1.1rem" }}>
+                        {stop.place_name || stop.activity}
+                      </div>
+                      <div className="timeline-meta" style={{ marginTop: 4 }}>
+                        <span>{stop.activity}</span>
+                        {stop.category && (
+                          <span
+                            style={{
+                              marginLeft: 8,
+                              padding: "2px 8px",
+                              borderRadius: 999,
+                              background: "rgba(224, 122, 95, 0.15)",
+                              color: "var(--brass-bright)",
+                              fontSize: "0.75rem",
+                              fontWeight: 600,
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            {stop.category}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className="timeline-meta" style={{ marginTop: 4 }}>
-                      <span>{stop.activity}</span>
-                      {stop.category && (
-                        <span
+
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                      {/* Reorder Buttons */}
+                      <button
+                        type="button"
+                        className="btn-tiny"
+                        disabled={i === 0 || actionLoading}
+                        onClick={() => handleMoveStop(i, -1)}
+                        title="Move stop earlier in route"
+                        style={{ padding: "3px 8px" }}
+                      >
+                        ▲
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-tiny"
+                        disabled={i === (plan.timeline_meta?.length || 1) - 1 || actionLoading}
+                        onClick={() => handleMoveStop(i, 1)}
+                        title="Move stop later in route"
+                        style={{ padding: "3px 8px" }}
+                      >
+                        ▼
+                      </button>
+
+                      {/* Swap Button */}
+                      {stop.place_id && (
+                        <button
+                          type="button"
+                          className="btn-tiny"
                           style={{
-                            marginLeft: 8,
-                            padding: "2px 8px",
-                            borderRadius: 999,
-                            background: "rgba(224, 122, 95, 0.15)",
-                            color: "var(--brass-bright)",
-                            fontSize: "0.75rem",
-                            fontWeight: 600,
-                            textTransform: "uppercase",
+                            background: swappingStopId === stop.place_id ? "var(--brass-bright)" : undefined,
+                            color: swappingStopId === stop.place_id ? "#fff" : undefined,
                           }}
+                          onClick={() =>
+                            swappingStopId === stop.place_id
+                              ? setSwappingStopId(null)
+                              : handleOpenSwap(Number(stop.place_id))
+                          }
+                          title="Swap with backup venue"
                         >
-                          {stop.category}
-                        </span>
+                          🔄 Swap
+                        </button>
+                      )}
+
+                      {/* Maps Button */}
+                      {stop.place_name && (
+                        <button
+                          type="button"
+                          className="btn-tiny"
+                          style={{ whiteSpace: "nowrap" }}
+                          onClick={() => openStopInMaps(String(stop.place_name))}
+                          title="View this stop on Google Maps"
+                        >
+                          📍 Maps ↗
+                        </button>
                       )}
                     </div>
                   </div>
 
-                  {stop.place_name && (
-                    <button
-                      type="button"
-                      className="btn-tiny"
-                      style={{ whiteSpace: "nowrap" }}
-                      onClick={() => openStopInMaps(String(stop.place_name))}
-                      title="View this stop on Google Maps"
+                  {/* Inline Swap Picker Drawer */}
+                  {swappingStopId === stop.place_id && (
+                    <div
+                      style={{
+                        marginTop: 12,
+                        padding: 12,
+                        background: "var(--ink-2)",
+                        borderRadius: "var(--radius)",
+                        border: "1px solid var(--hairline)",
+                      }}
                     >
-                      📍 Maps ↗
-                    </button>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                        <span style={{ fontSize: "0.85rem", fontWeight: 600, color: "var(--slate-strong)" }}>
+                          Choose replacement for {stop.place_name}:
+                        </span>
+                        <button
+                          type="button"
+                          className="btn-tiny"
+                          onClick={() => setSwappingStopId(null)}
+                        >
+                          ✕ Cancel
+                        </button>
+                      </div>
+
+                      {loadingBackups ? (
+                        <p style={{ fontSize: "0.82rem", color: "var(--slate)", margin: 0 }}>
+                          Loading available nearby venues...
+                        </p>
+                      ) : backups.length === 0 ? (
+                        <p style={{ fontSize: "0.82rem", color: "var(--slate)", margin: 0 }}>
+                          No alternative venues available. Try refining the plan instead.
+                        </p>
+                      ) : (
+                        <div style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 180, overflowY: "auto" }}>
+                          {backups.map((b) => (
+                            <button
+                              key={b.id}
+                              type="button"
+                              onClick={() => handleSelectSwap(Number(stop.place_id), b.id)}
+                              style={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                textAlign: "left",
+                                padding: "6px 10px",
+                                borderRadius: "var(--radius-sm)",
+                                background: "var(--ink-3)",
+                                border: "1px solid var(--hairline)",
+                                color: "var(--slate-strong)",
+                                fontSize: "0.85rem",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <div>
+                                <strong style={{ display: "block" }}>{b.name}</strong>
+                                <span style={{ fontSize: "0.75rem", color: "var(--slate)", textTransform: "capitalize" }}>
+                                  {b.category} {b.rating ? `· ⭐ ${b.rating.toFixed(1)}` : ""}
+                                </span>
+                              </div>
+                              <span style={{ fontSize: "0.8rem", color: "var(--brass-bright)" }}>
+                                Select →
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   )}
                 </div>
+
+                {/* Per-Leg Driving Transit Connector */}
+                {stop.travel_to_next && (
+                  <div
+                    style={{
+                      margin: "8px 0 12px 36px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      padding: "4px 12px",
+                      borderRadius: 999,
+                      background: "rgba(59, 130, 246, 0.08)",
+                      border: "1px dashed rgba(59, 130, 246, 0.3)",
+                      fontSize: "0.78rem",
+                      color: "var(--slate-strong)",
+                    }}
+                  >
+                    <span>🚗</span>
+                    <span>
+                      <strong>{Math.round(stop.travel_to_next.duration_min)} mins drive</strong> ({stop.travel_to_next.distance_km} km) to next venue ↓
+                    </span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
