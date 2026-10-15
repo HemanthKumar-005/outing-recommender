@@ -330,6 +330,10 @@ services:
       PLACE_SERVICE_URL: http://place-service:8000
       RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
       PLATFORM_DATABASE_URL: postgresql://${WORKER_ROLE_USER:-worker_role}:${WORKER_ROLE_PW:-worker_role_pw}@postgres:5432/${POSTGRES_DB:-outing}
+      REVIEWS_PATH: /data/reviews.csv
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+      - ../data:/data:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -345,5 +349,6 @@ volumes:
   rabbitmq_data:
   redis_data:
   models_data:
+  hf_cache:
   certbot_www:
   certbot_certs:

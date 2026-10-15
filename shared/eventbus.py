@@ -3,7 +3,8 @@ Shared event bus helper (RabbitMQ / topic exchange).
 
 Topics used across the system:
   - user.updated        {user_id}
-  - place.updated        {place_id}
+  - place.updated        {place_id, tenant_id, reason}
+  - sentiment.updated     {tenant_id, place_id, sentiment_score}
   - interactions          {interaction_id, user_id, place_id, type, rating, ts}
   - model.retrain         {reason}
   - model.updated         {version, path}

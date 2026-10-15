@@ -198,16 +198,36 @@ def places_by_ids(tenant_id: str, ids: list[int]) -> list:
         return [by_id[i] for i in ids if i in by_id]
 
 
-def update_place_sentiment(tenant_id: str, place_id: int, sentiment_score: float) -> dict | None:
+def update_place_sentiment(
+    tenant_id: str,
+    place_id: int,
+    sentiment_score: float,
+    ambience_add: list[str] | None = None,
+) -> dict | None:
     with tenant_cursor(tenant_id) as cur:
-        cur.execute(
-            """
-            UPDATE places.places
-            SET sentiment_score = %s
-            WHERE id = %s
-            RETURNING *
-            """,
-            (sentiment_score, place_id),
-        )
+        if ambience_add:
+            cur.execute(
+                """
+                UPDATE places.places
+                SET sentiment_score = %s,
+                    ambience = (
+                        SELECT COALESCE(jsonb_agg(DISTINCT elem), '[]'::jsonb)
+                        FROM jsonb_array_elements_text(COALESCE(ambience, '[]'::jsonb) || %s::jsonb) AS elem
+                    )
+                WHERE id = %s
+                RETURNING *
+                """,
+                (sentiment_score, Json(ambience_add), place_id),
+            )
+        else:
+            cur.execute(
+                """
+                UPDATE places.places
+                SET sentiment_score = %s
+                WHERE id = %s
+                RETURNING *
+                """,
+                (sentiment_score, place_id),
+            )
         return cur.fetchone()
 

@@ -89,6 +89,7 @@ class SurpriseBody(BaseModel):
 
 class SentimentUpdate(BaseModel):
     sentiment_score: float
+    ambience_add: list[str] | None = None
 
 
 @app.get("/health")
@@ -198,10 +199,24 @@ def update_place_sentiment(
     payload: SentimentUpdate,
     tenant_id: str = Depends(require_tenant),
 ):
-    row = db.update_place_sentiment(tenant_id, place_id, payload.sentiment_score)
+    row = db.update_place_sentiment(tenant_id, place_id, payload.sentiment_score, payload.ambience_add)
     if not row:
         raise HTTPException(status_code=404, detail="place not found")
-    return row
+    try:
+        from eventbus import publish
+        publish("place.updated", {
+            "tenant_id": tenant_id,
+            "place_id": place_id,
+            "reason": "sentiment_updated",
+        })
+        publish("sentiment.updated", {
+            "tenant_id": tenant_id,
+            "place_id": place_id,
+            "sentiment_score": payload.sentiment_score,
+        })
+    except Exception as e:  # noqa: BLE001
+        print(f"[place-service] failed to publish sentiment events for place {place_id}: {e}")
+    return _enrich_place(row)
 
 
 
