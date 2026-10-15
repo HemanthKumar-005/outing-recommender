@@ -160,7 +160,7 @@ def test_catalog_integrity():
     with open(cat_path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
     places = data.get("places") or []
-    assert len(places) == 310, f"Expected 310 places, found {len(places)}"
+    assert len(places) >= 310, f"Expected at least 310 places, found {len(places)}"
 
     for p in places:
         assert "opening_hours" in p, f"Missing opening_hours in {p['name']}"

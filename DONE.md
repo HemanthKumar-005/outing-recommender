@@ -28,6 +28,8 @@ For the active inventory of tasks remaining to be done, refer to [**`TODO.md`**]
 | **Live Dashboard Feeds & Activity Logs** | ✅ Completed | Verified | `ActivityPage` wired to chronological PostgreSQL interaction feed; `DashboardHome` wired to live AI picks & active itinerary |
 | **Matrix Factorization (TruncatedSVD)** | ✅ Completed | 7/7 passing | Dense latent embeddings over user-item affinity matrix via SVD in `scoring.py` for cross-category serendipitous discovery |
 | **Offline Evaluation & 5-Fold CV** | ✅ Completed | Full harness | 5-fold cross-validation, Precision@K, Recall@K, NDCG@K, MAP@K, Intra-List Diversity (ILD@K), and full ablation reports |
+| **NLP Transformer Sentiment Worker** | ✅ Completed | 11/11 passing | `distilbert-base-uncased-finetuned-sst-2-english` lazy singleton, continuous polarity, atmosphere extraction, and `ReviewSource` abstractions |
+| **POI Venue Catalog Expansion** | ✅ Completed | 38/38 passing | Expanded catalog to 3,534 venues across 93 cities in 33 states/UTs, 10,692 reviews in `reviews.csv`, and database upsert sync |
 
 ---
 
@@ -159,3 +161,21 @@ For the active inventory of tasks remaining to be done, refer to [**`TODO.md`**]
     - `evaluation/evaluation_results.csv` (consumed by `/model-card` endpoint)
     - `evaluation/ablation_report.md`
     - `evaluation_results.csv`
+
+### N. NLP Transformer Sentiment Worker
+* **Status: DONE** — **Production DistilBERT Sentiment Inference & Atmosphere Extraction**
+  - Integrated `distilbert-base-uncased-finetuned-sst-2-english` transformer pipeline in `services/sentiment-worker/worker.py` loaded lazily with persistent Hugging Face cache.
+  - Implemented continuous polarity scoring ($0.0 \le \text{polarity} \le 1.0$) with graceful fallback to keyword lexicon for air-gapped test environments.
+  - Built `AMBIENCE_KEYWORD_MAP` and `extract_ambience()` with occurrence and share thresholds, capping discovered tags at 8 while strictly preserving curated tags.
+  - Designed modular `ReviewSource` abstractions (`FileReviewSource`, `SyntheticReviewSource`, `CompositeReviewSource`) with auto-discovery and honest neutral scoring ($0.5$) for unreviewed venues.
+  - Added atomic `ambience_add` persistence to PostgreSQL via `PATCH /places/{id}/sentiment` and event dispatching (`sentiment.updated`, `place.updated`).
+  - Unit tests verified: `services/sentiment-worker/tests/test_worker.py` (11/11 passing).
+
+### O. Pan-India POI Venue Catalog Expansion
+* **Status: DONE** — **Pan-India Scale to 3,534 Curated Venues & 10,692 Reviews**
+  - Created `scripts/harvest_pan_india_places.py` combining live OpenStreetMap LocationIQ Nearby POIs across Indian metro hubs and culturally authentic regional profiles for all 93 cities across 33 states/UTs in `configs/india_locations.yaml`.
+  - Expanded `data/places_catalog.yaml` to **3,534 venues** (averaging 38 curated places per city across cafes, restaurants, bars, parks, attractions, museums) with full schema compliance (weekly hours, price ranges, indoor/outdoor flags, occasion tags).
+  - Generated companion `data/reviews.csv` with **10,692 reviews** for authentic customer review NLP processing.
+  - Upgraded `scripts/sync_database_places.py` to support full multi-tenant upsert (inserting new places and updating existing places).
+  - Unit tests verified: all 38/38 unit tests passing across all microservices.
+

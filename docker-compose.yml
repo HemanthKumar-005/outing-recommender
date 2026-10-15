@@ -265,6 +265,10 @@ services:
       # worker_role: read-only on platform.tenants, used to enumerate every
       # tenant for the startup catalog sweep.
       PLATFORM_DATABASE_URL: postgresql://worker_role:worker_role_pw@postgres:5432/outing
+      REVIEWS_PATH: /data/reviews.csv
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+      - ./data:/data:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -276,3 +280,4 @@ services:
 volumes:
   postgres_data:
   models_data:
+  hf_cache:
