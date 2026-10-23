@@ -4,12 +4,16 @@ import sys
 import httpx
 
 sys.path.insert(0, "/shared")
+<<<<<<< HEAD
 from tenant import tenant_headers as _tenant_headers  # noqa: E402
 from observability import propagate_headers  # noqa: E402
 
 
 def tenant_headers(tenant_id: str) -> dict:
     return propagate_headers(_tenant_headers(tenant_id))
+=======
+from tenant import tenant_headers  # noqa: E402
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 USER_SERVICE_URL = os.environ.get("USER_SERVICE_URL", "http://user-service:8000")
 PLACE_SERVICE_URL = os.environ.get("PLACE_SERVICE_URL", "http://place-service:8000")

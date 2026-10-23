@@ -1,6 +1,9 @@
 import hashlib
 import os
+<<<<<<< HEAD
 import sys
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 import time
 from datetime import datetime
 
@@ -8,6 +11,7 @@ import httpx
 import redis
 from fastapi import FastAPI, Query
 
+<<<<<<< HEAD
 import logging  # noqa: E402
 
 sys.path.insert(0, "/shared")
@@ -24,6 +28,9 @@ ALLOW_MOCK_WEATHER = os.environ.get("ALLOW_MOCK_WEATHER", "false" if APP_ENV == 
 # Open-Meteo's free API is for non-commercial use only: fine for a student beta, switch off if you monetise.
 OPEN_METEO_ENABLED = os.environ.get("OPEN_METEO_ENABLED", "true").lower() == "true"
 _stats = {"live": 0, "mock": 0, "unavailable": 0}
+=======
+app = FastAPI(title="Context Service")
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379/0")
 CACHE_TTL_SECONDS = 600
@@ -43,6 +50,7 @@ def get_redis():
 
 @app.get("/health")
 def health():
+<<<<<<< HEAD
     return {
         "status": "ok", "service": "context-service",
         "has_openweathermap_key": bool(OPENWEATHERMAP_API_KEY),
@@ -50,6 +58,9 @@ def health():
         "allow_mock_weather": ALLOW_MOCK_WEATHER,
         "weather_source_counts": _stats,  # watch "mock"/"unavailable" in production
     }
+=======
+    return {"status": "ok", "service": "context-service", "has_openweathermap_key": bool(OPENWEATHERMAP_API_KEY)}
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 
 @app.get("/ready")
@@ -133,8 +144,11 @@ def _fetch_openweathermap(lat: float, lng: float) -> dict | None:
 
 
 def _fetch_open_meteo(lat: float, lng: float) -> dict | None:
+<<<<<<< HEAD
     if not OPEN_METEO_ENABLED:
         return None
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     try:
         resp = httpx.get(
             OPEN_METEO_URL,
@@ -177,6 +191,7 @@ def get_context(lat: float, lng: float, at: str | None = Query(None, description
         print(f"[context-service] redis read failed: {e}")
 
     if weather is None:
+<<<<<<< HEAD
         weather = _live_weather(lat, lng)
         if weather:
             _stats["live"] += 1
@@ -188,6 +203,9 @@ def get_context(lat: float, lng: float, at: str | None = Query(None, description
             _stats["unavailable"] += 1
             log.error("weather unavailable: no live provider reachable and mock weather is disabled")
             weather = {"temp_c": None, "condition": "unknown", "source": "unavailable"}
+=======
+        weather = _live_weather(lat, lng) or _mock_weather(lat, lng, dt)
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         try:
             import json
             r.setex(cache_key, CACHE_TTL_SECONDS, json.dumps(weather))

@@ -4,6 +4,7 @@ sys.path.insert(0, "/shared")
 from pgdb import tenant_cursor  # noqa: E402
 from psycopg.types.json import Json  # noqa: E402
 
+<<<<<<< HEAD
 _PUBLIC_COLUMNS = (
     "id, tenant_id, name, email, age_group, budget_min, budget_max, preferred_categories, "
     "ambience_preferences, preferred_distance_km, preferred_outing_type, preferred_occasions, "
@@ -13,6 +14,8 @@ _PUBLIC_COLUMNS = (
 
 
 
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 def create_user(tenant_id: str, name: str, email: str, budget_min: int, budget_max: int,
                  preferred_categories: list, ambience_preferences: list,
@@ -29,7 +32,11 @@ def create_user(tenant_id: str, name: str, email: str, budget_min: int, budget_m
                 ambience_preferences, preferred_distance_km, preferred_outing_type, home_lat, home_lng,
                 preferred_occasions, preferred_duration)
                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+<<<<<<< HEAD
                RETURNING """ + _PUBLIC_COLUMNS,
+=======
+               RETURNING *""",
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             (tenant_id, name, email, age_group, budget_min, budget_max, Json(preferred_categories),
              Json(ambience_preferences), preferred_distance_km, preferred_outing_type, home_lat, home_lng,
              Json(preferred_occasions), preferred_duration),
@@ -39,7 +46,11 @@ def create_user(tenant_id: str, name: str, email: str, budget_min: int, budget_m
 
 def get_user(tenant_id: str, user_id: int) -> dict | None:
     with tenant_cursor(tenant_id) as cur:
+<<<<<<< HEAD
         cur.execute(f"SELECT {_PUBLIC_COLUMNS} FROM users.users WHERE id = %s", (user_id,))
+=======
+        cur.execute("SELECT * FROM users.users WHERE id = %s", (user_id,))
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         return cur.fetchone()
 
 
@@ -63,7 +74,11 @@ def update_preferences(tenant_id: str, user_id: int, budget_min=None, budget_max
             """UPDATE users.users SET budget_min=%s, budget_max=%s, preferred_categories=%s,
                ambience_preferences=%s, preferred_distance_km=%s, preferred_outing_type=%s,
                preferred_occasions=%s, preferred_duration=%s
+<<<<<<< HEAD
                WHERE id=%s RETURNING """ + _PUBLIC_COLUMNS,
+=======
+               WHERE id=%s RETURNING *""",
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             (budget_min, budget_max, Json(preferred_categories), Json(ambience_preferences),
              preferred_distance_km, preferred_outing_type, Json(preferred_occasions), preferred_duration, user_id),
         )
@@ -72,6 +87,7 @@ def update_preferences(tenant_id: str, user_id: int, budget_min=None, budget_max
 
 def list_users(tenant_id: str) -> list:
     with tenant_cursor(tenant_id) as cur:
+<<<<<<< HEAD
         cur.execute(f"SELECT {_PUBLIC_COLUMNS} FROM users.users ORDER BY id")
         return cur.fetchall()
 
@@ -178,3 +194,7 @@ def delete_user(tenant_id: str, user_id: int) -> bool:
     with tenant_cursor(tenant_id) as cur:
         cur.execute("DELETE FROM users.users WHERE id = %s", (user_id,))
         return cur.rowcount > 0
+=======
+        cur.execute("SELECT * FROM users.users ORDER BY id")
+        return cur.fetchall()
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8

@@ -4,7 +4,11 @@ import { useState } from "react";
 import LocationPicker, { type LocationSelection } from "./LocationPicker";
 import { apiFetch, type RecommendResponse, type Recommendation } from "../lib/api";
 import RecommendationCard from "./RecommendationCard";
+<<<<<<< HEAD
 import MapView, { type MapPlace } from "./MapView";
+=======
+import GoogleMapView, { type MapPlace } from "./GoogleMapView";
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 type RecommendPanelProps = {
   location?: LocationSelection | null;
@@ -551,7 +555,11 @@ export default function RecommendPanel({
           {/* Map Only View */}
           {visible.length > 0 && viewMode === "map" && (
             <div className="fade-in" style={{ marginTop: 14 }}>
+<<<<<<< HEAD
               <MapView
+=======
+              <GoogleMapView
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
                 places={visible.map((rec) => ({
                   id: rec.place.id,
                   name: rec.place.name,
@@ -580,8 +588,11 @@ export default function RecommendPanel({
                 {visible.map((rec) => (
                   <RecommendationCard
                     key={rec.place.id}
+<<<<<<< HEAD
                     placeId={rec.place.id}
                     hours_is_estimated={rec.place.hours_is_estimated ?? rec.place.opening_hours_is_estimated}
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
                     name={rec.place.name}
                     category={rec.place.category}
                     match={Math.round(rec.score * 100)}
@@ -613,7 +624,11 @@ export default function RecommendPanel({
                 ))}
               </div>
               <div className="map-sticky-container">
+<<<<<<< HEAD
                 <MapView
+=======
+                <GoogleMapView
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
                   places={visible.map((rec) => ({
                     id: rec.place.id,
                     name: rec.place.name,
@@ -642,8 +657,11 @@ export default function RecommendPanel({
               {visible.map((rec) => (
                 <RecommendationCard
                   key={rec.place.id}
+<<<<<<< HEAD
                   placeId={rec.place.id}
                   hours_is_estimated={rec.place.hours_is_estimated ?? rec.place.opening_hours_is_estimated}
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
                   name={rec.place.name}
                   category={rec.place.category}
                   match={Math.round(rec.score * 100)}

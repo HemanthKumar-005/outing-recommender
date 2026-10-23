@@ -19,8 +19,11 @@ ROOT = Path(__file__).resolve().parents[3]
 SHARED_DIR = ROOT / "shared"
 ENGINE_APP_DIR = ROOT / "services" / "recommendation-engine" / "app"
 
+<<<<<<< HEAD
 os.environ["ENABLE_XGBOOST_RANKER"] = "true"  # these tests exercise the (experimental) model path
 
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 for p in (str(SHARED_DIR), str(ENGINE_APP_DIR)):
     if p not in sys.path and os.path.isdir(p):
         sys.path.insert(0, p)
@@ -28,7 +31,11 @@ for p in (str(SHARED_DIR), str(ENGINE_APP_DIR)):
 try:
     from shared.features import FEATURE_NAMES, FEATURE_VERSION, build_feature_vector  # type: ignore # noqa: E402
 except ImportError:
+<<<<<<< HEAD
     from features import FEATURE_NAMES, FEATURE_VERSION  # type: ignore # noqa: E402
+=======
+    from features import FEATURE_NAMES, FEATURE_VERSION, build_feature_vector  # type: ignore # noqa: E402
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 from model import ModelManager  # type: ignore # noqa: E402
 
 

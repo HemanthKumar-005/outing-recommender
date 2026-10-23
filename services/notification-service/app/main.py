@@ -14,15 +14,27 @@ for _p in Path(__file__).resolve().parents:
             sys.path.insert(0, _sp)
         break
 
+<<<<<<< HEAD
 from eventbus import consume_in_background  # type: ignore # noqa: E402
 from tenant import require_tenant  # type: ignore # noqa: E402
 from authctx import Principal, get_principal, require_self_or_admin  # type: ignore # noqa: E402
 from observability import setup_observability  # type: ignore # noqa: E402
+=======
+try:
+    from shared.eventbus import consume_in_background  # type: ignore # noqa: E402
+    from shared.tenant import require_tenant  # type: ignore # noqa: E402
+except ImportError:
+    from eventbus import consume_in_background  # type: ignore # noqa: E402
+    from tenant import require_tenant  # type: ignore # noqa: E402
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 from . import db
 
 app = FastAPI(title="Notification Service")
+<<<<<<< HEAD
 setup_observability(app, "notification-service")
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 
 class NotificationCreate(BaseModel):
@@ -66,6 +78,7 @@ def ready(tenant_id: str = Depends(require_tenant)):
 
 
 @app.post("/notifications", status_code=201)
+<<<<<<< HEAD
 def create_notification(payload: NotificationCreate, principal: Principal = Depends(get_principal)):
     """Direct REST path for tenant-level callers; end users cannot push notifications to anyone."""
     if principal.user_id is not None and principal.role != "admin":
@@ -77,3 +90,14 @@ def create_notification(payload: NotificationCreate, principal: Principal = Depe
 def get_notifications(user_id: int, principal: Principal = Depends(get_principal)):
     require_self_or_admin(principal, user_id)
     return db.list_for_user(principal.tenant_id, user_id)
+=======
+def create_notification(payload: NotificationCreate, tenant_id: str = Depends(require_tenant)):
+    """Direct REST path for testing; production sends normally flow via the
+    `notification.send` event instead."""
+    return db.create_notification(tenant_id, payload.user_id, payload.title, payload.body, payload.channel)
+
+
+@app.get("/users/{user_id}/notifications")
+def get_notifications(user_id: int, tenant_id: str = Depends(require_tenant)):
+    return db.list_for_user(tenant_id, user_id)
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8

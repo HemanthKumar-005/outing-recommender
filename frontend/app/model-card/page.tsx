@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 const DEFAULT_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+<<<<<<< HEAD
+=======
+const DEFAULT_API_KEY = process.env.NEXT_PUBLIC_API_KEY || "demo-key";
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 type EvalRow = { strategy: string; "precision@k": string; "recall@k": string; "ndcg@k": string; map: string };
 
@@ -34,7 +38,13 @@ export default function ModelCard() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+<<<<<<< HEAD
     fetch(`${DEFAULT_API_URL}/recommendations/model-card`)
+=======
+    fetch(`${DEFAULT_API_URL}/recommendations/model-card`, {
+      headers: { "X-API-Key": DEFAULT_API_KEY },
+    })
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
       .then((r) => {
         if (!r.ok) throw new Error(`Request failed (${r.status})`);
         return r.json();

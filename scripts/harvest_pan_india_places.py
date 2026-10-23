@@ -13,8 +13,15 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+<<<<<<< HEAD
 import os
 import random
+=======
+import math
+import os
+import random
+import re
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 import sys
 import time
 import urllib.parse
@@ -29,17 +36,30 @@ ROOT = Path(__file__).resolve().parents[1]
 CATALOG_PATH = ROOT / "data" / "places_catalog.yaml"
 LOCATIONS_PATH = ROOT / "configs" / "india_locations.yaml"
 OCCASIONS_PATH = ROOT / "configs" / "occasions.yaml"
+<<<<<<< HEAD
 # Synthetic output is never written into runtime data paths.
 REVIEWS_PATH = ROOT / "tests" / "fixtures" / "synthetic_reviews.csv"
 
 sys.path.insert(0, str(ROOT / "shared"))
 from hours_pricing import (  # noqa: E402
+=======
+REVIEWS_PATH = ROOT / "data" / "reviews.csv"
+
+sys.path.insert(0, str(ROOT / "shared"))
+from hours_pricing import (  # noqa: E402
+    CATEGORY_DEFAULTS,
+    WEEKDAYS,
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     compute_price_tier,
     get_category_default,
 )
 
+<<<<<<< HEAD
 # No default key: a real token was committed here previously and MUST be considered leaked/rotated.
 LOCATIONIQ_API_KEY = os.environ.get("LOCATIONIQ_API_KEY", "")
+=======
+LOCATIONIQ_API_KEY = os.environ.get("LOCATIONIQ_API_KEY", "pk.29fdc1c562fe082ff4def88a6fc85b38")
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 # Regional cuisine & style presets for realistic naming
 REGIONAL_PROFILES: dict[str, dict[str, list[str]]] = {
@@ -218,7 +238,11 @@ def fetch_locationiq_nearby(lat: float, lon: float, tag: str, radius: int = 4000
             data = json.loads(resp.read().decode("utf-8"))
             if isinstance(data, list):
                 return data[:limit]
+<<<<<<< HEAD
     except Exception:
+=======
+    except Exception as e:
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         # Ignore rate limits/timeouts gracefully
         pass
     return []

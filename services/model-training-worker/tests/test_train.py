@@ -5,6 +5,10 @@ Unit tests for model-training-worker:
 3. Fallback to synthetic dataset when real interactions are insufficient (<1,000 or single-class).
 4. End-to-end model training on real interactions with temporal split and metadata generation.
 """
+<<<<<<< HEAD
+=======
+import json
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 import os
 import sys
 import tempfile
@@ -21,11 +25,19 @@ for p in (str(SHARED_DIR), str(WORKER_DIR)):
     if p not in sys.path and os.path.isdir(p):
         sys.path.insert(0, p)
 
+<<<<<<< HEAD
+=======
+import numpy as np  # noqa: E402
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 import train  # type: ignore # noqa: E402
 try:
     from shared.features import FEATURE_NAMES, FEATURE_VERSION  # type: ignore # noqa: E402
 except ImportError:
+<<<<<<< HEAD
     from features import FEATURE_NAMES  # type: ignore # noqa: E402
+=======
+    from features import FEATURE_NAMES, FEATURE_VERSION  # type: ignore # noqa: E402
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 
 class TestModelTrainingWorker(unittest.TestCase):
@@ -243,7 +255,10 @@ class TestModelTrainingWorker(unittest.TestCase):
 
         with patch.object(train, "MODEL_PATH", self.model_path), \
              patch.object(train, "MODEL_METADATA_PATH", self.meta_path), \
+<<<<<<< HEAD
              patch.object(train, "DATABASE_URL", "postgresql://trainer_role:x@localhost/db"), \
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
              patch.object(train, "extract_interactions_from_db", return_value=simulated_rows), \
              patch.object(train, "MIN_REAL_SAMPLES", 1000):
 
@@ -260,6 +275,7 @@ class TestModelTrainingWorker(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+<<<<<<< HEAD
 
 
 class TestCredentialHandling(unittest.TestCase):
@@ -269,3 +285,5 @@ class TestCredentialHandling(unittest.TestCase):
             train._redact("postgresql://trainer_role:s3cret@postgres:5432/outing"),
             "postgresql://trainer_role:***@postgres:5432/outing",
         )
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8

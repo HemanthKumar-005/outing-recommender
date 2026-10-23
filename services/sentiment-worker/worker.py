@@ -361,10 +361,23 @@ class FileReviewSource(ReviewSource):
         if filepath is not None:
             self.filepath = filepath if str(filepath).strip() else None
         elif auto_discover:
+<<<<<<< HEAD
             # Reviews are only read from a path the operator sets explicitly. The repo's
             # sample file is synthetic (tests/fixtures/synthetic_reviews.csv) and is
             # never auto-discovered, so fake reviews can't silently drive real scores.
             self.filepath = os.environ.get("REVIEWS_PATH") or None
+=======
+            env_path = os.environ.get("REVIEWS_PATH")
+            if env_path:
+                self.filepath = env_path
+            else:
+                candidates = [
+                    Path("/data/reviews.csv"),
+                    Path(__file__).resolve().parents[2] / "data" / "reviews.csv",
+                    Path("data/reviews.csv"),
+                ]
+                self.filepath = next((p for p in candidates if p.is_file()), None)
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         else:
             self.filepath = None
 

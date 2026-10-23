@@ -18,10 +18,14 @@ import requests
 import yaml
 
 BASE_URL = "http://localhost:8000/api"
+<<<<<<< HEAD
 import os as _os
 API_KEY = _os.environ.get("SEED_API_KEY", "")
 if not API_KEY:
     raise SystemExit("Set SEED_API_KEY to a tenant API key (create one with POST /tenants) before seeding.")
+=======
+API_KEY = "demo-key"
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 HEADERS = {"X-API-Key": API_KEY, "Content-Type": "application/json"}
 
 ROOT = Path(__file__).resolve().parents[1]

@@ -21,31 +21,50 @@ RABBITMQ_URL = os.environ.get("RABBITMQ_URL", "amqp://guest:guest@rabbitmq:5672/
 EXCHANGE = "events"
 
 
+<<<<<<< HEAD
 def _connect(retries: int = 15, delay: float = 3.0, timeout: float = 10.0) -> pika.BlockingConnection:
+=======
+def _connect(retries: int = 15, delay: float = 3.0) -> pika.BlockingConnection:
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     last_err = None
     for attempt in range(retries):
         try:
             params = pika.URLParameters(RABBITMQ_URL)
             params.heartbeat = 30
+<<<<<<< HEAD
             params.socket_timeout = timeout
             params.blocked_connection_timeout = timeout
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             conn = pika.BlockingConnection(params)
             return conn
         except Exception as e:  # noqa: BLE001
             last_err = e
             err_msg = str(e).strip() or repr(e)
             print(f"[eventbus] connect attempt {attempt + 1}/{retries} failed: {err_msg}")
+<<<<<<< HEAD
             if attempt + 1 < retries:
                 time.sleep(delay)
+=======
+            time.sleep(delay)
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     raise RuntimeError(f"Could not connect to RabbitMQ after {retries} attempts: {last_err}")
 
 
 def publish(routing_key: str, payload: dict) -> None:
+<<<<<<< HEAD
     """Best-effort publish. FAILS FAST (one attempt, 2 s timeout): a broker outage must never
     make user-facing requests hang. A missed event is logged; consumers also reconcile on startup."""
     try:
         conn = _connect(retries=1, delay=0, timeout=2.0)
     except RuntimeError as e:
+=======
+    """Publish a single message and close the connection. Fine for low-volume writes."""
+    try:
+        conn = _connect(retries=5, delay=2.0)
+    except RuntimeError as e:
+        # Don't take down a request path just because the broker is briefly unavailable.
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         print(f"[eventbus] publish skipped, broker unreachable: {e}")
         return
     try:
@@ -57,9 +76,13 @@ def publish(routing_key: str, payload: dict) -> None:
             body=json.dumps(payload, default=str).encode("utf-8"),
             properties=pika.BasicProperties(content_type="application/json", delivery_mode=2),
         )
+<<<<<<< HEAD
         print(f"[eventbus] published routing_key={routing_key}")  # payload omitted: may contain user data
     except Exception as e:  # noqa: BLE001
         print(f"[eventbus] publish failed for {routing_key}: {e}")
+=======
+        print(f"[eventbus] published routing_key={routing_key} payload={payload}")
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     finally:
         conn.close()
 

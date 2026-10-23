@@ -3,7 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+<<<<<<< HEAD
 import { getUserInfo, logoutUser } from "../lib/api";
+=======
+import { getUserInfo, clearSession } from "../lib/api";
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: "⌂" },
@@ -41,8 +45,13 @@ export default function DashboardSidebar({ open, onClose }: Props) {
     localStorage.setItem("nearby-theme", next);
   };
 
+<<<<<<< HEAD
   const logout = async () => {
     await logoutUser(); // clears the HttpOnly cookie server-side
+=======
+  const logout = () => {
+    clearSession();
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     router.push("/");
   };
 
@@ -74,7 +83,11 @@ export default function DashboardSidebar({ open, onClose }: Props) {
         <div className="dash-avatar">{initial}</div>
         <div className="dash-user-info">
           <div className="dash-user-name">{user.name}</div>
+<<<<<<< HEAD
           <div className="dash-user-workspace">{user.email}</div>
+=======
+          <div className="dash-user-workspace">{user.workspace}</div>
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         </div>
         <button
           type="button"

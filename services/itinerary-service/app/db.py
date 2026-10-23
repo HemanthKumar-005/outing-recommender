@@ -137,6 +137,7 @@ def replace_items(tenant_id: str, itinerary_id: int, items: list[dict[str, Any]]
     for item in items:
         inserted.append(add_item(tenant_id, itinerary_id, item))
     return inserted
+<<<<<<< HEAD
 
 
 def set_share_token(tenant_id: str, itinerary_id: int, token: str | None) -> None:
@@ -148,3 +149,5 @@ def get_by_share_token(tenant_id: str, token: str) -> dict | None:
     with tenant_cursor(tenant_id) as cur:
         cur.execute("SELECT * FROM itineraries.itineraries WHERE share_token = %s", (token,))
         return cur.fetchone()
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8

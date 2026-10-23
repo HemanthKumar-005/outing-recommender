@@ -27,13 +27,19 @@ from config_loader import (  # noqa: E402
 )
 from hours_pricing import evaluate_place_hours, format_price_display  # noqa: E402
 from tenant import require_tenant  # noqa: E402
+<<<<<<< HEAD
 from authctx import Principal, get_principal  # noqa: E402
 from observability import setup_observability  # noqa: E402
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 from . import db
 
 app = FastAPI(title="Place Service")
+<<<<<<< HEAD
 setup_observability(app, "place-service")
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 
 def _enrich_place(row: dict | None) -> dict | None:
@@ -48,6 +54,7 @@ def _enrich_place(row: dict | None) -> dict | None:
         res.get("entry_fee", 0.0),
     )
     res.update(hours_eval)
+<<<<<<< HEAD
     # Category-default hours are guesses (e.g. "every attraction closes Mondays 5:30 PM").
     # Never present a guess as fact: no "Open now"/"Closed" verdict, and a visible badge instead.
     res["hours_is_estimated"] = bool(res.get("opening_hours_is_estimated", True))
@@ -59,6 +66,8 @@ def _enrich_place(row: dict | None) -> dict | None:
         res["opens_at"] = None
         if res.get("today_hours") and res["today_hours"] != "Hours unavailable":
             res["today_hours"] = "~" + res["today_hours"]
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     res.update(price_eval)
     return res
 
@@ -89,6 +98,7 @@ class PlaceCreate(BaseModel):
     cost_for_two: float | None = None
     pricing_source: str = "category_default"
     pricing_is_estimated: bool = True
+<<<<<<< HEAD
     source: str = "unknown"
     source_id: str | None = None
     verification_status: str = Field("unverified", pattern="^(unverified|verified|closed|rejected)$")
@@ -106,6 +116,8 @@ class ResolveBody(BaseModel):
 class VerificationBody(BaseModel):
     status: str = Field(pattern="^(unverified|verified|closed|rejected)$")
     source_id: str | None = None
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 
 class SurpriseBody(BaseModel):
@@ -197,6 +209,7 @@ def search_places(
         "open_now": open_now,
     }}
 
+<<<<<<< HEAD
 @app.get("/places/nearby")
 def nearby_places(
     lat: float,
@@ -228,6 +241,10 @@ def create_place(payload: PlaceCreate, principal: Principal = Depends(get_princi
     if principal.user_id is not None and principal.role != "admin":
         raise HTTPException(status_code=403, detail="forbidden")
     tenant_id = principal.tenant_id
+=======
+@app.post("/places", status_code=201)
+def create_place(payload: PlaceCreate, tenant_id: str = Depends(require_tenant)):
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     row = db.create_place(tenant_id, payload.model_dump())
     try:
         from eventbus import publish
@@ -253,6 +270,7 @@ def get_place(place_id: int, tenant_id: str = Depends(require_tenant)):
     return _enrich_place(row)
 
 
+<<<<<<< HEAD
 @app.post("/places/{place_id}/report", status_code=201)
 def report_issue(place_id: int, payload: IssueReportBody, principal: Principal = Depends(get_principal)):
     """'Report an issue' button on venue cards -> moderation queue."""
@@ -289,16 +307,23 @@ def set_place_verification(place_id: int, payload: VerificationBody, principal: 
     return _enrich_place(row)
 
 
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 @app.patch("/places/{place_id}/sentiment")
 def update_place_sentiment(
     place_id: int,
     payload: SentimentUpdate,
+<<<<<<< HEAD
     principal: Principal = Depends(get_principal),
 ):
     # Sentiment is written by the sentiment-worker (tenant-level, no user identity), not by end users.
     if principal.user_id is not None and principal.role != "admin":
         raise HTTPException(status_code=403, detail="forbidden")
     tenant_id = principal.tenant_id
+=======
+    tenant_id: str = Depends(require_tenant),
+):
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     row = db.update_place_sentiment(tenant_id, place_id, payload.sentiment_score, payload.ambience_add)
     if not row:
         raise HTTPException(status_code=404, detail="place not found")

@@ -41,11 +41,14 @@ logger = logging.getLogger("recommendation-engine.model")
 if not logger.handlers:
     logging.basicConfig(level=logging.INFO)
 
+<<<<<<< HEAD
 # Experimental: the XGBoost model is trained on synthetic bootstrap data until enough REAL
 # interactions exist, so it is OFF by default. The deterministic rule/content-based scorer
 # (scoring.py + fusion.py) is the primary ranker; with the model off, every candidate gets a
 # neutral ML score of 0.5, which leaves the ordering to the deterministic components.
 XGBOOST_ENABLED = os.environ.get("ENABLE_XGBOOST_RANKER", "false").lower() == "true"
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 MODEL_PATH_DEFAULT = os.environ.get("MODEL_PATH", "/models/xgboost_model.json")
 MODEL_METADATA_PATH_DEFAULT = os.environ.get("MODEL_METADATA_PATH", "/models/xgboost_model.meta.json")
 
@@ -83,9 +86,12 @@ class ModelManager:
         Returns True on success. On failure or missing files, logs warning and
         leaves booster as None (or preserves current booster if this is a reload).
         """
+<<<<<<< HEAD
         if not XGBOOST_ENABLED:
             logger.info("[model] XGBoost ranker disabled (ENABLE_XGBOOST_RANKER=false); using deterministic scoring only.")
             return False
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         target_model = model_path or self.model_path
         target_meta = metadata_path or self.metadata_path
 
@@ -240,8 +246,11 @@ class ModelManager:
         Start background eventbus subscriber for 'model.updated'.
         Does not block and auto-retries on RabbitMQ downtime.
         """
+<<<<<<< HEAD
         if not XGBOOST_ENABLED:
             return
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         try:
             from eventbus import consume_in_background
             self._listener_thread = consume_in_background(

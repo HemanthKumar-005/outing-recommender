@@ -3,13 +3,18 @@
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+<<<<<<< HEAD
 import { loginUser, isOnboarded } from "../../lib/api";
 import Turnstile from "../../components/Turnstile";
+=======
+import { setSession, isOnboarded } from "../../lib/api";
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+<<<<<<< HEAD
   const [captcha, setCaptcha] = useState("");
   const [captchaReset, setCaptchaReset] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -32,6 +37,45 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+=======
+  const [remember, setRemember] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (!email.trim()) {
+      setError("Please enter your email.");
+      return;
+    }
+    if (!password.trim()) {
+      setError("Please enter your password.");
+      return;
+    }
+    setLoading(true);
+    setSession({
+      apiKey: process.env.NEXT_PUBLIC_API_KEY || `user-${email.trim().split("@")[0]}`,
+      userName: email.trim().split("@")[0],
+      email: email.trim(),
+    });
+    void remember;
+    setTimeout(() => {
+      setLoading(false);
+      if (isOnboarded()) router.push("/dashboard");
+      else router.push("/onboarding");
+    }, 400);
+  };
+
+  const useDemo = () => {
+    setSession({
+      apiKey: process.env.NEXT_PUBLIC_API_KEY || "demo-key",
+      userName: "Demo User",
+      email: "demo@nearby.co",
+    });
+    localStorage.setItem("nearby_onboarded", "true");
+    router.push("/dashboard");
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
   };
 
   return (
@@ -68,12 +112,26 @@ export default function LoginPage() {
               required
             />
           </div>
+<<<<<<< HEAD
           <Turnstile onToken={setCaptcha} resetSignal={captchaReset} />
+=======
+          <div className="form-group" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <input id="remember" type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} />
+            <label htmlFor="remember" style={{ fontSize: "0.88rem", color: "var(--slate)" }}>Remember me</label>
+          </div>
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
           {error && <p className="form-error">{error}</p>}
           <button type="submit" className="btn btn-primary btn-block btn-lg" disabled={loading}>
             {loading ? "Signing in…" : "Log in"}
           </button>
         </form>
+<<<<<<< HEAD
+=======
+        <div className="auth-divider">or</div>
+        <button type="button" className="btn btn-secondary btn-block" onClick={useDemo}>
+          Try the demo
+        </button>
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         <div className="auth-footer">
           New here? <Link href="/signup">Create an account</Link>
         </div>

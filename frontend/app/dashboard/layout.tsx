@@ -4,7 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import DashboardSidebar from "../../components/DashboardSidebar";
+<<<<<<< HEAD
 import { fetchMe } from "../../lib/api";
+=======
+import { isAuthenticated } from "../../lib/api";
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -13,6 +17,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
+<<<<<<< HEAD
     // The server is the source of truth: ask it who we are rather than trusting local state.
     let cancelled = false;
     fetchMe().then((user) => {
@@ -23,6 +28,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     return () => {
       cancelled = true;
     };
+=======
+    if (!isAuthenticated()) {
+      router.replace("/login");
+    } else {
+      setReady(true);
+    }
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
   }, [router]);
 
   if (!ready) {

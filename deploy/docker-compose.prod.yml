@@ -1,11 +1,14 @@
 x-python-env: &python-env
   PYTHONUNBUFFERED: "1"
+<<<<<<< HEAD
   APP_ENV: production
   SENTRY_DSN: ${SENTRY_DSN:-}
 
 x-auth-env: &auth-env
   JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET (>=32 random chars)}
   INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:?set INTERNAL_SERVICE_TOKEN}
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 networks:
   outing_prod_net:
@@ -20,14 +23,21 @@ services:
     image: nginx:1.27-alpine
     container_name: outing-nginx
     restart: always
+<<<<<<< HEAD
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME:?set DOMAIN_NAME (the hostname you serve, e.g. nearby.example.com)}
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+<<<<<<< HEAD
       - ./nginx/templates:/etc/nginx/templates:ro
+=======
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
       - certbot_www:/var/www/certbot:ro
       - certbot_certs:/etc/letsencrypt:ro
     depends_on:
@@ -36,6 +46,7 @@ services:
     networks:
       - outing_prod_net
 
+<<<<<<< HEAD
   # Free TLS certificates (Let's Encrypt). Bootstrap once with scripts/init-letsencrypt.sh;
   # this container then renews them every 12 hours.
   certbot:
@@ -49,6 +60,8 @@ services:
     networks:
       - outing_prod_net
 
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
   # =========================================================================
   # CORE INFRASTRUCTURE (INTERNAL ONLY - NO HOST PORTS EXPOSED)
   # =========================================================================
@@ -59,6 +72,7 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-outing}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
+<<<<<<< HEAD
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
       APP_ROLE_PW: ${APP_ROLE_PW:?}
       GATEWAY_ROLE_PW: ${GATEWAY_ROLE_PW:?}
@@ -67,6 +81,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ../postgres/init:/docker-entrypoint-initdb.d:ro
+=======
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_admin_pw}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../postgres/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-outing}"]
       interval: 5s
@@ -80,8 +100,13 @@ services:
     container_name: outing-rabbitmq
     restart: always
     environment:
+<<<<<<< HEAD
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:?set RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:?set RABBITMQ_PASS}
+=======
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:-guest}
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
@@ -116,14 +141,22 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+<<<<<<< HEAD
         NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
         NEXT_PUBLIC_TILE_URL: ${NEXT_PUBLIC_TILE_URL:-}
         NEXT_PUBLIC_SUPPORT_EMAIL: ${NEXT_PUBLIC_SUPPORT_EMAIL:-}
+=======
+        NEXT_PUBLIC_API_KEY: ${NEXT_PUBLIC_API_KEY:-demo-key}
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     container_name: outing-frontend
     restart: unless-stopped
     environment:
       NODE_ENV: production
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-/api}
+<<<<<<< HEAD
+=======
+      NEXT_PUBLIC_API_KEY: ${NEXT_PUBLIC_API_KEY:-demo-key}
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     depends_on:
       - api-gateway
     networks:
@@ -136,6 +169,7 @@ services:
     container_name: outing-api-gateway
     restart: unless-stopped
     environment:
+<<<<<<< HEAD
       <<: [*python-env, *auth-env]
       TRUST_PROXY: "true"            # we sit behind nginx, which sets X-Forwarded-For
       COOKIE_SECURE: ${COOKIE_SECURE:-true}
@@ -150,6 +184,10 @@ services:
       MAIL_FROM: ${MAIL_FROM:?set MAIL_FROM}
       MAX_TENANTS: ${MAX_TENANTS:-100}
       PLATFORM_DATABASE_URL: postgresql://gateway_role:${GATEWAY_ROLE_PW:?}@postgres:5432/${POSTGRES_DB:-outing}
+=======
+      <<: *python-env
+      PLATFORM_DATABASE_URL: postgresql://${GATEWAY_ROLE_USER:-gateway_role}:${GATEWAY_ROLE_PW:-gateway_role_pw}@postgres:5432/${POSTGRES_DB:-outing}
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
       REDIS_URL: redis://redis:6379/0
       RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-120}
       USER_SERVICE_URL: http://user-service:8000
@@ -191,10 +229,16 @@ services:
     container_name: outing-user-service
     restart: unless-stopped
     environment:
+<<<<<<< HEAD
       <<: [*python-env, *auth-env]
       TERMS_VERSION: ${TERMS_VERSION:-2026-10-21}
       DATABASE_URL: postgresql://app_role:${APP_ROLE_PW:?set APP_ROLE_PW in .env}@postgres:5432/${POSTGRES_DB:-outing}
       RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+=======
+      <<: *python-env
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/${POSTGRES_DB:-outing}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     depends_on:
       postgres:
         condition: service_healthy
@@ -211,9 +255,14 @@ services:
     restart: unless-stopped
     environment:
       <<: *python-env
+<<<<<<< HEAD
       VERIFIED_ONLY: ${VERIFIED_ONLY:-true}   # launch gate: show only human-verified venues
       DATABASE_URL: postgresql://app_role:${APP_ROLE_PW:?set APP_ROLE_PW in .env}@postgres:5432/${POSTGRES_DB:-outing}
       RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+=======
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/${POSTGRES_DB:-outing}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     depends_on:
       postgres:
         condition: service_healthy
@@ -230,9 +279,12 @@ services:
     restart: unless-stopped
     environment:
       <<: *python-env
+<<<<<<< HEAD
       ALLOW_MOCK_WEATHER: "false"
       OPEN_METEO_ENABLED: ${OPEN_METEO_ENABLED:-true}
       OPENWEATHERMAP_API_KEY: ${OPENWEATHERMAP_API_KEY:-}
+=======
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
       REDIS_URL: redis://redis:6379/0
     depends_on:
       redis:
@@ -248,8 +300,13 @@ services:
     restart: unless-stopped
     environment:
       <<: *python-env
+<<<<<<< HEAD
       DATABASE_URL: postgresql://app_role:${APP_ROLE_PW:?set APP_ROLE_PW in .env}@postgres:5432/${POSTGRES_DB:-outing}
       RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+=======
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/${POSTGRES_DB:-outing}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     depends_on:
       postgres:
         condition: service_healthy
@@ -271,7 +328,11 @@ services:
       RANKING_CONFIG_PATH: /configs/ranking.yaml
       EVALUATION_RESULTS_PATH: /evaluation/evaluation_results.csv
       REDIS_URL: redis://redis:6379/0
+<<<<<<< HEAD
       RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+=======
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
       USER_SERVICE_URL: http://user-service:8000
       PLACE_SERVICE_URL: http://place-service:8000
       CONTEXT_SERVICE_URL: http://context-service:8000
@@ -304,9 +365,15 @@ services:
     restart: unless-stopped
     environment:
       <<: *python-env
+<<<<<<< HEAD
       DATABASE_URL: postgresql://app_role:${APP_ROLE_PW:?set APP_ROLE_PW in .env}@postgres:5432/${POSTGRES_DB:-outing}
       PLATFORM_DATABASE_URL: postgresql://worker_role:${WORKER_ROLE_PW:?}@postgres:5432/${POSTGRES_DB:-outing}
       RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+=======
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/${POSTGRES_DB:-outing}
+      PLATFORM_DATABASE_URL: postgresql://${WORKER_ROLE_USER:-worker_role}:${WORKER_ROLE_PW:-worker_role_pw}@postgres:5432/${POSTGRES_DB:-outing}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
       PLACE_SERVICE_URL: http://place-service:8000
       CONTEXT_SERVICE_URL: http://context-service:8000
     depends_on:
@@ -329,8 +396,13 @@ services:
     restart: unless-stopped
     environment:
       <<: *python-env
+<<<<<<< HEAD
       DATABASE_URL: postgresql://app_role:${APP_ROLE_PW:?set APP_ROLE_PW in .env}@postgres:5432/${POSTGRES_DB:-outing}
       RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+=======
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/${POSTGRES_DB:-outing}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     depends_on:
       postgres:
         condition: service_healthy
@@ -352,7 +424,11 @@ services:
       <<: *python-env
       MODEL_PATH: /models/xgboost_model.json
       MODEL_METADATA_PATH: /models/xgboost_model.meta.json
+<<<<<<< HEAD
       RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+=======
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
       DAEMON_MODE: "true"
     volumes:
       - models_data:/models
@@ -371,10 +447,19 @@ services:
     environment:
       <<: *python-env
       PLACE_SERVICE_URL: http://place-service:8000
+<<<<<<< HEAD
       RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
       PLATFORM_DATABASE_URL: postgresql://worker_role:${WORKER_ROLE_PW:?}@postgres:5432/${POSTGRES_DB:-outing}
     volumes:
       - hf_cache:/root/.cache/huggingface
+=======
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASS:-guest}@rabbitmq:5672/%2F
+      PLATFORM_DATABASE_URL: postgresql://${WORKER_ROLE_USER:-worker_role}:${WORKER_ROLE_PW:-worker_role_pw}@postgres:5432/${POSTGRES_DB:-outing}
+      REVIEWS_PATH: /data/reviews.csv
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+      - ../data:/data:ro
+>>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     depends_on:
       postgres:
         condition: service_healthy
