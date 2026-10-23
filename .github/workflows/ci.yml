@@ -112,7 +112,15 @@ jobs:
             echo "REQUIRE_EMAIL_VERIFICATION=true"
           } >> .env
       - name: Start the stack
-        run: docker compose up -d --build --wait --wait-timeout 600 frontend api-gateway mailpit
+        run: |
+          docker compose up -d --build --wait --wait-timeout 600 frontend api-gateway mailpit || {
+            echo "### Docker Compose Logs" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            docker compose ps >> $GITHUB_STEP_SUMMARY
+            docker compose logs --tail=100 >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit 1
+          }
       - name: Seed the curated catalog into the consumer tenant
         run: |
           pip install pyyaml "psycopg[binary]"

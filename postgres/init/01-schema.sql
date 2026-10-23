@@ -320,13 +320,7 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA itineraries TO app_role;
 -- model-training-worker no longer needs the postgres superuser. The policy is
 -- SELECT-only and scoped to this single role; no other role is affected.
 -- ---------------------------------------------------------------------
-GRANT USAGE ON SCHEMA interactions, places, users TO trainer_role;
+GRANT USAGE ON SCHEMA interactions TO trainer_role;
 GRANT SELECT ON interactions.interactions TO trainer_role;
-GRANT SELECT ON places.places TO trainer_role;
-GRANT SELECT ON users.users TO trainer_role;
 CREATE POLICY trainer_read_all ON interactions.interactions
-    FOR SELECT TO trainer_role USING (true);
-CREATE POLICY trainer_read_all ON places.places
-    FOR SELECT TO trainer_role USING (true);
-CREATE POLICY trainer_read_all ON users.users
     FOR SELECT TO trainer_role USING (true);
