@@ -112,7 +112,7 @@ jobs:
             echo "REQUIRE_EMAIL_VERIFICATION=true"
           } >> .env
       - name: Start the stack
-        run: docker compose up -d --build --wait --wait-timeout 600
+        run: docker compose up -d --build --wait --wait-timeout 600 frontend api-gateway mailpit
       - name: Seed the curated catalog into the consumer tenant
         run: |
           pip install pyyaml "psycopg[binary]"
