@@ -113,14 +113,28 @@ jobs:
           } >> .env
       - name: Start the stack
         run: |
-          docker compose up -d --build --wait --wait-timeout 600 frontend api-gateway mailpit || {
-            echo "### Docker Compose Logs" >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            docker compose ps >> $GITHUB_STEP_SUMMARY
-            docker compose logs --tail=100 >> $GITHUB_STEP_SUMMARY
-            echo '```' >> $GITHUB_STEP_SUMMARY
-            exit 1
-          }
+          docker compose up -d --build
+          echo "Waiting for services to be ready..."
+          timeout=180
+          start_time=$(date +%s)
+          while true; do
+            if curl -s -f http://127.0.0.1:8000/ready > /dev/null 2>&1 && \
+               curl -s -f http://127.0.0.1:8025 > /dev/null 2>&1 && \
+               curl -s -f http://127.0.0.1:3000 > /dev/null 2>&1; then
+              echo "Stack is ready and responding on ports 3000, 8000, and 8025!"
+              break
+            fi
+            current_time=$(date +%s)
+            elapsed=$((current_time - start_time))
+            if [ $elapsed -ge $timeout ]; then
+              echo "Timed out waiting for stack to be ready ($timeout seconds)"
+              docker compose ps
+              docker compose logs --tail=100
+              exit 1
+            fi
+            sleep 3
+          done
+          docker compose ps
       - name: Seed the curated catalog into the consumer tenant
         run: |
           pip install pyyaml "psycopg[binary]"
