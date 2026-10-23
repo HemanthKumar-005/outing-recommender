@@ -4,16 +4,12 @@ from __future__ import annotations
 import sys
 from typing import Any
 
-<<<<<<< HEAD
 import os
 
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 sys.path.insert(0, "/shared")
 from pgdb import tenant_cursor  # noqa: E402
 from psycopg.types.json import Json  # noqa: E402
 
-<<<<<<< HEAD
 # Launch setting: only venues a human has verified are shown to the public.
 # Closed/rejected venues are ALWAYS hidden, regardless of this flag.
 VERIFIED_ONLY = os.environ.get("VERIFIED_ONLY", "false").lower() == "true"
@@ -22,8 +18,6 @@ VISIBLE_SQL = (
     else "verification_status NOT IN ('closed', 'rejected')"
 )
 
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 def create_place(tenant_id: str, payload: dict[str, Any]) -> dict:
     with tenant_cursor(tenant_id) as cur:
@@ -34,18 +28,11 @@ def create_place(tenant_id: str, payload: dict[str, Any]) -> dict:
                 rating, review_count, lat, lng, city, state, indoor_outdoor, ambience, tags,
                 description, family_friendly, couple_friendly, friends_friendly,
                 opening_hours, opening_hours_source, opening_hours_is_estimated,
-<<<<<<< HEAD
                 entry_fee, cost_for_two, pricing_source, pricing_is_estimated,
                 source, source_id, verification_status, last_verified_at
             ) VALUES (
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
-=======
-                entry_fee, cost_for_two, pricing_source, pricing_is_estimated
-            ) VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                %s, %s, %s, %s, %s, %s, %s
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             ) RETURNING *
             """,
             (
@@ -75,13 +62,10 @@ def create_place(tenant_id: str, payload: dict[str, Any]) -> dict:
                 payload.get("cost_for_two") or payload.get("average_cost"),
                 payload.get("pricing_source", "category_default"),
                 payload.get("pricing_is_estimated", True),
-<<<<<<< HEAD
                 payload.get("source", "unknown"),
                 payload.get("source_id"),
                 payload.get("verification_status", "unverified"),
                 payload.get("last_verified_at"),
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             ),
         )
         return cur.fetchone()
@@ -90,11 +74,7 @@ def create_place(tenant_id: str, payload: dict[str, Any]) -> dict:
 def list_places(tenant_id: str, limit: int = 200) -> list:
     with tenant_cursor(tenant_id) as cur:
         cur.execute(
-<<<<<<< HEAD
             f"SELECT * FROM places.places WHERE {VISIBLE_SQL} ORDER BY id DESC LIMIT %s",
-=======
-            "SELECT * FROM places.places ORDER BY id DESC LIMIT %s",
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             (limit,),
         )
         return cur.fetchall()
@@ -102,11 +82,7 @@ def list_places(tenant_id: str, limit: int = 200) -> list:
 
 def get_place(tenant_id: str, place_id: int) -> dict | None:
     with tenant_cursor(tenant_id) as cur:
-<<<<<<< HEAD
         cur.execute(f"SELECT * FROM places.places WHERE id = %s AND {VISIBLE_SQL}", (place_id,))
-=======
-        cur.execute("SELECT * FROM places.places WHERE id = %s", (place_id,))
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         return cur.fetchone()
 
 
@@ -126,11 +102,7 @@ def surprise_place(
     Uses ORDER BY random() LIMIT 1 on a filtered set — fine for catalog sizes
     typical of a tenant demo; for very large catalogs switch to TABLESAMPLE.
     """
-<<<<<<< HEAD
     clauses = [VISIBLE_SQL]
-=======
-    clauses = ["TRUE"]
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     params: list[Any] = []
 
     if category:
@@ -190,11 +162,7 @@ def search_places(
     limit: int = 50,
 ) -> list:
     """Geo + text search — recommendations never hard-code a place list."""
-<<<<<<< HEAD
     clauses = [VISIBLE_SQL]
-=======
-    clauses = ["TRUE"]
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     params: list[Any] = []
     if city:
         clauses.append("city ILIKE %s")
@@ -237,11 +205,7 @@ def places_by_ids(tenant_id: str, ids: list[int]) -> list:
         return []
     with tenant_cursor(tenant_id) as cur:
         cur.execute(
-<<<<<<< HEAD
             f"SELECT * FROM places.places WHERE id = ANY(%s) AND {VISIBLE_SQL}",
-=======
-            "SELECT * FROM places.places WHERE id = ANY(%s)",
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             (ids,),
         )
         rows = cur.fetchall()
@@ -282,7 +246,6 @@ def update_place_sentiment(
             )
         return cur.fetchone()
 
-<<<<<<< HEAD
 
 
 # ------------------------------------------------------------------ moderation
@@ -339,5 +302,3 @@ def set_verification(tenant_id: str, place_id: int, status: str, source_id: str 
             (status, source_id, status, place_id),
         )
         return cur.fetchone()
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8

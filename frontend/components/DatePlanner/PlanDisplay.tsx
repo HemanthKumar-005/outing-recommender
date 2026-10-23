@@ -2,13 +2,8 @@
 
 import { useState } from "react";
 import type { DatePlan } from "../../lib/api";
-<<<<<<< HEAD
 import { refinePlan, reorderPlan, swapPlanStop, fetchItineraryBackups, shareItinerary, itineraryCalendarUrl } from "../../lib/api";
 import MapView, { type MapPlace } from "../MapView";
-=======
-import { refinePlan, reorderPlan, swapPlanStop, fetchItineraryBackups } from "../../lib/api";
-import GoogleMapView, { type MapPlace } from "../GoogleMapView";
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 type Props = {
   plan: DatePlan;
@@ -162,7 +157,6 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
           <button type="button" className="btn btn-secondary btn-sm" onClick={copySummary} title="Copy plan text">
             {copied ? "✓ Copied!" : "📋 Copy Plan"}
           </button>
-<<<<<<< HEAD
           {plan.itinerary_id && (
             <>
               <a className="btn btn-secondary btn-sm" href={itineraryCalendarUrl(plan.itinerary_id)} download title="Add to any calendar app (.ics file)">
@@ -188,8 +182,6 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
               </button>
             </>
           )}
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
           <button type="button" className="btn btn-primary btn-sm" onClick={openRouteInGoogleMaps}>
             🗺️ Open in Google Maps ↗
           </button>
@@ -288,20 +280,12 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
                     textTransform: "uppercase",
                   }}
                 >
-<<<<<<< HEAD
                   {plan.routing.provider === "haversine_estimate" ? "📍 Straight-line estimate" : "🛣️ Road route"}
-=======
-                  {plan.routing.provider === "locationiq" ? "⚡ LocationIQ OSRM" : "📍 Traffic Model"}
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
                 </span>
               </div>
             )}
 
-<<<<<<< HEAD
             <MapView places={mapPlaces} routeMode={true} height={320} />
-=======
-            <GoogleMapView places={mapPlaces} routeMode={true} height={320} />
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
           </div>
         );
       })()}

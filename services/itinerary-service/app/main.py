@@ -4,10 +4,6 @@ from __future__ import annotations
 import os
 import sys
 from datetime import datetime
-<<<<<<< HEAD
-=======
-from typing import Any
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 import httpx
 from fastapi import Depends, FastAPI, HTTPException
@@ -16,20 +12,14 @@ from pydantic import BaseModel, Field
 sys.path.insert(0, "/shared")
 from config_loader import list_occasions_public  # noqa: E402
 from tenant import require_tenant  # noqa: E402
-<<<<<<< HEAD
 from authctx import Principal, get_principal  # noqa: E402
 from observability import propagate_headers, setup_observability  # noqa: E402
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 from . import db
 from .planner import generate_plan, resequence_plan
 
 app = FastAPI(title="Itinerary Service")
-<<<<<<< HEAD
 setup_observability(app, "itinerary-service")
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 PLACE_SERVICE_URL = os.environ.get("PLACE_SERVICE_URL", "http://place-service:8000")
 _client = httpx.AsyncClient(timeout=8.0)
@@ -66,7 +56,6 @@ class SwapRequest(BaseModel):
 
 
 def _headers(tenant_id: str) -> dict[str, str]:
-<<<<<<< HEAD
     return propagate_headers({"X-Tenant-Id": tenant_id, "Content-Type": "application/json"})
 
 
@@ -76,9 +65,6 @@ def _owned_itinerary(principal: Principal, itinerary_id: int) -> dict:
     if not row or not (principal.is_admin or row.get("user_id") == principal.user_id):
         raise HTTPException(status_code=404, detail="itinerary not found")
     return row
-=======
-    return {"X-Tenant-Id": tenant_id, "Content-Type": "application/json"}
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 
 async def _fetch_places(tenant_id: str, place_ids: list[int] | None = None) -> list[dict]:
@@ -116,16 +102,11 @@ def occasions():
 @app.post("/generate-plan")
 async def generate_plan_endpoint(
     body: GeneratePlanRequest,
-<<<<<<< HEAD
     principal: Principal = Depends(get_principal),
 ):
     tenant_id = principal.tenant_id
     if principal.user_id is not None and not principal.is_admin:
         body.user_id = principal.user_id  # never trust a client-supplied user_id
-=======
-    tenant_id: str = Depends(require_tenant),
-):
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     selected = await _fetch_places(tenant_id, body.place_ids or None)
     if not selected:
         # Auto-pick from catalog when client didn't select spots
@@ -193,18 +174,10 @@ async def generate_plan_endpoint(
 async def refine_plan(
     itinerary_id: int,
     body: RefineRequest,
-<<<<<<< HEAD
     principal: Principal = Depends(get_principal),
 ):
     tenant_id = principal.tenant_id
     existing = _owned_itinerary(principal, itinerary_id)
-=======
-    tenant_id: str = Depends(require_tenant),
-):
-    existing = db.get_itinerary(tenant_id, itinerary_id)
-    if not existing:
-        raise HTTPException(status_code=404, detail="itinerary not found")
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
     items = db.list_items(tenant_id, itinerary_id)
     place_ids = [i["place_id"] for i in items]
@@ -270,7 +243,6 @@ async def refine_plan(
 def list_itineraries(
     user_id: int | None = None,
     limit: int = 50,
-<<<<<<< HEAD
     principal: Principal = Depends(get_principal),
 ):
     if not principal.is_admin:
@@ -361,38 +333,16 @@ def itinerary_ics(itinerary_id: int, principal: Principal = Depends(get_principa
         media_type="text/calendar",
         headers={"Content-Disposition": f'attachment; filename="outing-{itinerary_id}.ics"'},
     )
-=======
-    tenant_id: str = Depends(require_tenant),
-):
-    return db.list_itineraries(tenant_id, user_id, limit)
-
-
-@app.get("/itineraries/{itinerary_id}")
-def get_itinerary(itinerary_id: int, tenant_id: str = Depends(require_tenant)):
-    row = db.get_itinerary(tenant_id, itinerary_id)
-    if not row:
-        raise HTTPException(status_code=404, detail="not found")
-    items = db.list_items(tenant_id, itinerary_id)
-    return {**row, "items": items}
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 
 @app.post("/itineraries/{itinerary_id}/reorder")
 async def reorder_itinerary(
     itinerary_id: int,
     body: ReorderRequest,
-<<<<<<< HEAD
     principal: Principal = Depends(get_principal),
 ):
     tenant_id = principal.tenant_id
     existing = _owned_itinerary(principal, itinerary_id)
-=======
-    tenant_id: str = Depends(require_tenant),
-):
-    existing = db.get_itinerary(tenant_id, itinerary_id)
-    if not existing:
-        raise HTTPException(status_code=404, detail="itinerary not found")
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
     places = await _fetch_places(tenant_id, body.place_ids)
     if not places:
@@ -443,18 +393,10 @@ async def reorder_itinerary(
 async def swap_itinerary_stop(
     itinerary_id: int,
     body: SwapRequest,
-<<<<<<< HEAD
     principal: Principal = Depends(get_principal),
 ):
     tenant_id = principal.tenant_id
     existing = _owned_itinerary(principal, itinerary_id)
-=======
-    tenant_id: str = Depends(require_tenant),
-):
-    existing = db.get_itinerary(tenant_id, itinerary_id)
-    if not existing:
-        raise HTTPException(status_code=404, detail="itinerary not found")
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
     current_items = db.list_items(tenant_id, itinerary_id)
     place_ids = [it["place_id"] for it in current_items]
@@ -505,18 +447,10 @@ async def swap_itinerary_stop(
 @app.get("/itineraries/{itinerary_id}/backups")
 async def get_itinerary_backups(
     itinerary_id: int,
-<<<<<<< HEAD
     principal: Principal = Depends(get_principal),
 ):
     tenant_id = principal.tenant_id
     existing = _owned_itinerary(principal, itinerary_id)
-=======
-    tenant_id: str = Depends(require_tenant),
-):
-    existing = db.get_itinerary(tenant_id, itinerary_id)
-    if not existing:
-        raise HTTPException(status_code=404, detail="itinerary not found")
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     items = db.list_items(tenant_id, itinerary_id)
     current_ids = {it["place_id"] for it in items}
     pool = await _fetch_places(tenant_id, None)

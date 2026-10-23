@@ -7,11 +7,6 @@ Upserts places: updates existing venues and inserts new venues for active tenant
 from __future__ import annotations
 
 import os
-<<<<<<< HEAD
-=======
-import random
-import sys
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 from pathlib import Path
 import psycopg
 from psycopg.types.json import Json
@@ -25,13 +20,9 @@ DB_HOST = os.environ.get("DB_HOST", "localhost")
 DB_PORT = os.environ.get("DB_PORT", "5432")
 DB_NAME = os.environ.get("DB_NAME", "outing")
 DB_USER = os.environ.get("DB_USER", "postgres")
-<<<<<<< HEAD
 DB_PASS = os.environ.get("DB_PASS", "")
 if not DB_PASS:
     raise SystemExit("Set DB_PASS (the postgres superuser password from your .env) before running this script.")
-=======
-DB_PASS = os.environ.get("DB_PASS", "postgres_admin_pw")
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 
 def sync_database():
@@ -115,12 +106,8 @@ def sync_database():
                         cost_for_two = %s,
                         pricing_source = %s,
                         pricing_is_estimated = %s,
-<<<<<<< HEAD
                         price_range = %s,
                         source = %s
-=======
-                        price_range = %s
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
                     WHERE tenant_id = %s AND LOWER(name) = %s AND LOWER(city) = %s
                     """,
                     (
@@ -132,10 +119,7 @@ def sync_database():
                         pricing_src,
                         pricing_est,
                         price_range,
-<<<<<<< HEAD
                         p.get("source", "repo_curated"),
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
                         tenant_id,
                         p_name.lower(),
                         p_city.lower(),
@@ -143,14 +127,9 @@ def sync_database():
                 )
                 updated_count += cur.rowcount
             else:
-<<<<<<< HEAD
                 # Never invent ratings or review counts: unknown stays unknown.
                 rating = None
                 review_count = 0
-=======
-                rating = round(random.uniform(4.0, 4.9), 1)
-                review_count = random.randint(45, 650)
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
                 cur.execute(
                     """
                     INSERT INTO places.places (
@@ -160,12 +139,8 @@ def sync_database():
                         description, family_friendly, couple_friendly, friends_friendly,
                         opening_hours, opening_hours_source, opening_hours_is_estimated,
                         entry_fee, pricing_source, pricing_is_estimated,
-<<<<<<< HEAD
                         sentiment_score, popularity_score,
                         source, verification_status
-=======
-                        sentiment_score, popularity_score
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
                     ) VALUES (
                         %s, %s, %s, %s, %s,
                         %s, %s, %s, %s,
@@ -173,10 +148,7 @@ def sync_database():
                         %s, %s, %s, %s,
                         %s, %s, %s,
                         %s, %s, %s,
-<<<<<<< HEAD
                         %s, %s,
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
                         %s, %s
                     )
                     """,
@@ -209,11 +181,8 @@ def sync_database():
                         pricing_est,
                         0.5,
                         0.5,
-<<<<<<< HEAD
                         p.get("source", "repo_curated"),
                         p.get("verification_status", "unverified"),
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
                     ),
                 )
                 inserted_count += cur.rowcount

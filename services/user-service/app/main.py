@@ -2,11 +2,7 @@ import os
 import sys
 from pathlib import Path
 
-<<<<<<< HEAD
 from fastapi import Depends, FastAPI, Header, HTTPException
-=======
-from fastapi import Depends, FastAPI, HTTPException
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 from pydantic import BaseModel, EmailStr, Field
 
 if os.path.isdir("/shared") and "/shared" not in sys.path:
@@ -18,7 +14,6 @@ for _p in Path(__file__).resolve().parents:
             sys.path.insert(0, _sp)
         break
 
-<<<<<<< HEAD
 from eventbus import publish  # type: ignore # noqa: E402
 from tenant import require_tenant  # type: ignore # noqa: E402
 from authctx import Principal, get_principal, require_self_or_admin  # type: ignore # noqa: E402
@@ -26,25 +21,14 @@ from security import (  # type: ignore # noqa: E402
     hash_password, hash_token, new_one_time_token, password_needs_rehash,
     safe_equals, validate_password_strength, verify_password,
 )
-=======
-try:
-    from shared.eventbus import publish  # type: ignore # noqa: E402
-    from shared.tenant import require_tenant  # type: ignore # noqa: E402
-except ImportError:
-    from eventbus import publish  # type: ignore # noqa: E402
-    from tenant import require_tenant  # type: ignore # noqa: E402
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 from . import db
 
 app = FastAPI(title="User Service")
 
-<<<<<<< HEAD
 TERMS_VERSION = os.environ.get("TERMS_VERSION", "2026-10-21")
 INTERNAL_SERVICE_TOKEN = os.environ.get("INTERNAL_SERVICE_TOKEN", "")
 
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 class UserCreate(BaseModel):
     name: str
@@ -63,18 +47,12 @@ class UserCreate(BaseModel):
 
 
 class PreferencesUpdate(BaseModel):
-<<<<<<< HEAD
     budget_min: int | None = Field(None, ge=0, le=4)
     budget_max: int | None = Field(None, ge=0, le=4)
-=======
-    budget_min: int | None = None
-    budget_max: int | None = None
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     preferred_categories: list[str] | None = None
     ambience_preferences: list[str] | None = None
     preferred_occasions: list[str] | None = None
     preferred_duration: str | None = None
-<<<<<<< HEAD
     preferred_distance_km: float | None = Field(None, gt=0, le=500)
     preferred_outing_type: str | None = Field(None, pattern="^(couple|friends|family|solo)$")
 
@@ -106,12 +84,6 @@ def require_internal(x_internal_token: str | None = Header(None, alias="X-Intern
         raise HTTPException(status_code=403, detail="forbidden")
 
 
-=======
-    preferred_distance_km: float | None = None
-    preferred_outing_type: str | None = Field(None, pattern="^(couple|friends|family|solo)$")
-
-
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "user-service"}
@@ -120,17 +92,12 @@ def health():
 @app.get("/ready")
 def ready(tenant_id: str = Depends(require_tenant)):
     try:
-<<<<<<< HEAD
         db.get_user_public(tenant_id, -1)
-=======
-        db.list_users(tenant_id)
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         return {"status": "ready", "database": "ok"}
     except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=503, detail=f"database not ready: {e}")
 
 
-<<<<<<< HEAD
 # ----------------------------------------------------------------------------
 # Internal authentication endpoints (api-gateway only)
 # ----------------------------------------------------------------------------
@@ -232,13 +199,6 @@ def create_user(payload: UserCreate, principal: Principal = Depends(get_principa
     try:
         user = db.create_user(
             principal.tenant_id, payload.name, payload.email, payload.budget_min, payload.budget_max,
-=======
-@app.post("/users", status_code=201)
-def create_user(payload: UserCreate, tenant_id: str = Depends(require_tenant)):
-    try:
-        user = db.create_user(
-            tenant_id, payload.name, payload.email, payload.budget_min, payload.budget_max,
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             payload.preferred_categories, payload.ambience_preferences,
             payload.home_lat, payload.home_lng, payload.age_group,
             payload.preferred_distance_km, payload.preferred_outing_type,
@@ -246,16 +206,11 @@ def create_user(payload: UserCreate, tenant_id: str = Depends(require_tenant)):
         )
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"could not create user: {e}")
-<<<<<<< HEAD
     publish("user.updated", {"tenant_id": principal.tenant_id, "user_id": user["id"], "reason": "created"})
-=======
-    publish("user.updated", {"tenant_id": tenant_id, "user_id": user["id"], "reason": "created"})
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     return user
 
 
 @app.get("/users")
-<<<<<<< HEAD
 def list_users(principal: Principal = Depends(get_principal)):
     if not principal.is_admin:
         raise HTTPException(status_code=403, detail="forbidden")
@@ -266,40 +221,21 @@ def list_users(principal: Principal = Depends(get_principal)):
 def get_user(user_id: int, principal: Principal = Depends(get_principal)):
     require_self_or_admin(principal, user_id)
     user = db.get_user(principal.tenant_id, user_id)
-=======
-def list_users(tenant_id: str = Depends(require_tenant)):
-    return db.list_users(tenant_id)
-
-
-@app.get("/users/{user_id}")
-def get_user(user_id: int, tenant_id: str = Depends(require_tenant)):
-    user = db.get_user(tenant_id, user_id)
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     if not user:
         raise HTTPException(status_code=404, detail="user not found")
     return user
 
 
 @app.put("/users/{user_id}/preferences")
-<<<<<<< HEAD
 def update_preferences(user_id: int, payload: PreferencesUpdate, principal: Principal = Depends(get_principal)):
     require_self_or_admin(principal, user_id)
     user = db.update_preferences(
         principal.tenant_id, user_id, payload.budget_min, payload.budget_max,
-=======
-def update_preferences(user_id: int, payload: PreferencesUpdate, tenant_id: str = Depends(require_tenant)):
-    user = db.update_preferences(
-        tenant_id, user_id, payload.budget_min, payload.budget_max,
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         payload.preferred_categories, payload.ambience_preferences,
         payload.preferred_distance_km, payload.preferred_outing_type,
         payload.preferred_occasions, payload.preferred_duration
     )
     if not user:
         raise HTTPException(status_code=404, detail="user not found")
-<<<<<<< HEAD
     publish("user.updated", {"tenant_id": principal.tenant_id, "user_id": user_id, "reason": "preferences_updated"})
-=======
-    publish("user.updated", {"tenant_id": tenant_id, "user_id": user_id, "reason": "preferences_updated"})
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     return user

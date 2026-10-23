@@ -1,8 +1,5 @@
 import Link from "next/link";
-<<<<<<< HEAD
 import { SUPPORT_EMAIL } from "../lib/site";
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 export default function Footer() {
   return (
@@ -33,7 +30,6 @@ export default function Footer() {
             <Link href="/login">Log in</Link>
             <Link href="/signup">Sign up</Link>
           </div>
-<<<<<<< HEAD
           <div className="footer-col">
             <h4>Legal &amp; help</h4>
             <Link href="/privacy">Privacy Policy</Link>
@@ -47,12 +43,6 @@ export default function Footer() {
             Beta · venue details may be estimates · Map data ©{" "}
             <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>
           </span>
-=======
-        </div>
-        <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} Nearby & Co.</span>
-          <span>Made for better plans.</span>
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         </div>
       </div>
     </footer>

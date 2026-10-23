@@ -14,27 +14,15 @@ for _p in Path(__file__).resolve().parents:
             sys.path.insert(0, _sp)
         break
 
-<<<<<<< HEAD
 from eventbus import publish  # type: ignore # noqa: E402
 from tenant import require_tenant  # type: ignore # noqa: E402
 from authctx import Principal, get_principal, require_self_or_admin  # type: ignore # noqa: E402
 from observability import setup_observability  # type: ignore # noqa: E402
-=======
-try:
-    from shared.eventbus import publish  # type: ignore # noqa: E402
-    from shared.tenant import require_tenant  # type: ignore # noqa: E402
-except ImportError:
-    from eventbus import publish  # type: ignore # noqa: E402
-    from tenant import require_tenant  # type: ignore # noqa: E402
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 from . import db
 
 app = FastAPI(title="Interaction Tracking Service")
-<<<<<<< HEAD
 setup_observability(app, "interaction-service")
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 
 class InteractionCreate(BaseModel):
@@ -61,7 +49,6 @@ def ready(tenant_id: str = Depends(require_tenant)):
 
 
 @app.post("/interactions", status_code=201)
-<<<<<<< HEAD
 def create_interaction(payload: InteractionCreate, principal: Principal = Depends(get_principal)):
     interaction_type = payload.type or payload.event_type
     if not interaction_type or interaction_type not in db.VALID_TYPES:
@@ -74,21 +61,11 @@ def create_interaction(payload: InteractionCreate, principal: Principal = Depend
         )
     except Exception as e:  # noqa: BLE001  (FK violation: unknown user/place in this tenant)
         raise HTTPException(status_code=400, detail="unknown user or place") from e
-=======
-def create_interaction(payload: InteractionCreate, tenant_id: str = Depends(require_tenant)):
-    interaction_type = payload.type or payload.event_type
-    if not interaction_type or interaction_type not in db.VALID_TYPES:
-        raise HTTPException(status_code=400, detail=f"type must be one of {sorted(db.VALID_TYPES)}")
-    interaction = db.create_interaction(
-        tenant_id, payload.user_id, payload.place_id, interaction_type, payload.rating, payload.context,
-    )
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     publish("interactions", interaction)
     return interaction
 
 
 @app.post("/events", status_code=201)
-<<<<<<< HEAD
 def create_event(payload: InteractionCreate, principal: Principal = Depends(get_principal)):
     return create_interaction(payload, principal)
 
@@ -111,22 +88,3 @@ def get_all_interactions(limit: int = 5000, principal: Principal = Depends(get_p
     if not principal.is_admin:
         raise HTTPException(status_code=403, detail="forbidden")
     return db.list_all(principal.tenant_id, min(limit, 20000))
-=======
-def create_event(payload: InteractionCreate, tenant_id: str = Depends(require_tenant)):
-    return create_interaction(payload, tenant_id)
-
-
-@app.get("/users/{user_id}/interactions")
-def get_user_interactions(user_id: int, tenant_id: str = Depends(require_tenant)):
-    return db.list_by_user(tenant_id, user_id)
-
-
-@app.get("/places/{place_id}/interactions")
-def get_place_interactions(place_id: int, tenant_id: str = Depends(require_tenant)):
-    return db.list_by_place(tenant_id, place_id)
-
-
-@app.get("/interactions")
-def get_all_interactions(limit: int = 5000, tenant_id: str = Depends(require_tenant)):
-    return db.list_all(tenant_id, limit)
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8

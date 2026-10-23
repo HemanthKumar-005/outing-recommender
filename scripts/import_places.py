@@ -13,12 +13,8 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-<<<<<<< HEAD
 ALLOW_SYNTHETIC = "--allow-synthetic" in sys.argv
 CATALOG_PATH = ROOT / "data" / ("quarantine/synthetic_places.yaml" if ALLOW_SYNTHETIC else "places_catalog.yaml")
-=======
-CATALOG_PATH = ROOT / "data" / "places_catalog.yaml"
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 LOCATIONS_PATH = ROOT / "configs" / "india_locations.yaml"
 
 sys.path.insert(0, str(ROOT / "shared"))
@@ -64,15 +60,12 @@ def print_stats():
 
 
 def generate_mock_places(city: str, state: str, count: int, start_index: int = 1) -> list[dict]:
-<<<<<<< HEAD
     """Generate FAKE placeholder venues. Test-fixture use only: these are not real places."""
     if not ALLOW_SYNTHETIC:
         raise SystemExit(
             "Refusing to generate synthetic venues: they are not real places and must never reach users.\n"
             "Pass --allow-synthetic only for local test fixtures (output goes to data/quarantine/)."
         )
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     categories = [
         ("cafe", "cafe", 500, "indoor", ["cozy", "trendy"], ["casual", "first_date_friendly", "wifi"], True, True, True),
         ("restaurant", "dining", 1200, "indoor", ["cozy", "romantic"], ["food", "casual", "family"], True, True, True),
@@ -198,10 +191,7 @@ if __name__ == "__main__":
     parser.add_argument("--count", type=int, default=5, help="Number of places to import (default: 5)")
     parser.add_argument("--all-cities", action="store_true", help="Import places for all cities in config")
     parser.add_argument("--min-per-city", type=int, default=None, help="Top up any city with fewer than N places")
-<<<<<<< HEAD
     parser.add_argument("--allow-synthetic", action="store_true", help="Generate FAKE venues into data/quarantine/ (test fixtures only)")
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     parser.add_argument("--stats", action="store_true", help="Display catalog stats")
     args = parser.parse_args()
 

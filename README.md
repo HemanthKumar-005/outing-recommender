@@ -100,14 +100,8 @@ data, not before.
 - Explore/exploit dial - a diversity parameter runs a greedy
   MMR-style re-rank (scoring.py::diversify) that trades relevance for
   variety across category/ambience, user-controlled via a slider in the UI.
-<<<<<<< HEAD
 - Skip/like signals are recorded as interactions (POST /api/interactions/interactions)
   and influence the NEXT request. Instant in-session re-ranking is NOT implemented.
-=======
-- Live re-ranking within a session - POST /recommendations/{session_id}/feedback
-  with skip/like re-ranks the cached candidate pool in Redis instantly,
-  no full re-query, no page reload.
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 - Closed feedback loop - itinerary-service's background workers detect
   when a planned stop's visit window has passed and the guest hasn't rated
   it, and fire a reminder via notification.send - closing the loop back
@@ -135,7 +129,6 @@ data, not before.
 - model.updated - new model version ready, recommendation-engine hot-reloads (not tenant-scoped)
 - notification.send - notification-service delivers (carries tenant_id)
 
-<<<<<<< HEAD
 ## Running it locally
 
 Requires Docker + Docker Compose. (The compose files were validated in CI configuration only;
@@ -182,49 +175,6 @@ TEST_E2E=1 python -m pytest tests
 ```
 
 Offline evaluation: `pip install numpy xgboost scikit-learn && python3 scripts/evaluate.py`
-=======
-## Running it
-
-Requires Docker + Docker Compose. This was authored without a live Docker
-environment on hand, so double-check `docker compose build` end-to-end and
-share any error output if something doesn't line up - happy to fix.
-
-```bash
-docker compose up --build -d
-# postgres/init.sql runs automatically on first startup: creates schemas,
-# RLS policies, roles, and seeds a demo tenant (API key "demo-key")
-
-# Train the toy model once RabbitMQ/place data is up (safe to re-run any time)
-docker compose run --rm model-training-worker
-
-# Seed sample users/places/interactions for the demo tenant, through the gateway
-pip install requests
-python3 scripts/seed_data.py
-
-# Open the frontend
-open http://localhost:3000
-# or provision your own isolated workspace: http://localhost:3000/signup
-
-# Or ask for recommendations directly
-curl -H 'X-API-Key: demo-key' -H 'Content-Type: application/json' \
-  -X POST http://localhost:8000/api/recommendations/recommendations \
-  -d '{"user_id": 1, "lat": 12.9716, "lng": 77.5946, "radius_km": 8, "outing_type": "friends", "top_k": 5}'
-
-# Build an itinerary from a chosen set of places
-curl -H 'X-API-Key: demo-key' -H 'Content-Type: application/json' \
-  -X POST http://localhost:8000/api/itinerary/itinerary \
-  -d '{"user_id": 1, "places": [{"id":1,"name":"Blue Tokai","category":"cafe","lat":12.97,"lng":77.59}],
-       "start_time": "2026-08-15T10:00:00", "end_time": "2026-08-15T18:00:00"}'
-
-# Run the offline evaluation + ablation study
-pip install numpy xgboost scikit-learn
-python3 scripts/evaluate.py
-
-# Provision a second, fully isolated tenant and confirm it sees nothing
-# from the demo tenant
-curl -X POST http://localhost:8000/tenants -H 'Content-Type: application/json' -d '{"name": "Test Co"}'
-```
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 Every service also exposes /health (liveness) and /ready (dependency
 check). Postgres, RabbitMQ, and Redis are also reachable on their host ports
@@ -263,14 +213,9 @@ retune without a rebuild.
 10. Explanations - each result includes a reasons list, e.g. "Within
     your budget", "Good fit for current weather", "Popular with similar
     guests".
-<<<<<<< HEAD
 11. (Not implemented) Session caching / live re-ranking. Earlier drafts described a
     Redis-cached candidate pool and a `/recommendations/{session_id}/feedback` endpoint;
     neither exists in the code.
-=======
-11. Session caching - the full ranked pool is cached in Redis under a
-    session_id, enabling live skip/like re-ranking without a full re-query.
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 The XGBoost model ships untrained - run model-training-worker once (it
 synthesizes a plausible labeled dataset since there's no real interaction

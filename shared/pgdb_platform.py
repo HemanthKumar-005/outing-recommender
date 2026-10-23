@@ -1,12 +1,8 @@
-<<<<<<< HEAD
 """Platform-schema helpers (tenant registry) used by api-gateway and workers.
 
 API keys are stored only as SHA-256 hashes (+ a short display prefix). The full
 key is returned exactly once, at creation or rotation.
 """
-=======
-"""Platform-schema helpers (tenant registry) used by api-gateway."""
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 from __future__ import annotations
 
 import os
@@ -14,16 +10,9 @@ import os
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
 
-<<<<<<< HEAD
 from security import generate_api_key, hash_api_key  # type: ignore
 
 PLATFORM_DATABASE_URL = os.environ.get("PLATFORM_DATABASE_URL", "")
-=======
-PLATFORM_DATABASE_URL = os.environ.get(
-    "PLATFORM_DATABASE_URL",
-    "postgresql://gateway_role:gateway_role_pw@postgres:5432/outing",
-)
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 _pool: ConnectionPool | None = None
 
@@ -31,11 +20,8 @@ _pool: ConnectionPool | None = None
 def _pool_get() -> ConnectionPool:
     global _pool
     if _pool is None:
-<<<<<<< HEAD
         if not PLATFORM_DATABASE_URL:
             raise RuntimeError("PLATFORM_DATABASE_URL is not set")
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         _pool = ConnectionPool(
             conninfo=PLATFORM_DATABASE_URL,
             min_size=1,
@@ -46,7 +32,6 @@ def _pool_get() -> ConnectionPool:
 
 
 def resolve_tenant_by_api_key(api_key: str) -> dict | None:
-<<<<<<< HEAD
     """Return the tenant for a presented key, or None if unknown or revoked."""
     with _pool_get().connection() as conn:
         with conn.cursor() as cur:
@@ -121,41 +106,3 @@ def list_tenant_ids() -> list[str]:
         with conn.cursor() as cur:
             cur.execute("SELECT id FROM platform.tenants WHERE revoked_at IS NULL ORDER BY id")
             return [str(row["id"]) for row in cur.fetchall()]
-=======
-    with _pool_get().connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                "SELECT id, name, api_key FROM platform.tenants WHERE api_key = %s",
-                (api_key,),
-            )
-            row = cur.fetchone()
-            if not row:
-                return None
-            return {"id": row["id"], "name": row["name"], "api_key": row["api_key"]}
-
-
-def create_tenant(name: str, api_key: str) -> dict:
-    with _pool_get().connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                """INSERT INTO platform.tenants (name, api_key)
-                   VALUES (%s, %s) RETURNING id, name, api_key""",
-                (name, api_key),
-            )
-            row = cur.fetchone()
-            return {"id": row["id"], "name": row["name"], "api_key": row["api_key"]}
-
-
-def list_tenant_ids() -> list[str]:
-    """Return all tenant IDs from the platform registry.
-
-    Used by background workers (e.g. sentiment-worker) that need to sweep
-    every tenant on startup.  Runs as worker_role which only has SELECT on
-    platform.tenants.
-    """
-    with _pool_get().connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute("SELECT id FROM platform.tenants ORDER BY id")
-            return [str(row["id"]) for row in cur.fetchall()]
-
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8

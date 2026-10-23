@@ -2,11 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-<<<<<<< HEAD
 import { apiFetch, fetchMe } from "../../lib/api";
-=======
-import { isAuthenticated } from "../../lib/api";
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 const CATEGORIES = [
   { id: "cafe", label: "☕ Cafés" },
@@ -39,13 +35,9 @@ export default function OnboardingPage() {
   const [occ, setOcc] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-<<<<<<< HEAD
     fetchMe().then((u) => {
       if (!u) router.replace("/signup");
     });
-=======
-    if (!isAuthenticated()) router.replace("/signup");
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
   }, [router]);
 
   const toggle = (set: Set<string>, id: string, setter: (s: Set<string>) => void) => {
@@ -55,7 +47,6 @@ export default function OnboardingPage() {
     setter(next);
   };
 
-<<<<<<< HEAD
   const finish = async () => {
     // Persist to the server (the profile the recommender actually reads), not just the browser.
     try {
@@ -70,9 +61,6 @@ export default function OnboardingPage() {
     } catch {
       /* non-fatal: preferences can be edited later; continue to the dashboard */
     }
-=======
-  const finish = () => {
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     localStorage.setItem(
       "nearby_preferences",
       JSON.stringify({

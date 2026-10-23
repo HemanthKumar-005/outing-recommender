@@ -17,10 +17,6 @@ import sys
 import time
 import urllib.parse
 import urllib.request
-<<<<<<< HEAD
-=======
-from collections import Counter
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 from pathlib import Path
 import yaml
 
@@ -28,11 +24,6 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "shared"))
 
 from hours_pricing import (  # noqa: E402
-<<<<<<< HEAD
-=======
-    CATEGORY_DEFAULTS,
-    WEEKDAYS,
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     compute_price_tier,
     get_category_default,
     parse_osm_opening_hours,

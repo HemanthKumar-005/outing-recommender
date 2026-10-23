@@ -10,18 +10,10 @@ from __future__ import annotations
 import math
 import os
 import sys
-<<<<<<< HEAD
 
 import httpx
 from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel
-=======
-from typing import Any
-
-import httpx
-from fastapi import Depends, FastAPI
-from pydantic import BaseModel, Field
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 from pathlib import Path
 
 if os.path.isdir("/shared") and "/shared" not in sys.path:
@@ -33,27 +25,17 @@ for _p in Path(__file__).resolve().parents:
             sys.path.insert(0, _sp)
         break
 
-<<<<<<< HEAD
 from authctx import Principal, get_principal  # noqa: E402
 from observability import propagate_headers, setup_observability  # noqa: E402
 from config_loader import list_occasions_public, ranking_config  # noqa: E402
 from features import build_feature_vector  # noqa: E402
-=======
-from config_loader import list_occasions_public, ranking_config  # noqa: E402
-from features import build_feature_vector  # noqa: E402
-from occasion_scoring import occasion_score  # noqa: E402
-from tenant import require_tenant  # noqa: E402
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 from . import scoring
 from .fusion import fuse_candidate, profile_weights
 from .model import model_manager
 
 app = FastAPI(title="Recommendation Engine")
-<<<<<<< HEAD
 setup_observability(app, "recommendation-engine")
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 USER_SERVICE_URL = os.environ.get("USER_SERVICE_URL", "http://user-service:8000")
 CONTEXT_SERVICE_URL = os.environ.get("CONTEXT_SERVICE_URL", "http://context-service:8000")
@@ -143,14 +125,10 @@ def model_info():
 
 
 @app.post("/recommendations")
-<<<<<<< HEAD
 async def recommend(body: RecommendRequest, principal: Principal = Depends(get_principal)):
     tenant_id = principal.tenant_id
     if principal.user_id is not None and not principal.is_admin:
         body.user_id = principal.user_id  # personalise only for the signed-in user, never for a client-chosen id
-=======
-async def recommend(body: RecommendRequest, tenant_id: str = Depends(require_tenant)):
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     lat, lng = body.lat, body.lng
     radius = body.radius_km
     # Prefer explicit city choice — resolve coordinates from pan-India index
@@ -159,11 +137,7 @@ async def recommend(body: RecommendRequest, tenant_id: str = Depends(require_ten
             res = await _client.get(
                 f"{PLACE_SERVICE_URL}/locations/resolve",
                 params={"city": body.city, **({"state": body.state} if body.state else {})},
-<<<<<<< HEAD
                 headers=propagate_headers({"X-Tenant-Id": tenant_id}),
-=======
-                headers={"X-Tenant-Id": tenant_id},
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             )
             if res.status_code == 200:
                 hit = res.json()
@@ -188,11 +162,7 @@ async def recommend(body: RecommendRequest, tenant_id: str = Depends(require_ten
             **({"city": body.city} if body.city else {}),
             **({"state": body.state} if body.state else {}),
         },
-<<<<<<< HEAD
         headers=propagate_headers({"X-Tenant-Id": tenant_id}),
-=======
-        headers={"X-Tenant-Id": tenant_id},
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     )
     r.raise_for_status()
     payload = r.json()
@@ -207,11 +177,7 @@ async def recommend(body: RecommendRequest, tenant_id: str = Depends(require_ten
         c_res = await _client.get(
             f"{CONTEXT_SERVICE_URL}/context",
             params={"lat": lat, "lng": lng},
-<<<<<<< HEAD
             headers=propagate_headers({"X-Tenant-Id": tenant_id})
-=======
-            headers={"X-Tenant-Id": tenant_id}
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         )
         if c_res.status_code == 200:
             env_context = c_res.json()
@@ -226,11 +192,7 @@ async def recommend(body: RecommendRequest, tenant_id: str = Depends(require_ten
         try:
             u_res = await _client.get(
                 f"{USER_SERVICE_URL}/users/{body.user_id}",
-<<<<<<< HEAD
                 headers=propagate_headers({"X-Tenant-Id": tenant_id})
-=======
-                headers={"X-Tenant-Id": tenant_id}
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             )
             if u_res.status_code == 200:
                 user_profile = u_res.json()
@@ -249,11 +211,7 @@ async def recommend(body: RecommendRequest, tenant_id: str = Depends(require_ten
         try:
             i_res = await _client.get(
                 f"{INTERACTION_SERVICE_URL}/users/{body.user_id}/interactions",
-<<<<<<< HEAD
                 headers=propagate_headers({"X-Tenant-Id": tenant_id})
-=======
-                headers={"X-Tenant-Id": tenant_id}
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             )
             if i_res.status_code == 200:
                 interactions = i_res.json()
@@ -268,11 +226,7 @@ async def recommend(body: RecommendRequest, tenant_id: str = Depends(require_ten
             ai_res = await _client.get(
                 f"{INTERACTION_SERVICE_URL}/interactions",
                 params={"limit": 5000},
-<<<<<<< HEAD
                 headers=propagate_headers({"X-Tenant-Id": tenant_id})
-=======
-                headers={"X-Tenant-Id": tenant_id}
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             )
             if ai_res.status_code == 200:
                 all_interactions = ai_res.json()
@@ -419,7 +373,6 @@ async def recommend(body: RecommendRequest, tenant_id: str = Depends(require_ten
 
 @app.post("/group")
 @app.post("/recommendations/group")
-<<<<<<< HEAD
 async def group_recommend(body: GroupRecommendRequest, principal: Principal = Depends(get_principal)):
     """Multi-user group recommendation using consensus aggregation strategies
     (least_misery, average, borda) from configs/ranking.yaml (Review §1, Domain C Task 11)."""
@@ -431,11 +384,6 @@ async def group_recommend(body: GroupRecommendRequest, principal: Principal = De
             status_code=403,
             detail="Group planning with other accounts is not available yet: members must opt in first.",
         )
-=======
-async def group_recommend(body: GroupRecommendRequest, tenant_id: str = Depends(require_tenant)):
-    """Multi-user group recommendation using consensus aggregation strategies
-    (least_misery, average, borda) from configs/ranking.yaml (Review §1, Domain C Task 11)."""
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     if not body.user_ids:
         return {"recommendations": [], "error": "user_ids list must not be empty", "strategy": body.strategy}
 
@@ -446,11 +394,7 @@ async def group_recommend(body: GroupRecommendRequest, tenant_id: str = Depends(
             res = await _client.get(
                 f"{PLACE_SERVICE_URL}/locations/resolve",
                 params={"city": body.city, **({"state": body.state} if body.state else {})},
-<<<<<<< HEAD
                 headers=propagate_headers({"X-Tenant-Id": tenant_id}),
-=======
-                headers={"X-Tenant-Id": tenant_id},
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             )
             if res.status_code == 200:
                 hit = res.json()
@@ -474,11 +418,7 @@ async def group_recommend(body: GroupRecommendRequest, tenant_id: str = Depends(
             **({"city": body.city} if body.city else {}),
             **({"state": body.state} if body.state else {}),
         },
-<<<<<<< HEAD
         headers=propagate_headers({"X-Tenant-Id": tenant_id}),
-=======
-        headers={"X-Tenant-Id": tenant_id},
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     )
     r.raise_for_status()
     payload = r.json()
@@ -505,11 +445,7 @@ async def group_recommend(body: GroupRecommendRequest, tenant_id: str = Depends(
         c_res = await _client.get(
             f"{CONTEXT_SERVICE_URL}/context",
             params={"lat": lat, "lng": lng},
-<<<<<<< HEAD
             headers=propagate_headers({"X-Tenant-Id": tenant_id})
-=======
-            headers={"X-Tenant-Id": tenant_id}
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         )
         if c_res.status_code == 200:
             env_context = c_res.json()
@@ -523,11 +459,7 @@ async def group_recommend(body: GroupRecommendRequest, tenant_id: str = Depends(
     for uid in body.user_ids:
         user_dict = {"id": uid, "budget_min": 0, "budget_max": 4, "preferred_categories": [], "ambience_preferences": []}
         try:
-<<<<<<< HEAD
             u_res = await _client.get(f"{USER_SERVICE_URL}/users/{uid}", headers=propagate_headers({"X-Tenant-Id": tenant_id}))
-=======
-            u_res = await _client.get(f"{USER_SERVICE_URL}/users/{uid}", headers={"X-Tenant-Id": tenant_id})
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             if u_res.status_code == 200:
                 p = u_res.json()
                 user_dict["budget_min"] = p.get("budget_min", 0)

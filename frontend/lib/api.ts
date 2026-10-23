@@ -1,5 +1,4 @@
 const DEFAULT_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-<<<<<<< HEAD
 
 export function getApiUrl(): string {
   return DEFAULT_API_URL;
@@ -43,77 +42,16 @@ function readCachedUser(): SessionUser | null {
   } catch {
     return null;
   }
-=======
-const DEFAULT_API_KEY = process.env.NEXT_PUBLIC_API_KEY || "demo-key";
-
-export function getApiUrl(): string {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("nearby_api_url") || DEFAULT_API_URL;
-  }
-  return DEFAULT_API_URL;
-}
-
-export function getApiKey(): string {
-  if (typeof window !== "undefined") {
-    return localStorage.getItem("nearby_api_key") || DEFAULT_API_KEY;
-  }
-  return DEFAULT_API_KEY;
-}
-
-export function setSession(data: {
-  apiKey: string;
-  tenantId?: string;
-  workspaceName?: string;
-  userName?: string;
-  email?: string;
-}) {
-  if (typeof window === "undefined") return;
-  localStorage.setItem("nearby_api_key", data.apiKey);
-  if (data.tenantId) localStorage.setItem("nearby_tenant_id", data.tenantId);
-  if (data.workspaceName) localStorage.setItem("nearby_workspace", data.workspaceName);
-  if (data.userName) localStorage.setItem("nearby_user_name", data.userName);
-  if (data.email) localStorage.setItem("nearby_email", data.email);
-  localStorage.setItem("nearby_authenticated", "true");
-}
-
-export function getSession() {
-  if (typeof window === "undefined") return null;
-  const apiKey = localStorage.getItem("nearby_api_key");
-  if (!apiKey) return null;
-  return {
-    apiKey,
-    tenantId: localStorage.getItem("nearby_tenant_id") || "",
-    workspaceName: localStorage.getItem("nearby_workspace") || "",
-    userName: localStorage.getItem("nearby_user_name") || "",
-    email: localStorage.getItem("nearby_email") || "",
-  };
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 }
 
 export function clearSession() {
   if (typeof window === "undefined") return;
-<<<<<<< HEAD
   for (const k of ["nearby_user", "nearby_onboarded", "nearby_preferences"]) localStorage.removeItem(k);
 }
 
 /** UI hint only. Authorisation is always enforced server-side. */
 export function isAuthenticated(): boolean {
   return readCachedUser() !== null;
-=======
-  localStorage.removeItem("nearby_api_key");
-  localStorage.removeItem("nearby_tenant_id");
-  localStorage.removeItem("nearby_workspace");
-  localStorage.removeItem("nearby_user_name");
-  localStorage.removeItem("nearby_email");
-  localStorage.removeItem("nearby_authenticated");
-  localStorage.removeItem("nearby_onboarded");
-  localStorage.removeItem("nearby_preferences");
-}
-
-export function isAuthenticated(): boolean {
-  if (typeof window === "undefined") return false;
-  return localStorage.getItem("nearby_authenticated") === "true" && !!localStorage.getItem("nearby_api_key");
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 }
 
 export function isOnboarded(): boolean {
@@ -121,36 +59,14 @@ export function isOnboarded(): boolean {
   return localStorage.getItem("nearby_onboarded") === "true";
 }
 
-<<<<<<< HEAD
 export function getUserInfo(): { id: number; name: string; email: string } {
   const u = readCachedUser();
   return { id: u?.id ?? 0, name: u?.name || "there", email: u?.email || "" };
-=======
-export function getUserInfo(): {
-  id: number;
-  name: string;
-  workspace: string;
-  email: string;
-  tenantId?: string;
-} {
-  if (typeof window === "undefined") {
-    return { id: 1, name: "Guest", workspace: "Demo", email: "" };
-  }
-  const storedId = localStorage.getItem("nearby_user_id");
-  return {
-    id: storedId ? parseInt(storedId, 10) || 1 : 1,
-    name: localStorage.getItem("nearby_user_name") || "Guest",
-    workspace: localStorage.getItem("nearby_workspace") || "Demo workspace",
-    email: localStorage.getItem("nearby_email") || "",
-    tenantId: localStorage.getItem("nearby_tenant_id") || "",
-  };
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 }
 
 export async function apiFetch(path: string, options: RequestInit = {}) {
   const url = `${getApiUrl().replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
   const headers = new Headers(options.headers || {});
-<<<<<<< HEAD
   if (!headers.has("Content-Type") && options.body) {
     headers.set("Content-Type", "application/json");
   }
@@ -252,29 +168,6 @@ export async function shareItinerary(itineraryId: number) {
 
 export function itineraryCalendarUrl(itineraryId: number): string {
   return `${getApiUrl().replace(/\/$/, "")}/itinerary/itineraries/${itineraryId}/calendar.ics`;
-=======
-  headers.set("X-API-Key", getApiKey());
-  if (!headers.has("Content-Type") && options.body) {
-    headers.set("Content-Type", "application/json");
-  }
-  const res = await fetch(url, { ...options, headers });
-  return res;
-}
-
-export async function signupTenant(name: string) {
-  // Signup hits the gateway root /tenants (not under /api)
-  const base = getApiUrl().replace(/\/api\/?$/, "");
-  const res = await fetch(`${base}/tenants`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name }),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || `Signup failed (${res.status})`);
-  }
-  return res.json() as Promise<{ tenant_id: string; name: string; api_key: string }>;
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 }
 
 export type Place = {
@@ -300,10 +193,7 @@ export type Place = {
   opening_hours?: Record<string, string[][]>;
   opening_hours_source?: string;
   opening_hours_is_estimated?: boolean;
-<<<<<<< HEAD
   hours_is_estimated?: boolean;
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
   open_now?: boolean | null;
   hours_status?: string;
   hours_detail?: string;

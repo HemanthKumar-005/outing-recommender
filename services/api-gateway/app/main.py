@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """API gateway: the only publicly exposed backend.
 
 Responsibilities
@@ -11,17 +10,12 @@ Responsibilities
 """
 import logging
 import os
-=======
-import os
-import secrets
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 import sys
 import time
 
 import httpx
 # pyrefly: ignore [missing-import]
 import redis
-<<<<<<< HEAD
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -41,21 +35,10 @@ from pgdb_platform import (  # noqa: E402
 )
 # pyrefly: ignore [missing-import]
 from security import SESSION_COOKIE, SESSION_TTL_SECONDS, decode_session_token, hash_api_key, mint_session_token  # noqa: E402
-=======
-from fastapi import FastAPI, Request, Response
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-
-sys.path.insert(0, "/shared")
-# pyrefly: ignore [missing-import]
-from pgdb_platform import create_tenant, resolve_tenant_by_api_key  # noqa: E402
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 # pyrefly: ignore [missing-import]
 from tenant import TENANT_HEADER  # noqa: E402
 
 app = FastAPI(title="API Gateway")
-<<<<<<< HEAD
 setup_observability(app, "api-gateway")
 log = logging.getLogger("api-gateway")
 
@@ -68,8 +51,6 @@ TURNSTILE_SECRET_KEY = os.environ.get("TURNSTILE_SECRET_KEY", "")
 TRUST_PROXY = os.environ.get("TRUST_PROXY", "false").lower() == "true"  # true behind our nginx
 MAX_TENANTS = int(os.environ.get("MAX_TENANTS", "100"))
 COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "true" if IS_PROD else "false").lower() == "true"
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 CORS_ORIGINS = [
     origin.strip()
@@ -84,25 +65,15 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=CORS_ORIGINS,
     allow_credentials=True,
-<<<<<<< HEAD
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "X-API-Key", "X-Request-ID"],
-=======
-    allow_methods=["*"],
-    allow_headers=["*"],
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 )
 
 REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379/0")
 RATE_LIMIT_PER_MINUTE = int(os.environ.get("RATE_LIMIT_PER_MINUTE", "120"))
-<<<<<<< HEAD
 AUTH_RATE_LIMIT_PER_HOUR = int(os.environ.get("AUTH_RATE_LIMIT_PER_HOUR", "20"))
 CACHE_TTL_SECONDS = 15
 API_KEY_CACHE_TTL_SECONDS = 30
-=======
-CACHE_TTL_SECONDS = 15
-API_KEY_CACHE_TTL_SECONDS = 30  # tenant resolution is cached briefly to avoid a DB round trip per request
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 ROUTES = {
     "users": os.environ.get("USER_SERVICE_URL", "http://user-service:8000"),
@@ -113,7 +84,6 @@ ROUTES = {
     "itinerary": os.environ.get("ITINERARY_SERVICE_URL", "http://itinerary-service:8000"),
     "notifications": os.environ.get("NOTIFICATION_SERVICE_URL", "http://notification-service:8000"),
 }
-<<<<<<< HEAD
 USER_SERVICE = ROUTES["users"]
 
 # Public, unauthenticated GET endpoints (read-only reference data / shared itineraries).
@@ -126,16 +96,11 @@ PUBLIC_PATHS = (
 )
 CACHEABLE_PREFIXES = ("places",)
 SAFE_METHODS = {"GET", "HEAD", "OPTIONS"}
-=======
-
-CACHEABLE_PREFIXES = ("places",)  # GET responses under these prefixes get a short cache
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 _client = httpx.AsyncClient(timeout=10.0)
 _redis = redis.from_url(REDIS_URL, decode_responses=True)
 
 
-<<<<<<< HEAD
 # ------------------------------------------------------------------ helpers
 def _client_ip(request: Request) -> str:
     if TRUST_PROXY:
@@ -210,12 +175,6 @@ def _consumer_tenant() -> str:
 
 
 # ------------------------------------------------------------------- health
-=======
-class TenantSignup(BaseModel):
-    name: str
-
-
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "api-gateway", "routes": list(ROUTES.keys())}
@@ -223,7 +182,6 @@ def health():
 
 @app.get("/ready")
 def ready():
-<<<<<<< HEAD
     """Readiness: Redis and the platform DB must both be reachable."""
     problems = {}
     try:
@@ -449,38 +407,12 @@ async def revoke_key(request: Request):
 def _resolve_tenant(api_key: str) -> str | None:
     key_hash = hash_api_key(api_key)
     cache_key = f"apikey:{key_hash}"
-=======
-    try:
-        _redis.ping()
-        return {"status": "ready", "redis": "ok"}
-    except Exception as e:  # noqa: BLE001
-        return {"status": "ready", "redis": f"unavailable ({e}), continuing without cache/rate-limit"}
-
-
-@app.post("/tenants", status_code=201)
-def signup(payload: TenantSignup):
-    """Self-serve tenant provisioning: creates a new tenant and returns its
-    API key. Every request against this key is isolated from every other
-    tenant's data by Postgres row-level security - see postgres/init.sql."""
-    api_key = secrets.token_urlsafe(24)
-    tenant = create_tenant(payload.name, api_key)
-    return {"tenant_id": str(tenant["id"]), "name": tenant["name"], "api_key": tenant["api_key"]}
-
-
-def _resolve_tenant(api_key: str) -> str | None:
-    cache_key = f"apikey:{api_key}"
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     try:
         cached = _redis.get(cache_key)
         if cached:
             return cached
     except Exception as e:  # noqa: BLE001
-<<<<<<< HEAD
         log.warning("tenant cache read failed: %s", e)
-=======
-        print(f"[api-gateway] tenant cache read failed: {e}")
-
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     tenant = resolve_tenant_by_api_key(api_key)
     if not tenant:
         return None
@@ -488,7 +420,6 @@ def _resolve_tenant(api_key: str) -> str | None:
     try:
         _redis.setex(cache_key, API_KEY_CACHE_TTL_SECONDS, tenant_id)
     except Exception as e:  # noqa: BLE001
-<<<<<<< HEAD
         log.warning("tenant cache write failed: %s", e)
     return tenant_id
 
@@ -534,44 +465,6 @@ async def proxy(service: str, path: str, request: Request):
     identity = f"{tenant_id}:{user_id}" if user_id else tenant_id
     if not await run_in_threadpool(_rate_limit, identity, RATE_LIMIT_PER_MINUTE, 60, False):
         return _json_error(429, "rate limit exceeded")
-=======
-        print(f"[api-gateway] tenant cache write failed: {e}")
-    return tenant_id
-
-
-def _rate_limit_key(identity: str) -> str:
-    window = int(time.time() // 60)
-    return f"ratelimit:{identity}:{window}"
-
-
-def _check_rate_limit(identity: str) -> bool:
-    key = _rate_limit_key(identity)
-    try:
-        count = _redis.incr(key)
-        if count == 1:
-            _redis.expire(key, 60)
-        return count <= RATE_LIMIT_PER_MINUTE
-    except Exception as e:  # noqa: BLE001
-        print(f"[api-gateway] rate limit check failed open: {e}")
-        return True
-
-
-@app.api_route("/api/{service}/{path:path}", methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"])
-async def proxy(service: str, path: str, request: Request):
-    if service not in ROUTES:
-        return JSONResponse(status_code=404, content={"detail": f"unknown service '{service}'"})
-
-    api_key = request.headers.get("x-api-key")
-    if not api_key:
-        return JSONResponse(status_code=401, content={"detail": "missing X-API-Key"})
-    tenant_id = _resolve_tenant(api_key)
-    if not tenant_id:
-        return JSONResponse(status_code=401, content={"detail": "invalid X-API-Key"})
-
-    # Rate-limit per tenant, not per IP, so one tenant's traffic can't starve another's.
-    if not _check_rate_limit(tenant_id):
-        return JSONResponse(status_code=429, content={"detail": "rate limit exceeded"})
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
     target_url = f"{ROUTES[service]}/{path}"
     cache_key = f"cache:{tenant_id}:{request.method}:{target_url}:{request.url.query}"
@@ -582,7 +475,6 @@ async def proxy(service: str, path: str, request: Request):
             if cached:
                 return Response(content=cached, media_type="application/json", headers={"X-Cache": "HIT"})
         except Exception as e:  # noqa: BLE001
-<<<<<<< HEAD
             log.warning("cache read failed: %s", e)
 
     # Build upstream headers from scratch: NEVER copy client-supplied identity headers.
@@ -604,25 +496,11 @@ async def proxy(service: str, path: str, request: Request):
     except httpx.HTTPError as e:
         log.error("upstream %s unavailable: %s", service, e)
         return _json_error(502, f"{service} is unavailable")
-=======
-            print(f"[api-gateway] cache read failed: {e}")
-
-    body = await request.body()
-    upstream = await _client.request(
-        request.method, target_url, params=dict(request.query_params),
-        content=body,
-        headers={
-            "content-type": request.headers.get("content-type", "application/json"),
-            TENANT_HEADER: tenant_id,
-        },
-    )
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
     if request.method == "GET" and service in CACHEABLE_PREFIXES and upstream.status_code == 200:
         try:
             _redis.setex(cache_key, CACHE_TTL_SECONDS, upstream.content)
         except Exception as e:  # noqa: BLE001
-<<<<<<< HEAD
             log.warning("cache write failed: %s", e)
 
     passthrough = {}
@@ -634,8 +512,3 @@ async def proxy(service: str, path: str, request: Request):
         media_type=upstream.headers.get("content-type", "application/json"),
         headers=passthrough,
     )
-=======
-            print(f"[api-gateway] cache write failed: {e}")
-
-    return Response(content=upstream.content, status_code=upstream.status_code, media_type="application/json")
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8

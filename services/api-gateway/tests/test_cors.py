@@ -28,11 +28,7 @@ class TestGatewayCORS(unittest.TestCase):
             headers={
                 "Origin": "http://localhost:3000",
                 "Access-Control-Request-Method": "POST",
-<<<<<<< HEAD
                 "Access-Control-Request-Headers": "Content-Type, X-API-Key",
-=======
-                "Access-Control-Request-Headers": "Content-Type, X-API-Key, X-Tenant-Id",
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             },
         )
         self.assertEqual(res.status_code, 200)
@@ -60,7 +56,6 @@ class TestGatewayCORS(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-<<<<<<< HEAD
 
 
 class TestGatewayCORSStrictness(unittest.TestCase):
@@ -85,5 +80,3 @@ class TestGatewayCORSStrictness(unittest.TestCase):
             },
         )
         self.assertEqual(res.status_code, 400)
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8

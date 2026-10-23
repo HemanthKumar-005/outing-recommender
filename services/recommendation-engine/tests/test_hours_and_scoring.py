@@ -35,14 +35,7 @@ except ImportError:
     from hours_pricing import (  # type: ignore # noqa: E402
         KOLKATA_TZ,
         WEEKDAYS,
-<<<<<<< HEAD
         evaluate_place_hours,
-=======
-        compute_price_tier,
-        evaluate_place_hours,
-        format_12hr,
-        format_price_display,
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
         parse_osm_opening_hours,
     )
 
@@ -164,7 +157,6 @@ def test_catalog_integrity():
     with open(cat_path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
     places = data.get("places") or []
-<<<<<<< HEAD
     assert len(places) >= 300, f"Expected at least 300 curated places, found {len(places)}"
 
     # Truthfulness gates (see scripts/quarantine_catalog.py):
@@ -176,9 +168,6 @@ def test_catalog_integrity():
     taj = next(p for p in places if p["name"] == "Taj Mahal")
     assert taj["opening_hours"]["fri"] == [], "Taj Mahal is closed on Fridays"
     assert taj["opening_hours"]["mon"], "Taj Mahal is open on Mondays"
-=======
-    assert len(places) >= 310, f"Expected at least 310 places, found {len(places)}"
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
     for p in places:
         assert "opening_hours" in p, f"Missing opening_hours in {p['name']}"

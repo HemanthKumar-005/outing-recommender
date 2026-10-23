@@ -3,13 +3,9 @@ from __future__ import annotations
 import os
 import sys
 from pathlib import Path
-<<<<<<< HEAD
 
 # Unit tests must never call a live routing provider.
 os.environ["ROUTING_ENABLED"] = "false"
-=======
-import pytest
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 ROOT = Path(__file__).resolve().parents[3]
 SHARED_DIR = ROOT / "shared"
@@ -25,10 +21,6 @@ from planner import (  # noqa: E402
     optimize_route_2opt,
     order_nearest_neighbour,
     compute_route_routing,
-<<<<<<< HEAD
-=======
-    generate_plan,
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
     resequence_plan,
 )
 
@@ -105,11 +97,7 @@ def test_compute_route_routing():
     assert routing["total_distance_km"] > 0
     assert routing["total_duration_min"] > 0
     assert len(routing["legs"]) == 1
-<<<<<<< HEAD
     assert routing["provider"] == "haversine_estimate"
-=======
-    assert routing["provider"] in ("locationiq", "haversine_estimate")
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 
 def test_resequence_and_generate_plan_routing():

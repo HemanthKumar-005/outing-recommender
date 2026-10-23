@@ -23,10 +23,7 @@ redis==5.0.8
 psycopg==3.2.3
 psycopg-binary==3.2.3
 psycopg-pool==3.2.3
-<<<<<<< HEAD
 PyJWT==2.9.0
 argon2-cffi==23.1.0
 email-validator==2.2.0
 sentry-sdk==2.14.0
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8

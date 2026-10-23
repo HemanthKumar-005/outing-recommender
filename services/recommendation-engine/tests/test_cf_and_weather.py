@@ -14,11 +14,7 @@ for p in (str(SHARED_DIR), str(ENGINE_APP_DIR)):
         sys.path.insert(0, p)
 
 import scoring
-<<<<<<< HEAD
 from fusion import fuse_candidate
-=======
-from fusion import fuse_candidate, profile_weights
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 
 def test_weather_suitability_heatwave():

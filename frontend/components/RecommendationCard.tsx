@@ -2,18 +2,12 @@
 
 import { useState } from "react";
 import PlaceImage from "./PlaceImage";
-<<<<<<< HEAD
 import ReportIssue from "./ReportIssue";
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 export type WeeklyHoursMap = Record<string, string[][]>;
 
 export type RecommendationCardProps = {
-<<<<<<< HEAD
   placeId?: number;
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
   name: string;
   category: string;
   match: number;
@@ -32,10 +26,7 @@ export type RecommendationCardProps = {
   today_hours?: string;
   weekly_hours?: WeeklyHoursMap;
   opening_hours_is_estimated?: boolean;
-<<<<<<< HEAD
   hours_is_estimated?: boolean;
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
   lat?: number;
   lng?: number;
   city?: string;
@@ -97,12 +88,9 @@ export default function RecommendationCard({
   entry_text,
   price_symbols,
   pricing_is_estimated = true,
-<<<<<<< HEAD
   placeId,
   hours_is_estimated,
   opening_hours_is_estimated,
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
   open_now,
   hours_status,
   hours_detail,
@@ -138,11 +126,7 @@ export default function RecommendationCard({
       ? cost_for_two === 0
         ? "Free entry"
         : `${approx}₹${Math.round(cost_for_two)} for two`
-<<<<<<< HEAD
       : "Price not available");
-=======
-      : `${approx}₹600 for two`);
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
   const displayEntryText =
     entry_text || (entry_fee && entry_fee > 0 ? `Entry: ₹${Math.round(entry_fee)}` : "");
@@ -151,12 +135,9 @@ export default function RecommendationCard({
   const mapsQuery = lat && lng ? `${lat},${lng}` : encodeURIComponent(`${name} ${city || ""}`);
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
 
-<<<<<<< HEAD
   // Hours are guesses unless the backend says otherwise: never present them as fact.
   const hoursEstimated = hours_is_estimated ?? opening_hours_is_estimated ?? true;
 
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
   // Open/Closed badge configuration (Both Text and Colour)
   let badgeClass = "badge-hours badge-unavailable";
   let badgeIcon = "🕒";
@@ -261,14 +242,11 @@ export default function RecommendationCard({
               <div style={{ fontSize: "0.85rem", color: "var(--foreground, #1f2937)", display: "flex", alignItems: "center", gap: 6 }}>
                 <span style={{ fontWeight: 600 }}>Today:</span>
                 <span>{today_hours || (open_now === false ? "Closed" : "Hours unavailable")}</span>
-<<<<<<< HEAD
                 {hoursEstimated && (
                   <span className="badge-hours badge-unavailable" title="We could not verify this venue's hours. Check before you go.">
                     Estimated — verify ahead
                   </span>
                 )}
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
                 {hours_detail && hours_detail !== today_hours && hours_detail !== "Hours unavailable" && (
                   <span style={{ color: "var(--muted, #6b7280)", fontSize: "0.8rem" }}>
                     ({hours_detail})
@@ -276,11 +254,7 @@ export default function RecommendationCard({
                 )}
               </div>
 
-<<<<<<< HEAD
               {!hoursEstimated && weekly_hours && Object.keys(weekly_hours).length > 0 && (
-=======
-              {weekly_hours && Object.keys(weekly_hours).length > 0 && (
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
                 <button
                   type="button"
                   className="btn-hours-toggle"
@@ -294,11 +268,7 @@ export default function RecommendationCard({
             </div>
 
             {/* Expandable Weekly Hours View */}
-<<<<<<< HEAD
             {!hoursEstimated && weeklyExpanded && weekly_hours && (
-=======
-            {weeklyExpanded && weekly_hours && (
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
               <div className="weekly-schedule-dropdown fade-in" role="region" aria-label="Weekly hours schedule">
                 <table className="weekly-table">
                   <tbody>
@@ -331,15 +301,12 @@ export default function RecommendationCard({
             </div>
           )}
 
-<<<<<<< HEAD
           {placeId != null && (
             <div style={{ marginTop: 8 }}>
               <ReportIssue placeId={placeId} placeName={name} />
             </div>
           )}
 
-=======
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
           {/* Action buttons */}
           <div className="action-row" style={{ marginTop: 12 }}>
             {onLike && (

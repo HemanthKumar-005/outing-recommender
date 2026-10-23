@@ -18,10 +18,6 @@ import os
 import random
 import sys
 from pathlib import Path
-<<<<<<< HEAD
-=======
-from typing import Any
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 
 import numpy as np
 import xgboost as xgb

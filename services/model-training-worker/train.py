@@ -84,7 +84,6 @@ from sklearn.metrics import f1_score, precision_score, recall_score, roc_auc_sco
 
 MODEL_PATH = os.environ.get("MODEL_PATH", "/models/xgboost_model.json")
 MODEL_METADATA_PATH = os.environ.get("MODEL_METADATA_PATH", "/models/xgboost_model.meta.json")
-<<<<<<< HEAD
 # No default and no superuser fallback: training reads interaction logs through the
 # read-only `trainer_role` (see postgres/init/01-schema.sql). If DATABASE_URL is unset the
 # worker trains on its synthetic bootstrap data only.
@@ -94,9 +93,6 @@ DATABASE_URL = os.environ.get("DATABASE_URL", "")
 def _redact(url: str) -> str:
     import re as _re
     return _re.sub(r"://([^:/@]+):[^@]*@", r"://\1:***@", url)
-=======
-DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://postgres:postgres_admin_pw@postgres:5432/outing")
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
 FAIL_ON_DB_UNAVAILABLE = os.environ.get("FAIL_ON_DB_UNAVAILABLE", "false").lower() == "true"
 MIN_REAL_SAMPLES = int(os.environ.get("MIN_REAL_SAMPLES", "1000"))
 MODEL_NAME = "xgboost_recommender"
@@ -410,11 +406,7 @@ def train() -> tuple[str, dict, str, str]:
 
     if DATABASE_URL:
         try:
-<<<<<<< HEAD
             print(f"[model-training-worker] Connecting to database at {_redact(DATABASE_URL)}...")
-=======
-            print(f"[model-training-worker] Connecting to database at {DATABASE_URL}...")
->>>>>>> 974a81e8740404fa82fbb044631fe0277358dcd8
             raw_rows = extract_interactions_from_db(DATABASE_URL)
             print(f"[model-training-worker] Successfully extracted {len(raw_rows)} raw interaction rows from database.")
         except Exception as e:
