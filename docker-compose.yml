@@ -1,0 +1,309 @@
+x-python-env: &python-env
+  PYTHONUNBUFFERED: "1"
+  APP_ENV: ${APP_ENV:-development}
+  SENTRY_DSN: ${SENTRY_DSN:-}
+
+# Identity/secret settings shared by api-gateway and user-service.
+x-auth-env: &auth-env
+  JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET (>=32 random chars) in .env}
+  INTERNAL_SERVICE_TOKEN: ${INTERNAL_SERVICE_TOKEN:?set INTERNAL_SERVICE_TOKEN in .env}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: outing
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      APP_ROLE_PW: ${APP_ROLE_PW:?}
+      GATEWAY_ROLE_PW: ${GATEWAY_ROLE_PW:?}
+      WORKER_ROLE_PW: ${WORKER_ROLE_PW:?}
+      TRAINER_ROLE_PW: ${TRAINER_ROLE_PW:?}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d outing"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:?set RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:?set RABBITMQ_PASS}
+    ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"   # management UI (credentials from .env)
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # Local mail catcher: open http://localhost:8025 to read verification emails.
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "127.0.0.1:8025:8025"
+      - "127.0.0.1:1025:1025"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  user-service:
+    build:
+      context: .
+      dockerfile: services/user-service/Dockerfile
+    environment:
+      <<: [*python-env, *auth-env]
+      TERMS_VERSION: ${TERMS_VERSION:-2026-10-21}
+      # app_role: CRUD on tenant-owned schemas only, enforced by RLS (see postgres/init/01-schema.sql)
+      DATABASE_URL: postgresql://app_role:${APP_ROLE_PW:?set APP_ROLE_PW in .env}@postgres:5432/outing
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8001:8000"
+
+  place-service:
+    build:
+      context: .
+      dockerfile: services/place-service/Dockerfile
+    environment:
+      <<: *python-env
+      # app_role: CRUD on tenant-owned schemas only, enforced by RLS (see postgres/init.sql)
+      DATABASE_URL: postgresql://app_role:${APP_ROLE_PW:?set APP_ROLE_PW in .env}@postgres:5432/outing
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8002:8000"
+
+  context-service:
+    build:
+      context: .
+      dockerfile: services/context-service/Dockerfile
+    environment:
+      <<: *python-env
+      REDIS_URL: redis://redis:6379/0
+      OPENWEATHERMAP_API_KEY: ${OPENWEATHERMAP_API_KEY:-}
+    depends_on:
+      - redis
+    ports:
+      - "127.0.0.1:8003:8000"
+
+  interaction-service:
+    build:
+      context: .
+      dockerfile: services/interaction-service/Dockerfile
+    environment:
+      <<: *python-env
+      # app_role: CRUD on tenant-owned schemas only, enforced by RLS (see postgres/init.sql)
+      DATABASE_URL: postgresql://app_role:${APP_ROLE_PW:?set APP_ROLE_PW in .env}@postgres:5432/outing
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8004:8000"
+
+  recommendation-engine:
+    build:
+      context: .
+      dockerfile: services/recommendation-engine/Dockerfile
+    environment:
+      <<: *python-env
+      MODEL_PATH: /models/xgboost_model.json
+      MODEL_METADATA_PATH: /models/xgboost_model.meta.json
+      RANKING_CONFIG_PATH: /configs/ranking.yaml
+      EVALUATION_RESULTS_PATH: /evaluation/evaluation_results.csv
+      REDIS_URL: redis://redis:6379/0
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+      USER_SERVICE_URL: http://user-service:8000
+      PLACE_SERVICE_URL: http://place-service:8000
+      CONTEXT_SERVICE_URL: http://context-service:8000
+      INTERACTION_SERVICE_URL: http://interaction-service:8000
+    volumes:
+      - models_data:/models
+      - ./configs:/configs:ro
+      - ./evaluation:/evaluation:ro
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      user-service:
+        condition: service_started
+      place-service:
+        condition: service_started
+      context-service:
+        condition: service_started
+      interaction-service:
+        condition: service_started
+    ports:
+      - "127.0.0.1:8005:8000"
+
+  itinerary-service:
+    build:
+      context: .
+      dockerfile: services/itinerary-service/Dockerfile
+    environment:
+      <<: *python-env
+      # app_role: CRUD on tenant-owned schemas only, enforced by RLS (see postgres/init.sql)
+      DATABASE_URL: postgresql://app_role:${APP_ROLE_PW:?set APP_ROLE_PW in .env}@postgres:5432/outing
+      # worker_role: read-only on platform.tenants, used to enumerate every
+      # tenant for the feedback-reminder and weather-watch background loops.
+      PLATFORM_DATABASE_URL: postgresql://worker_role:${WORKER_ROLE_PW:?set WORKER_ROLE_PW in .env}@postgres:5432/outing
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+      PLACE_SERVICE_URL: http://place-service:8000
+      CONTEXT_SERVICE_URL: http://context-service:8000
+      LOCATIONIQ_API_KEY: ${LOCATIONIQ_API_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      place-service:
+        condition: service_started
+      context-service:
+        condition: service_started
+    ports:
+      - "127.0.0.1:8006:8000"
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: services/notification-service/Dockerfile
+    environment:
+      <<: *python-env
+      # app_role: CRUD on tenant-owned schemas only, enforced by RLS (see postgres/init.sql)
+      DATABASE_URL: postgresql://app_role:${APP_ROLE_PW:?set APP_ROLE_PW in .env}@postgres:5432/outing
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8007:8000"
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    environment:
+      <<: [*python-env, *auth-env]
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:3000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
+      REQUIRE_EMAIL_VERIFICATION: ${REQUIRE_EMAIL_VERIFICATION:-false}
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_STARTTLS: ${SMTP_STARTTLS:-false}
+      MAIL_FROM: ${MAIL_FROM:-Nearby & Co. <no-reply@localhost>}
+      # gateway_role: resolves hashed X-API-Key -> tenant_id; no access to tenant-owned schemas.
+      PLATFORM_DATABASE_URL: postgresql://gateway_role:${GATEWAY_ROLE_PW:?set GATEWAY_ROLE_PW in .env}@postgres:5432/outing
+      REDIS_URL: redis://redis:6379/0
+      USER_SERVICE_URL: http://user-service:8000
+      PLACE_SERVICE_URL: http://place-service:8000
+      CONTEXT_SERVICE_URL: http://context-service:8000
+      INTERACTION_SERVICE_URL: http://interaction-service:8000
+      RECOMMENDATION_ENGINE_URL: http://recommendation-engine:8000
+      ITINERARY_SERVICE_URL: http://itinerary-service:8000
+      NOTIFICATION_SERVICE_URL: http://notification-service:8000
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      user-service:
+        condition: service_started
+      place-service:
+        condition: service_started
+      context-service:
+        condition: service_started
+      interaction-service:
+        condition: service_started
+      recommendation-engine:
+        condition: service_started
+      itinerary-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000/api
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
+        NEXT_PUBLIC_TILE_URL: ${NEXT_PUBLIC_TILE_URL:-}
+        NEXT_PUBLIC_SUPPORT_EMAIL: ${NEXT_PUBLIC_SUPPORT_EMAIL:-}
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000/api
+    depends_on:
+      - api-gateway
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  model-training-worker:
+    build:
+      context: .
+      dockerfile: services/model-training-worker/Dockerfile
+    environment:
+      <<: *python-env
+      MODEL_PATH: /models/xgboost_model.json
+      MODEL_METADATA_PATH: /models/xgboost_model.meta.json
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+      DATABASE_URL: postgresql://trainer_role:${TRAINER_ROLE_PW:?set TRAINER_ROLE_PW in .env}@postgres:5432/outing
+      DAEMON_MODE: "true"
+    volumes:
+      - models_data:/models
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  sentiment-worker:
+    build:
+      context: .
+      dockerfile: services/sentiment-worker/Dockerfile
+    environment:
+      <<: *python-env
+      PLACE_SERVICE_URL: http://place-service:8000
+      RABBITMQ_URL: amqp://${RABBITMQ_USER:?set RABBITMQ_USER}:${RABBITMQ_PASS:?set RABBITMQ_PASS}@rabbitmq:5672/%2F
+      # worker_role: read-only on platform.tenants, used to enumerate every
+      # tenant for the startup catalog sweep.
+      PLATFORM_DATABASE_URL: postgresql://worker_role:${WORKER_ROLE_PW:?set WORKER_ROLE_PW in .env}@postgres:5432/outing
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      place-service:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  models_data:
+  hf_cache:

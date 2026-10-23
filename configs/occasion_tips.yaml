@@ -1,0 +1,56 @@
+# Occasion-specific tips shown on generated date plans.
+# Keep copy data-driven so product can edit without code changes.
+
+tips:
+  first_date:
+    - Be yourself and stay relaxed
+    - Choose comfortable but nice attire
+    - Keep conversation light and positive
+    - Listen actively and show genuine interest
+    - Plan an activity to avoid awkward silences
+  romantic:
+    - Plan small surprises throughout the date
+    - Dress up for the occasion
+    - Bring flowers or a small gift
+    - Choose locations with intimate ambiance
+    - Focus on quality time together
+  anniversary:
+    - Prepare a heartfelt note or letter
+    - Choose meaningful locations
+    - Capture moments with photos
+    - Reflect on your journey together
+    - Make it personalized and special
+  brewery_tour:
+    - Pace yourself with the beer tasting
+    - Try different beer styles together
+    - Ask about brewery stories and processes
+    - Pair beers with appropriate food
+    - Designate a driver or use ride-sharing
+  adventure:
+    - Carry water and light snacks
+    - Wear comfortable shoes and weather-ready clothes
+    - Check trail or park timings in advance
+    - Capture the views but stay safe
+    - Build in rest stops
+  cultural:
+    - Dress respectfully for temples and heritage sites
+    - Hire a local guide when available
+    - Try regional specialties nearby
+    - Allow extra time for queues at popular spots
+    - Keep cash for small entry fees
+  casual:
+    - Carry a camera for memorable photos
+    - Dress appropriately for the weather
+    - Be punctual and relaxed
+    - Try local specialties together
+    - Stay hydrated and enjoy each moment
+
+default_tips:
+  - Carry a camera for memorable photos
+  - Dress appropriately for the weather
+  - Be punctual and relaxed
+  - Try local specialties together
+  - Stay hydrated and enjoy each moment
+
+brewery_safety_note: >-
+  Remember to pace yourselves and consider ride-sharing options for brewery visits.

@@ -1,0 +1,31 @@
+{
+  "include": [
+    "services",
+    "shared",
+    "scripts",
+    "evaluation",
+    "scratch"
+  ],
+  "extraPaths": [
+    "shared",
+    "services/api-gateway",
+    "services/api-gateway/app",
+    "services/context-service",
+    "services/context-service/app",
+    "services/interaction-service",
+    "services/interaction-service/app",
+    "services/itinerary-service",
+    "services/itinerary-service/app",
+    "services/model-training-worker",
+    "services/notification-service",
+    "services/notification-service/app",
+    "services/place-service",
+    "services/place-service/app",
+    "services/recommendation-engine",
+    "services/recommendation-engine/app",
+    "services/sentiment-worker",
+    "services/user-service",
+    "services/user-service/app"
+  ],
+  "reportMissingImports": "none"
+}

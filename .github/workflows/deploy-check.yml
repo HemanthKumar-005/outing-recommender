@@ -1,0 +1,32 @@
+name: Deployment Validation
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  validate-compose:
+    name: Validate Docker Compose configurations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Dev compose (needs the example .env)
+        run: |
+          cp .env.example .env
+          docker compose config -q
+      - name: Production compose fails fast when secrets are missing
+        run: |
+          cp deploy/.env.production.example deploy/.env.production
+          if docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env.production config -q 2>/dev/null; then
+            echo "Production compose started with EMPTY secrets - the fail-fast guards are broken"; exit 1
+          fi
+      - name: Production compose is valid once secrets are filled
+        run: |
+          sed -E 's/^([A-Z_]+)=$/\1=ci-placeholder-value/; s#^MAIL_FROM=.*#MAIL_FROM=ci@example.com#' deploy/.env.production.example > deploy/.env.production
+          docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env.production config -q
+      - name: No default passwords or demo key anywhere in deploy config
+        run: |
+          ! grep -rEn "app_role_pw|postgres_admin_pw|gateway_role_pw|worker_role_pw|demo-key|AIzaSy" \
+            docker-compose.yml deploy postgres/init frontend/lib frontend/app frontend/components services shared scripts \
+            --include=* 2>/dev/null | grep -v "tests/" | grep -v "postgres/dev/"

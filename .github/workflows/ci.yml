@@ -1,0 +1,137 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  secrets:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  python:
+    name: Python lint, unit + integration tests (real Postgres & Redis)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: { POSTGRES_PASSWORD: ci_admin_pw, POSTGRES_DB: outing }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7
+        ports: ["6379:6379"]
+    env:
+      PGPASSWORD: ci_admin_pw
+      TEST_ADMIN_URL: postgresql://postgres:ci_admin_pw@127.0.0.1:5432/outing
+      TEST_APP_URL: postgresql://app_role:ci_app@127.0.0.1:5432/outing
+      TEST_GATEWAY_URL: postgresql://gateway_role:ci_gw@127.0.0.1:5432/outing
+      TEST_TRAINER_URL: postgresql://trainer_role:ci_tr@127.0.0.1:5432/outing
+      TEST_E2E: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - name: Install dependencies
+        run: |
+          pip install ruff pip-audit pytest
+          for f in services/*/requirements.txt; do pip install -r "$f" || exit 1; done
+      - name: Lint (real errors only)
+        run: ruff check --select E9,F63,F7,F82,F811,F401,F841 shared services scripts tests
+      - name: Load schema exactly as the postgres container does
+        run: |
+          export POSTGRES_USER=postgres POSTGRES_DB=outing APP_ROLE_PW=ci_app GATEWAY_ROLE_PW=ci_gw WORKER_ROLE_PW=ci_wk TRAINER_ROLE_PW=ci_tr
+          bash postgres/init/00-roles.sh
+          psql -h 127.0.0.1 -U postgres -d outing -v ON_ERROR_STOP=1 -f postgres/init/01-schema.sql
+          bash postgres/init/02-seed.sh
+        env: { PGHOST: 127.0.0.1 }
+      - name: RLS isolation + auth/ownership integration tests
+        run: python -m pytest tests -q
+      - name: Service unit tests
+        run: |
+          for s in api-gateway itinerary-service sentiment-worker model-training-worker recommendation-engine; do
+            (cd services/$s && python -m pytest tests -q) || exit 1
+          done
+      - name: Restore-verification SQL passes on a fresh dump
+        run: |
+          pg_dump -h 127.0.0.1 -U postgres -d outing --no-owner > /tmp/dump.sql
+          psql -h 127.0.0.1 -U postgres -c "CREATE DATABASE restored" 
+          psql -h 127.0.0.1 -U postgres -d restored -c "CREATE EXTENSION IF NOT EXISTS pgcrypto"
+          psql -h 127.0.0.1 -U postgres -d restored -v ON_ERROR_STOP=1 -q -f /tmp/dump.sql
+          psql -h 127.0.0.1 -U postgres -d restored -v ON_ERROR_STOP=1 -f deploy/scripts/verify-restore.sql
+      - name: Dependency audit (pip-audit)
+        run: |
+          for f in services/*/requirements.txt; do pip-audit -r "$f" --progress-spinner off || true; done
+        # Informational for now: tighten to a hard failure once the backlog is clean.
+
+  frontend:
+    name: Frontend type-check, build, audit
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: frontend } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm, cache-dependency-path: frontend/package-lock.json }
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run build
+      - run: npm audit --audit-level=high
+
+  trivy:
+    name: Trivy filesystem scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scanners: vuln,secret,misconfig
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "0"   # report-only until the baseline is clean
+
+  e2e:
+    name: Playwright end-to-end (signup -> email -> onboarding -> recommendations -> plan)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create dev .env with throw-away secrets
+        run: |
+          cp .env.example .env
+          {
+            echo "JWT_SECRET=$(openssl rand -hex 32)"
+            echo "INTERNAL_SERVICE_TOKEN=$(openssl rand -hex 16)"
+            echo "REQUIRE_EMAIL_VERIFICATION=true"
+          } >> .env
+      - name: Start the stack
+        run: docker compose up -d --build --wait --wait-timeout 600
+      - name: Seed the curated catalog into the consumer tenant
+        run: |
+          pip install pyyaml "psycopg[binary]"
+          set -a; . ./.env; set +a
+          DB_HOST=127.0.0.1 DB_PASS="$POSTGRES_PASSWORD" python scripts/sync_database_places.py
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Run Playwright
+        working-directory: e2e
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+          npx playwright test
+      - name: Dump logs on failure
+        if: failure()
+        run: docker compose logs --tail=200
+      - run: docker compose down -v
+        if: always()

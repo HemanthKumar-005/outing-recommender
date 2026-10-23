@@ -1,0 +1,17 @@
+title = "Nearby & Co. gitleaks config"
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Documented, non-secret test values"
+regexes = [
+  '''1x00000000000000000000AA''',            # Cloudflare Turnstile always-pass TEST site key
+  '''1x0000000000000000000000000000000AA''', # Cloudflare Turnstile always-pass TEST secret
+  '''change-me-dev[-a-z]*''',
+  '''dev-only-[a-z-]+change-me[-a-z0-9]*''',
+]
+paths = [
+  '''\.env\.example$''',
+  '''\.env\.production\.example$''',
+  '''data/quarantine/''',
+]
