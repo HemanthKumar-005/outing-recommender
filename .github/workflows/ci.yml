@@ -52,9 +52,9 @@ jobs:
       - name: Load schema exactly as the postgres container does
         run: |
           export POSTGRES_USER=postgres POSTGRES_DB=outing APP_ROLE_PW=ci_app GATEWAY_ROLE_PW=ci_gw WORKER_ROLE_PW=ci_wk TRAINER_ROLE_PW=ci_tr
-          bash postgres/init/00-roles.sh
+          sh postgres/init/00-roles.sh
           psql -h 127.0.0.1 -U postgres -d outing -v ON_ERROR_STOP=1 -f postgres/init/01-schema.sql
-          bash postgres/init/02-seed.sh
+          sh postgres/init/02-seed.sh
         env: { PGHOST: 127.0.0.1 }
       - name: RLS isolation + auth/ownership integration tests
         run: python -m pytest tests -q
@@ -93,13 +93,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: aquasecurity/trivy-action@v0.28.0
-        with:
-          scan-type: fs
-          scanners: vuln,secret,misconfig
-          severity: CRITICAL,HIGH
-          ignore-unfixed: true
-          exit-code: "0"   # report-only until the baseline is clean
+      - name: Run Trivy via Docker
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/app aquasec/trivy:latest fs --scanners vuln,secret,misconfig --severity CRITICAL,HIGH --ignore-unfixed --exit-code 0 /app
 
   e2e:
     name: Playwright end-to-end (signup -> email -> onboarding -> recommendations -> plan)

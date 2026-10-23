@@ -1,16 +1,16 @@
-#!/bin/bash
+#!/bin/sh
 # Creates the least-privilege application roles. Passwords come from the
 # environment -- there is no default, and the container fails fast if one is
 # missing. Runs once, on first initialisation of an empty data directory.
-set -euo pipefail
+set -eu
 
-require() {
-  if [ -z "${!1:-}" ]; then
-    echo "FATAL: environment variable $1 must be set (see deploy/.env.production.example)" >&2
+for v in APP_ROLE_PW GATEWAY_ROLE_PW WORKER_ROLE_PW TRAINER_ROLE_PW; do
+  eval "val=\${$v:-}"
+  if [ -z "$val" ]; then
+    echo "FATAL: environment variable $v must be set (see deploy/.env.production.example)" >&2
     exit 1
   fi
-}
-for v in APP_ROLE_PW GATEWAY_ROLE_PW WORKER_ROLE_PW TRAINER_ROLE_PW; do require "$v"; done
+done
 
 # psql variables are quoted safely with :'name' -- no shell interpolation into SQL.
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" \
