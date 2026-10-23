@@ -23,7 +23,7 @@ for p in (str(SHARED_DIR), str(WORKER_DIR)):
 
 import train  # type: ignore # noqa: E402
 try:
-    from shared.features import FEATURE_NAMES, FEATURE_VERSION  # type: ignore # noqa: E402
+    from shared.features import FEATURE_NAMES  # type: ignore # noqa: E402
 except ImportError:
     from features import FEATURE_NAMES  # type: ignore # noqa: E402
 

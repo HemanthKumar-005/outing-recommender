@@ -85,8 +85,6 @@ def load_real_interactions() -> list[tuple[np.ndarray, np.ndarray, np.ndarray]] 
                 for uid, user_rows in user_interactions.items():
                     if len(user_rows) < 5:
                         continue
-                    # Construct feature matrix and relevance labels
-                    n = len(user_rows)
                     X_rows = []
                     y_rows = []
                     prob_rows = []

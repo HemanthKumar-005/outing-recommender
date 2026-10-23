@@ -25,10 +25,7 @@ try:
     from shared.hours_pricing import (  # type: ignore # noqa: E402
         KOLKATA_TZ,
         WEEKDAYS,
-        compute_price_tier,
         evaluate_place_hours,
-        format_12hr,
-        format_price_display,
         parse_osm_opening_hours,
     )
 except ImportError:

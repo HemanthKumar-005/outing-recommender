@@ -26,7 +26,7 @@ for p in (str(SHARED_DIR), str(ENGINE_APP_DIR)):
         sys.path.insert(0, p)
 
 try:
-    from shared.features import FEATURE_NAMES, FEATURE_VERSION, build_feature_vector  # type: ignore # noqa: E402
+    from shared.features import FEATURE_NAMES, FEATURE_VERSION  # type: ignore # noqa: E402
 except ImportError:
     from features import FEATURE_NAMES, FEATURE_VERSION  # type: ignore # noqa: E402
 from model import ModelManager  # type: ignore # noqa: E402

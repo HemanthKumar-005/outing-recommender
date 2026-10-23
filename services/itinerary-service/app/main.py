@@ -450,7 +450,7 @@ async def get_itinerary_backups(
     principal: Principal = Depends(get_principal),
 ):
     tenant_id = principal.tenant_id
-    existing = _owned_itinerary(principal, itinerary_id)
+    _owned_itinerary(principal, itinerary_id)
     items = db.list_items(tenant_id, itinerary_id)
     current_ids = {it["place_id"] for it in items}
     pool = await _fetch_places(tenant_id, None)
