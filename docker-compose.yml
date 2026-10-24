@@ -23,7 +23,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d:ro
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:19432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d outing"]
       interval: 5s
@@ -36,8 +36,8 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:?set RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS:?set RABBITMQ_PASS}
     ports:
-      - "127.0.0.1:5672:5672"
-      - "127.0.0.1:15672:15672"   # management UI (credentials from .env)
+      - "127.0.0.1:19672:5672"
+      - "127.0.0.1:19673:15672"   # management UI
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 10s
@@ -48,13 +48,13 @@ services:
   mailpit:
     image: axllent/mailpit:latest
     ports:
-      - "127.0.0.1:8025:8025"
-      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:19080:8025"
+      - "127.0.0.1:19025:1025"
 
   redis:
     image: redis:7-alpine
     ports:
-      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:19379:6379"
 
   user-service:
     build:
@@ -72,7 +72,7 @@ services:
       rabbitmq:
         condition: service_healthy
     ports:
-      - "127.0.0.1:8001:8000"
+      - "127.0.0.1:19001:8000"
 
   place-service:
     build:
@@ -89,7 +89,7 @@ services:
       rabbitmq:
         condition: service_healthy
     ports:
-      - "127.0.0.1:8002:8000"
+      - "127.0.0.1:19002:8000"
 
   context-service:
     build:
@@ -102,7 +102,7 @@ services:
     depends_on:
       - redis
     ports:
-      - "127.0.0.1:8003:8000"
+      - "127.0.0.1:19003:8000"
 
   interaction-service:
     build:
@@ -119,7 +119,7 @@ services:
       rabbitmq:
         condition: service_healthy
     ports:
-      - "127.0.0.1:8004:8000"
+      - "127.0.0.1:19004:8000"
 
   recommendation-engine:
     build:
@@ -155,7 +155,7 @@ services:
       interaction-service:
         condition: service_started
     ports:
-      - "127.0.0.1:8005:8000"
+      - "127.0.0.1:19005:8000"
 
   itinerary-service:
     build:
@@ -182,7 +182,7 @@ services:
       context-service:
         condition: service_started
     ports:
-      - "127.0.0.1:8006:8000"
+      - "127.0.0.1:19006:8000"
 
   notification-service:
     build:
@@ -199,7 +199,7 @@ services:
       rabbitmq:
         condition: service_healthy
     ports:
-      - "127.0.0.1:8007:8000"
+      - "127.0.0.1:19007:8000"
 
   api-gateway:
     build:
@@ -208,7 +208,7 @@ services:
     environment:
       <<: [*python-env, *auth-env]
       PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:3000}
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:19300,http://127.0.0.1:19300,http://localhost:3000,http://127.0.0.1:3000}
       TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
       REQUIRE_EMAIL_VERIFICATION: ${REQUIRE_EMAIL_VERIFICATION:-false}
       SMTP_HOST: ${SMTP_HOST:-mailpit}
@@ -245,23 +245,23 @@ services:
       notification-service:
         condition: service_started
     ports:
-      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:19000:8000"
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:8000/api
+        NEXT_PUBLIC_API_URL: http://localhost:19000/api
         NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${NEXT_PUBLIC_TURNSTILE_SITE_KEY:-}
         NEXT_PUBLIC_TILE_URL: ${NEXT_PUBLIC_TILE_URL:-}
         NEXT_PUBLIC_SUPPORT_EMAIL: ${NEXT_PUBLIC_SUPPORT_EMAIL:-}
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000/api
+      NEXT_PUBLIC_API_URL: http://localhost:19000/api
     depends_on:
       - api-gateway
     ports:
-      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:19300:3000"
 
   model-training-worker:
     build:

@@ -87,13 +87,17 @@ export default function HomePage() {
 
   useEffect(() => {
     setMounted(true);
-    if (!isAuthenticated()) {
-      router.replace("/login");
+    // If already logged in, take them straight to the dashboard
+    if (isAuthenticated()) {
+      router.replace("/dashboard");
     }
   }, [router]);
 
-  // Don't flash content before redirect resolves
-  if (!mounted || !isAuthenticated()) return null;
+  // Prevent SSR flash
+  if (!mounted) return null;
+
+  // Authenticated users are being redirected; don't flash landing page
+  if (isAuthenticated()) return null;
 
   return (
     <>
