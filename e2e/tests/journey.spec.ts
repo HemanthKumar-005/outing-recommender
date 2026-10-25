@@ -1,8 +1,9 @@
 import { test, expect } from "@playwright/test";
 
 // Needs the dev stack running with REQUIRE_EMAIL_VERIFICATION=true, Turnstile TEST keys
-// (see .env.example), Mailpit on :8025 and the curated catalog loaded.
-const MAILPIT = process.env.MAILPIT_URL || "http://localhost:8025";
+// (see .env.example), Mailpit on :19080 and the curated catalog loaded.
+const MAILPIT = process.env.MAILPIT_URL || "http://localhost:19080";
+const API_GATEWAY = process.env.API_GATEWAY_URL || "http://localhost:19000";
 const password = "correct-horse-battery-9";
 
 async function verificationLink(request: any, email: string): Promise<string> {
@@ -63,7 +64,7 @@ test("signup -> email confirmation -> onboarding -> recommendations -> plan", as
   expect(await page.evaluate(() => document.cookie)).not.toContain("nb_session");
 
   // Recommendations through the real API as this user
-  const rec = await page.request.post("/api/recommendations/recommendations", {
+  const rec = await page.request.post(`${API_GATEWAY}/api/recommendations/recommendations`, {
     data: { lat: 12.9716, lng: 77.5946, radius_km: 20, outing_type: "friends", top_k: 5 },
     headers: { Origin: page.url().split("/dashboard")[0] },
   });

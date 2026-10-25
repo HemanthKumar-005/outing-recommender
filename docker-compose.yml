@@ -207,7 +207,7 @@ services:
       dockerfile: services/api-gateway/Dockerfile
     environment:
       <<: [*python-env, *auth-env]
-      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:3000}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:19300}
       CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:19300,http://127.0.0.1:19300,http://localhost:3000,http://127.0.0.1:3000}
       TURNSTILE_SECRET_KEY: ${TURNSTILE_SECRET_KEY:-}
       REQUIRE_EMAIL_VERIFICATION: ${REQUIRE_EMAIL_VERIFICATION:-false}

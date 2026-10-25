@@ -118,10 +118,10 @@ jobs:
           timeout=180
           start_time=$(date +%s)
           while true; do
-            if curl -s -f http://127.0.0.1:8000/ready > /dev/null 2>&1 && \
-               curl -s -f http://127.0.0.1:8025 > /dev/null 2>&1 && \
-               curl -s -f http://127.0.0.1:3000 > /dev/null 2>&1; then
-              echo "Stack is ready and responding on ports 3000, 8000, and 8025!"
+            if curl -s -f http://127.0.0.1:19000/ready > /dev/null 2>&1 && \
+               curl -s -f http://127.0.0.1:19080 > /dev/null 2>&1 && \
+               curl -s -f http://127.0.0.1:19300 > /dev/null 2>&1; then
+              echo "Stack is ready and responding on ports 19300, 19000, and 19080!"
               break
             fi
             current_time=$(date +%s)
@@ -139,7 +139,7 @@ jobs:
         run: |
           pip install pyyaml "psycopg[binary]"
           set -a; . ./.env; set +a
-          DB_HOST=127.0.0.1 DB_PASS="$POSTGRES_PASSWORD" python scripts/sync_database_places.py
+          DB_HOST=127.0.0.1 DB_PORT=19432 DB_PASS="$POSTGRES_PASSWORD" python scripts/sync_database_places.py
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - name: Run Playwright
