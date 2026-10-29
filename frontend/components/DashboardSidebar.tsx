@@ -28,17 +28,26 @@ export default function DashboardSidebar({ open, onClose }: Props) {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
 
   useEffect(() => {
-    const saved = localStorage.getItem("nearby-theme") as "dark" | "light" | null;
-    const preferred = saved || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
-    setTheme(preferred);
-    document.documentElement.setAttribute("data-theme", preferred);
+    try {
+      const saved = localStorage.getItem("nearby-theme") as "dark" | "light" | null;
+      const preferred = saved || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      setTheme(preferred);
+      document.documentElement.setAttribute("data-theme", preferred);
+    } catch {
+      setTheme("dark");
+      document.documentElement.setAttribute("data-theme", "dark");
+    }
   }, []);
 
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
     setTheme(next);
     document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("nearby-theme", next);
+    try {
+      localStorage.setItem("nearby-theme", next);
+    } catch {
+      /* ignore storage failure */
+    }
   };
 
   const logout = async () => {
