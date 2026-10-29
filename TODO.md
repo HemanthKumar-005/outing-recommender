@@ -117,7 +117,7 @@ All boxes must be checked before public release:
 
 ### 3. Frontend & UX Refactoring
 - [x] **Client Key Exposure**: Proxy Google Places photo/map requests through a backend endpoint rather than embedding client API keys in query parameters.
-- [ ] **Component & CSS Modularization**: Split massive `globals.css` (3,200+ lines) into CSS Modules or design tokens; clean up redundant components (e.g. duplicate `PlanDisplay.tsx`).
+- [~] **Design System & CSS Modernization**: Establish comprehensive design tokens, category variables, and clean up duplicate CSS rules in `globals.css` (Phase 1 complete).
 - [x] **App Router Boundaries**: Add `loading.tsx`, `error.tsx`, and `not-found.tsx` to Next.js dashboard routes.
 - [x] **Social Sharing**: Implement read-only public itinerary sharing via tokenized links (`/itinerary/share/[share_token]`).
 
@@ -125,6 +125,29 @@ All boxes must be checked before public release:
 - [~] **Structured Logging & Tracing**: Adopt structured JSON logging with request IDs (`X-Request-ID`) propagated across all services.
 - [~] **Error Tracking**: Integrate Sentry for both Next.js frontend and FastAPI backends.
 - [~] **Database Backup Drills**: Validate `deploy/backup-db.sh` with automated restore verification and define RPO/RTO objectives.
+
+---
+
+## 🎨 Frontend Modernization & Visual Redesign Track
+
+Tracks the end-to-end multi-phase visual redesign of the Next.js frontend to achieve a modern, aesthetic, colourful experience (Airbnb Experiences x Spotify Wrapped x Linear polish):
+
+- [x] **Phase 1 — Design System & Base Components (Completed 2026-10-29)**:
+  - [x] 50–900 color scales for Coral (brand primary), Violet (nightlife), Teal (outdoors), Amber (ratings), Rose (romantic), and Neutrals in `globals.css`.
+  - [x] Semantic category color tokens (`--cat-food`, `--cat-outdoors`, `--cat-nightlife`, `--cat-culture`, `--cat-romantic`, `--cat-activity`) with backgrounds, borders, and glows.
+  - [x] Mathematical spacing scale (`--space-1` to `--space-20`) and 5-step radius scale (`--radius-xs` to `--radius-pill`).
+  - [x] Fluid typography scale via `clamp()` (`--text-2xs` through `--text-4xl`) with tightened display tracking.
+  - [x] Layered glassmorphism (`backdrop-filter: blur(16px)` + `--shadow-inner-bevel`) and warm color-tinted elevation shadows.
+  - [x] Modernized base components: `.btn` (animated gradient CTA, secondary glass, ghost, tiny), `.form-input` / `.form-select` with accessible focus rings, `.chip` with category accents, `.badge`, `.card`, `.modal-dialog`, `.tabs-nav`, `.toast`, and shimmering `.skeleton`.
+  - [x] Synchronous, flash-free dark/light theme initialization script with safe `try/catch` in `layout.tsx`, `Navbar.tsx`, `DashboardSidebar.tsx`.
+  - [x] Zero-dependency inline SVG icon set in `components/Icons.tsx` replacing disparate emojis.
+  - [x] Removed duplicated `.btn-primary` and legacy `.pricing-card` / dead `.testimonial-card` rules.
+  - [x] Verified `npm run build` (0 TS/CSS errors) and captured Playwright screenshots at 1440px and 390px in both themes.
+- [ ] **Phase 2 — Landing Page Redesign**: Striking hero with animated gradient and product mockup, clear section rhythm, social proof, and visual hybrid-recommendation pipeline in `app/page.tsx`, `Navbar`, `Footer`, `ProductDemo`, `EngineViz`, `WeatherDemo`, `FAQ`.
+- [ ] **Phase 3 — Auth & Onboarding Flow**: Split layout with gradient panel, step progress bar, and colourful selectable interest tiles for `/login`, `/signup`, `/verify-email`, and `/onboarding`.
+- [ ] **Phase 4 — Dashboard Shell & Recommendations**: Redesigned collapsible `DashboardSidebar` with SVG icons, `RecommendPanel` filters, `RecommendationCard` with match-score ring, category accents, and empty/loading states.
+- [ ] **Phase 5 — Itinerary, Date Planner, Groups & Maps**: Vertical timeline with timestamps/connectors, weather-change rescheduling banner, group consensus view (least-misery/Borda), and custom styled map pins.
+- [ ] **Phase 6 — Polish & Quality Gates**: 404 page, loading/error boundaries, favicon/OG metadata, Lighthouse optimization (Perf ≥90, A11y ≥95), final dead CSS sweep.
 
 ---
 
