@@ -2,21 +2,29 @@ import "./globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://nearby-and-co.com"),
   title: "Nearby & Co. — Find Outings You'll Actually Love",
   description:
     "Personalized outing recommendations based on your preferences, location, budget, weather, reviews, and who you're going with. Stop wondering where to go.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/icon.svg",
+  },
   openGraph: {
     title: "Nearby & Co. — Find Outings You'll Actually Love",
     description:
       "Personalized outing recommendations based on preferences, location, budget, weather, and group taste.",
     type: "website",
     siteName: "Nearby & Co.",
+    images: ["/icon.svg"],
   },
   twitter: {
     card: "summary_large_image",
     title: "Nearby & Co. — Find Outings You'll Actually Love",
     description:
       "Personalized outing recommendations based on preferences, location, budget, weather, and group taste.",
+    images: ["/icon.svg"],
   },
 };
 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import PlaceImage from "./PlaceImage";
 import ReportIssue from "./ReportIssue";
+import { Icons } from "./Icons";
 
 export type WeeklyHoursMap = Record<string, string[][]>;
 
@@ -75,6 +76,69 @@ function formatDayRanges(ranges?: string[][]): string {
     .join(", ");
 }
 
+/**
+ * Circular Match Score Ring with Gradient SVG Arc
+ */
+function MatchScoreRing({ score }: { score: number }) {
+  const radius = 22;
+  const strokeWidth = 3.5;
+  const circumference = 2 * Math.PI * radius;
+  const progress = Math.min(100, Math.max(0, score));
+  const dashoffset = circumference - (progress / 100) * circumference;
+
+  let strokeColor = "url(#matchGradientHigh)";
+  if (score < 80) strokeColor = "url(#matchGradientMid)";
+  if (score < 70) strokeColor = "url(#matchGradientLow)";
+
+  return (
+    <div className="match-score-ring" title={`${score}% Match Score`}>
+      <svg width="56" height="56" viewBox="0 0 56 56">
+        <defs>
+          <linearGradient id="matchGradientHigh" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="var(--teal-400)" />
+            <stop offset="100%" stopColor="var(--coral-400)" />
+          </linearGradient>
+          <linearGradient id="matchGradientMid" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="var(--coral-400)" />
+            <stop offset="100%" stopColor="var(--amber-400)" />
+          </linearGradient>
+          <linearGradient id="matchGradientLow" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="var(--amber-400)" />
+            <stop offset="100%" stopColor="var(--neutral-400)" />
+          </linearGradient>
+        </defs>
+        {/* Background track */}
+        <circle
+          cx="28"
+          cy="28"
+          r={radius}
+          fill="none"
+          stroke="rgba(255, 255, 255, 0.1)"
+          strokeWidth={strokeWidth}
+        />
+        {/* Progress arc */}
+        <circle
+          cx="28"
+          cy="28"
+          r={radius}
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={dashoffset}
+          strokeLinecap="round"
+          transform="rotate(-90 28 28)"
+          style={{ transition: "stroke-dashoffset 0.8s cubic-bezier(0.16, 1, 0.3, 1)" }}
+        />
+      </svg>
+      <div className="match-score-text">
+        <span className="match-score-val">{score}</span>
+        <span className="match-score-pct">%</span>
+      </div>
+    </div>
+  );
+}
+
 export default function RecommendationCard({
   name,
   category,
@@ -112,9 +176,9 @@ export default function RecommendationCard({
 }: RecommendationCardProps) {
   const [weeklyExpanded, setWeeklyExpanded] = useState(false);
 
-  // Compute current day in Asia/Kolkata or user locale
+  // Compute current day in India locale
   const now = new Date();
-  const dayIndex = (now.getDay() + 6) % 7; // Monday = 0, Sunday = 6
+  const dayIndex = (now.getDay() + 6) % 7;
   const currentDayKey = ORDERED_DAYS[dayIndex];
 
   // Pricing display calculation
@@ -131,25 +195,24 @@ export default function RecommendationCard({
   const displayEntryText =
     entry_text || (entry_fee && entry_fee > 0 ? `Entry: ₹${Math.round(entry_fee)}` : "");
 
-  // Google Maps URL (free plain web URL)
+  // Google Maps URL
   const mapsQuery = lat && lng ? `${lat},${lng}` : encodeURIComponent(`${name} ${city || ""}`);
   const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
 
-  // Hours are guesses unless the backend says otherwise: never present them as fact.
   const hoursEstimated = hours_is_estimated ?? opening_hours_is_estimated ?? true;
 
-  // Open/Closed badge configuration (Both Text and Colour)
+  // Open/Closed badge configuration
   let badgeClass = "badge-hours badge-unavailable";
-  let badgeIcon = "🕒";
+  let badgeIcon = <Icons.Clock size={12} />;
   let badgeTitle = "Hours unavailable";
 
   if (open_now === true) {
     badgeClass = "badge-hours badge-open";
-    badgeIcon = "●";
+    badgeIcon = <span style={{ width: 6, height: 6, borderRadius: "50%", background: "currentColor", display: "inline-block" }} />;
     badgeTitle = hours_detail && hours_detail.startsWith("Closes") ? hours_detail : "Open now";
   } else if (open_now === false) {
     badgeClass = "badge-hours badge-closed";
-    badgeIcon = "○";
+    badgeIcon = <span style={{ width: 6, height: 6, borderRadius: "50%", border: "1px solid currentColor", display: "inline-block" }} />;
     badgeTitle = hours_detail && hours_detail.startsWith("Opens") ? hours_detail : "Closed";
   }
 
@@ -161,8 +224,35 @@ export default function RecommendationCard({
     if (r && !combinedReasons.includes(r)) combinedReasons.push(r);
   });
 
+  const getCategoryTheme = (cat: string) => {
+    const c = (cat || "").toLowerCase();
+    if (c.includes("cafe") || c.includes("restaurant") || c.includes("food")) {
+      return { color: "var(--cat-food)", bg: "var(--cat-food-bg)", border: "var(--cat-food-border)", Icon: Icons.Food };
+    }
+    if (c.includes("park") || c.includes("outdoor") || c.includes("garden")) {
+      return { color: "var(--cat-outdoors)", bg: "var(--cat-outdoors-bg)", border: "var(--cat-outdoors-border)", Icon: Icons.Outdoors };
+    }
+    if (c.includes("bar") || c.includes("brewery") || c.includes("nightlife")) {
+      return { color: "var(--cat-nightlife)", bg: "var(--cat-nightlife-bg)", border: "var(--cat-nightlife-border)", Icon: Icons.Nightlife };
+    }
+    if (c.includes("museum") || c.includes("art") || c.includes("gallery") || c.includes("heritage")) {
+      return { color: "var(--cat-culture)", bg: "var(--cat-culture-bg)", border: "var(--cat-culture-border)", Icon: Icons.Culture };
+    }
+    return { color: "var(--cat-romantic)", bg: "var(--cat-romantic-bg)", border: "var(--cat-romantic-border)", Icon: Icons.Sparkles };
+  };
+
+  const theme = getCategoryTheme(category);
+  const CategoryIcon = theme.Icon;
+
   return (
-    <article className="ticket fade-up place-card-enhanced" aria-label={`Recommendation for ${name}`}>
+    <article
+      className="ticket fade-up place-card-enhanced"
+      aria-label={`Recommendation for ${name}`}
+      style={{
+        borderTop: `2px solid ${theme.color}`,
+        position: "relative",
+      }}
+    >
       {/* Place image strip */}
       <div
         className="ticket-image"
@@ -171,7 +261,7 @@ export default function RecommendationCard({
           height: 140,
           borderRadius: "var(--radius) var(--radius) 0 0",
           overflow: "hidden",
-          background: "#f0ece6",
+          background: "var(--bg-surface-elevated)",
           position: "relative",
         }}
       >
@@ -184,19 +274,38 @@ export default function RecommendationCard({
             <span className="badge-text">{badgeTitle}</span>
           </span>
         </div>
+
+        {/* Floating Category Pill on Image */}
+        <div style={{ position: "absolute", bottom: 10, left: 10, zIndex: 2 }}>
+          <span
+            className="badge"
+            style={{
+              background: "rgba(0, 0, 0, 0.75)",
+              backdropFilter: "blur(8px)",
+              color: "#fff",
+              border: `1px solid ${theme.border}`,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 5,
+              fontSize: "0.78rem",
+            }}
+          >
+            <CategoryIcon size={13} style={{ color: theme.color }} />
+            <span style={{ textTransform: "capitalize" }}>{category}</span>
+          </span>
+        </div>
       </div>
 
       <div className="ticket-row">
-        <div className="ticket-stub">
-          <span className="ticket-score">{match}</span>
-          <span className="ticket-score-label">match</span>
-          <span className="ticket-category">{category}</span>
+        {/* Match Score Ring Stub */}
+        <div className="ticket-stub" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+          <MatchScoreRing score={match} />
+          <span className="ticket-score-label" style={{ marginTop: 4, letterSpacing: "0.08em" }}>MATCH</span>
         </div>
 
         <div className="ticket-main">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
-            <h3 className="ticket-name" style={{ margin: 0 }}>{name}</h3>
-            {/* Plain Google Maps link (costs nothing) */}
+            <h3 className="ticket-name" style={{ margin: 0, fontSize: "1.22rem" }}>{name}</h3>
             <a
               href={googleMapsUrl}
               target="_blank"
@@ -204,34 +313,35 @@ export default function RecommendationCard({
               className="maps-link"
               title="Open venue details in Google Maps"
               aria-label={`Open ${name} in Google Maps`}
+              style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: "0.82rem" }}
             >
-              <span aria-hidden="true">📍</span> Maps ↗
+              <Icons.Navigation size={12} /> Maps <Icons.ArrowUpRight size={12} />
             </a>
           </div>
 
           {/* Pricing & Key Meta Row */}
-          <div className="ticket-meta" style={{ marginTop: 6, display: "flex", flexWrap: "wrap", gap: "6px 12px" }}>
+          <div className="ticket-meta" style={{ marginTop: 6, display: "flex", flexWrap: "wrap", gap: "6px 12px", alignItems: "center" }}>
             <span className="meta-price" title={pricing_is_estimated ? "Estimated cost for two" : "Verified cost for two"}>
-              <strong style={{ color: "var(--foreground, #111827)" }}>{symbols}</strong>
+              <strong style={{ color: "var(--text-primary)" }}>{symbols}</strong>
               {" · "}
               <span>{displayCostText}</span>
             </span>
 
             {displayEntryText && (
-              <span className="meta-entry-fee" style={{ color: "var(--slate, #4b5563)" }}>
+              <span className="meta-entry-fee" style={{ color: "var(--text-muted)" }}>
                 {displayEntryText}
               </span>
             )}
 
             {distance_km != null && (
-              <span className="meta-distance">
-                {distance_km.toFixed(1)} km
+              <span className="meta-distance" style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>
+                <Icons.MapPin size={12} /> {distance_km.toFixed(1)} km
               </span>
             )}
 
             {rating != null && (
-              <span className="meta-rating">
-                ★ {rating.toFixed(1)}/5
+              <span className="meta-rating" style={{ display: "inline-flex", alignItems: "center", gap: 3, color: "var(--amber-400)" }}>
+                <Icons.Star size={13} /> {rating.toFixed(1)}/5
               </span>
             )}
           </div>
@@ -239,7 +349,7 @@ export default function RecommendationCard({
           {/* Opening Hours Schedule Widget */}
           <div className="hours-widget" style={{ marginTop: 8 }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 6 }}>
-              <div style={{ fontSize: "0.85rem", color: "var(--foreground, #1f2937)", display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                 <span style={{ fontWeight: 600 }}>Today:</span>
                 <span>{today_hours || (open_now === false ? "Closed" : "Hours unavailable")}</span>
                 {hoursEstimated && (
@@ -248,7 +358,7 @@ export default function RecommendationCard({
                   </span>
                 )}
                 {hours_detail && hours_detail !== today_hours && hours_detail !== "Hours unavailable" && (
-                  <span style={{ color: "var(--muted, #6b7280)", fontSize: "0.8rem" }}>
+                  <span style={{ color: "var(--text-muted)", fontSize: "0.8rem" }}>
                     ({hours_detail})
                   </span>
                 )}
@@ -292,11 +402,14 @@ export default function RecommendationCard({
             )}
           </div>
 
-          {/* Reasons Chips */}
+          {/* Reasons Chips with semantic highlights */}
           {combinedReasons.length > 0 && (
             <div className="reasons" style={{ marginTop: 8 }}>
               {combinedReasons.slice(0, 3).map((r, i) => (
-                <span key={i} className="reason-chip">{r}</span>
+                <span key={i} className="reason-chip" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                  <Icons.Check size={11} style={{ color: "var(--teal-400)" }} />
+                  <span>{r}</span>
+                </span>
               ))}
             </div>
           )}
@@ -308,38 +421,66 @@ export default function RecommendationCard({
           )}
 
           {/* Action buttons */}
-          <div className="action-row" style={{ marginTop: 12 }}>
+          <div className="action-row" style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
             {onLike && (
               <button
                 type="button"
                 className={`btn-tiny ${liked ? "liked" : ""}`}
                 onClick={onLike}
                 aria-pressed={liked}
+                style={{ display: "inline-flex", alignItems: "center", gap: 4 }}
               >
-                {liked ? "♥ Liked" : "♥ Like"}
+                <Icons.Heart size={13} fill={liked ? "currentColor" : "none"} />
+                <span>{liked ? "Saved" : "Save"}</span>
               </button>
             )}
             {onSkip && (
-              <button type="button" className="btn-tiny" onClick={onSkip}>
-                ✕ Skip
+              <button
+                type="button"
+                className="btn-tiny"
+                onClick={onSkip}
+                style={{ display: "inline-flex", alignItems: "center", gap: 4 }}
+              >
+                <Icons.Close size={12} />
+                <span>Skip</span>
               </button>
             )}
             {onAdd && (
-              <button type="button" className="btn-tiny" onClick={onAdd}>
-                ＋ Itinerary
+              <button
+                type="button"
+                className="btn-tiny"
+                onClick={onAdd}
+                style={{ display: "inline-flex", alignItems: "center", gap: 4 }}
+              >
+                <Icons.Calendar size={13} />
+                <span>+ Itinerary</span>
               </button>
             )}
             {onWhy && (
-              <button type="button" className="btn-tiny" onClick={onWhy} aria-expanded={showWhy}>
-                {showWhy ? "Hide why" : "Why this?"}
+              <button
+                type="button"
+                className="btn-tiny"
+                onClick={onWhy}
+                aria-expanded={showWhy}
+                style={{ display: "inline-flex", alignItems: "center", gap: 4 }}
+              >
+                <Icons.Info size={13} />
+                <span>{showWhy ? "Hide why" : "Why this?"}</span>
               </button>
             )}
           </div>
 
+          {/* Sleek Score Breakdown Drawer */}
           {showWhy && whyContent && (
-            <pre className="breakdown fade-in" tabIndex={0} aria-label="Score breakdown details">
-              {whyContent}
-            </pre>
+            <div className="fade-in" style={{ marginTop: 12, padding: "12px 14px", background: "var(--bg-surface-elevated)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border-subtle)" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "var(--text-muted)", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                <span>Hybrid Scoring Breakdown</span>
+                <span>Match: {match}%</span>
+              </div>
+              <pre className="breakdown" style={{ margin: 0, padding: 0, background: "transparent", border: "none", color: "var(--text-secondary)" }} tabIndex={0}>
+                {whyContent}
+              </pre>
+            </div>
           )}
         </div>
       </div>

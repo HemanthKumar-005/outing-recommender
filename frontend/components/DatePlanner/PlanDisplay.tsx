@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { DatePlan } from "../../lib/api";
 import { refinePlan, reorderPlan, swapPlanStop, fetchItineraryBackups, shareItinerary, itineraryCalendarUrl } from "../../lib/api";
 import MapView, { type MapPlace } from "../MapView";
+import { Icons } from "../Icons";
 
 type Props = {
   plan: DatePlan;
@@ -210,14 +211,45 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
         </div>
       )}
 
-      {/* Weather Backup Notice */}
+      {/* Weather-Change Rescheduling Banner */}
       {plan.backup_plan && (
-        <div className="notice-box notice-success">
-          <span style={{ fontSize: "1.3rem" }}>⛅</span>
-          <div>
-            <strong style={{ display: "block", marginBottom: 2 }}>Weather-Safe Backup Plan</strong>
-            <span>{plan.backup_plan}</span>
+        <div
+          className="weather-reschedule-banner fade-in"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 12,
+            padding: "14px 18px",
+            borderRadius: "var(--radius)",
+            background: "linear-gradient(135deg, rgba(20, 184, 166, 0.12), rgba(59, 130, 246, 0.08))",
+            border: "1px solid rgba(20, 184, 166, 0.3)",
+            marginBottom: 20,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(20, 184, 166, 0.2)", color: "var(--teal-400)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+              <Icons.CloudSun size={22} />
+            </div>
+            <div>
+              <strong style={{ fontSize: "0.95rem", color: "var(--text-primary)", display: "block" }}>
+                Weather-Safe Rescheduling Available
+              </strong>
+              <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+                {plan.backup_plan}
+              </span>
+            </div>
           </div>
+          <button
+            type="button"
+            className="btn btn-secondary btn-sm"
+            onClick={() => refine("Swap outdoor stops for indoor weather-safe venues")}
+            disabled={refining}
+            style={{ borderColor: "var(--teal-400)", color: "var(--teal-400)" }}
+          >
+            {refining ? "Rescheduling…" : "Apply Weather Backup ⚡"}
+          </button>
         </div>
       )}
 
@@ -306,7 +338,7 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
 
           <div className="timeline">
             {plan.timeline_meta.map((stop, i) => (
-              <div key={`${stop.time}-${i}`} style={{ marginBottom: 16 }}>
+              <div key={`${stop.time}-${i}`} style={{ marginBottom: 12 }}>
                 <div className="timeline-item">
                   <div className="timeline-dot" />
                   <div className="timeline-time">{stop.time}</div>
@@ -323,8 +355,8 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
                               marginLeft: 8,
                               padding: "2px 8px",
                               borderRadius: 999,
-                              background: "rgba(224, 122, 95, 0.15)",
-                              color: "var(--brass-bright)",
+                              background: "rgba(224, 94, 58, 0.15)",
+                              color: "var(--coral-400)",
                               fontSize: "0.75rem",
                               fontWeight: 600,
                               textTransform: "uppercase",
@@ -344,9 +376,9 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
                         disabled={i === 0 || actionLoading}
                         onClick={() => handleMoveStop(i, -1)}
                         title="Move stop earlier in route"
-                        style={{ padding: "3px 8px" }}
+                        style={{ padding: "3px 6px" }}
                       >
-                        ▲
+                        <Icons.ChevronUp size={13} />
                       </button>
                       <button
                         type="button"
@@ -354,9 +386,9 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
                         disabled={i === (plan.timeline_meta?.length || 1) - 1 || actionLoading}
                         onClick={() => handleMoveStop(i, 1)}
                         title="Move stop later in route"
-                        style={{ padding: "3px 8px" }}
+                        style={{ padding: "3px 6px" }}
                       >
-                        ▼
+                        <Icons.ChevronDown size={13} />
                       </button>
 
                       {/* Swap Button */}
@@ -365,8 +397,11 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
                           type="button"
                           className="btn-tiny"
                           style={{
-                            background: swappingStopId === stop.place_id ? "var(--brass-bright)" : undefined,
+                            background: swappingStopId === stop.place_id ? "var(--coral-500)" : undefined,
                             color: swappingStopId === stop.place_id ? "#fff" : undefined,
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 4,
                           }}
                           onClick={() =>
                             swappingStopId === stop.place_id
@@ -375,7 +410,7 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
                           }
                           title="Swap with backup venue"
                         >
-                          🔄 Swap
+                          <Icons.RefreshCw size={12} /> Swap
                         </button>
                       )}
 
@@ -384,11 +419,11 @@ export default function PlanDisplay({ plan, onRefined }: Props) {
                         <button
                           type="button"
                           className="btn-tiny"
-                          style={{ whiteSpace: "nowrap" }}
+                          style={{ whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 3 }}
                           onClick={() => openStopInMaps(String(stop.place_name))}
                           title="View this stop on Google Maps"
                         >
-                          📍 Maps ↗
+                          <Icons.Navigation size={12} /> Maps <Icons.ArrowUpRight size={11} />
                         </button>
                       )}
                     </div>

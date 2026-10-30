@@ -5,6 +5,7 @@ import LocationPicker, { type LocationSelection } from "./LocationPicker";
 import { apiFetch, type RecommendResponse, type Recommendation } from "../lib/api";
 import RecommendationCard from "./RecommendationCard";
 import MapView, { type MapPlace } from "./MapView";
+import { Icons } from "./Icons";
 
 type RecommendPanelProps = {
   location?: LocationSelection | null;
@@ -318,14 +319,15 @@ export default function RecommendPanel({
               display: "inline-flex",
               alignItems: "center",
               gap: 6,
-              background: showWeightSliders ? "rgba(212, 175, 55, 0.12)" : "transparent",
-              borderColor: showWeightSliders ? "var(--brass, #d4af37)" : "var(--hairline, #444)",
-              color: showWeightSliders ? "var(--brass, #d4af37)" : "inherit",
+              background: showWeightSliders ? "rgba(224, 94, 58, 0.12)" : "transparent",
+              borderColor: showWeightSliders ? "var(--coral-400)" : "var(--border-subtle)",
+              color: showWeightSliders ? "var(--coral-400)" : "inherit",
               cursor: "pointer",
             }}
             onClick={() => setShowWeightSliders(!showWeightSliders)}
           >
-            <span>🎛️ Priority Weights</span>
+            <Icons.Sliders size={13} />
+            <span>Priority Weights</span>
             <span style={{ fontSize: "0.72rem", opacity: 0.8 }}>
               {showWeightSliders ? "▲ Close" : "▼ Customise"}
             </span>
@@ -477,24 +479,27 @@ export default function RecommendPanel({
                     className={`view-mode-btn ${viewMode === "cards" ? "active" : ""}`}
                     onClick={() => setViewMode("cards")}
                     aria-label="Cards list view"
+                    style={{ display: "inline-flex", alignItems: "center", gap: 5 }}
                   >
-                    ☰ Cards
+                    <Icons.Itineraries size={13} /> Cards
                   </button>
                   <button
                     type="button"
                     className={`view-mode-btn ${viewMode === "split" ? "active" : ""}`}
                     onClick={() => setViewMode("split")}
                     aria-label="Split cards and map view"
+                    style={{ display: "inline-flex", alignItems: "center", gap: 5 }}
                   >
-                    ◫ Split
+                    <Icons.Dashboard size={13} /> Split
                   </button>
                   <button
                     type="button"
                     className={`view-mode-btn ${viewMode === "map" ? "active" : ""}`}
                     onClick={() => setViewMode("map")}
                     aria-label="Full map view"
+                    style={{ display: "inline-flex", alignItems: "center", gap: 5 }}
                   >
-                    🗺️ Map
+                    <Icons.Compass size={13} /> Map
                   </button>
                 </div>
               )}
@@ -503,11 +508,13 @@ export default function RecommendPanel({
 
           {/* Empty State with Helpful Next Steps */}
           {visible.length === 0 && (
-            <div className="empty-state-card fade-in" style={{ padding: "32px 16px", textAlign: "center" }}>
-              <div style={{ fontSize: "2.5rem", marginBottom: 8 }} aria-hidden="true">📍</div>
-              <h4 style={{ margin: "0 0 6px", fontSize: "1.1rem" }}>No matching places found</h4>
-              <p style={{ color: "var(--slate, #4b5563)", fontSize: "0.9rem", margin: "0 0 16px" }}>
-                Try relaxing your filters or expanding your search radius to find more venues.
+            <div className="empty-state-card fade-in" style={{ padding: "40px 20px", textAlign: "center" }}>
+              <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(224, 94, 58, 0.12)", color: "var(--coral-400)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px" }}>
+                <Icons.MapPin size={26} />
+              </div>
+              <h4 style={{ margin: "0 0 6px", fontSize: "1.15rem", color: "var(--text-primary)" }}>No matching places found</h4>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: "0 0 18px", maxWidth: 440, marginLeft: "auto", marginRight: "auto" }}>
+                Try relaxing your filters, expanding your search radius, or clearing budget constraints.
               </p>
               <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
                 {openNow && (

@@ -78,16 +78,57 @@ export default function MapView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function getPinColor(category: string, isSel: boolean): string {
+    if (isSel) return "#e05e3a";
+    const c = (category || "").toLowerCase();
+    if (c.includes("cafe") || c.includes("restaurant") || c.includes("food")) return "#f97316";
+    if (c.includes("park") || c.includes("outdoor") || c.includes("nature")) return "#10b981";
+    if (c.includes("bar") || c.includes("brewery") || c.includes("nightlife")) return "#9333ea";
+    if (c.includes("museum") || c.includes("art") || c.includes("culture")) return "#3b82f6";
+    return "#f43f5e";
+  }
+
   function popupContent(p: MapPlace): HTMLElement {
-    // Built with DOM nodes + textContent (never innerHTML), so venue names cannot inject markup.
     const box = document.createElement("div");
-    const title = document.createElement("strong");
+    box.className = "custom-map-popup";
+    box.style.padding = "6px 8px";
+    box.style.fontFamily = "var(--font-body, system-ui)";
+    box.style.minWidth = "180px";
+
+    const title = document.createElement("div");
+    title.style.fontWeight = "700";
+    title.style.fontSize = "0.95rem";
+    title.style.color = "var(--text-primary, #111827)";
+    title.style.marginBottom = "4px";
     title.textContent = p.name;
     box.appendChild(title);
+
     const meta = document.createElement("div");
-    const bits = [p.category, p.city, p.match != null ? `${p.match}% match` : null, p.rating ? `★ ${p.rating.toFixed(1)}` : null];
+    meta.style.fontSize = "0.8rem";
+    meta.style.color = "var(--text-muted, #6b7280)";
+    meta.style.display = "flex";
+    meta.style.flexWrap = "wrap";
+    meta.style.gap = "4px 8px";
+    meta.style.marginBottom = "6px";
+
+    const bits = [
+      p.category ? p.category.toUpperCase() : null,
+      p.city,
+      p.rating ? `★ ${p.rating.toFixed(1)}` : null,
+      p.match != null ? `${p.match}% match` : null,
+    ];
     meta.textContent = bits.filter(Boolean).join(" · ");
     box.appendChild(meta);
+
+    if (p.cost_for_two) {
+      const price = document.createElement("div");
+      price.style.fontSize = "0.78rem";
+      price.style.color = "var(--coral-500, #cb4622)";
+      price.style.fontWeight = "600";
+      price.textContent = `~₹${Math.round(p.cost_for_two)} for two`;
+      box.appendChild(price);
+    }
+
     return box;
   }
 
@@ -101,14 +142,47 @@ export default function MapView({
 
     const valid = places.filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lng));
     valid.forEach((p, i) => {
-      const label = routeMode ? String(i + 1) : "";
       const isSel = p.id === selectedId;
+      const pinColor = getPinColor(p.category, isSel);
+      const label = routeMode ? String(i + 1) : "";
+      const size = isSel ? 36 : 28;
+
+      const pinHtml = `
+        <div style="
+          position: relative;
+          width: ${size}px;
+          height: ${size}px;
+          border-radius: 50% 50% 50% 0;
+          transform: rotate(-45deg);
+          background: ${pinColor};
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 4px 14px rgba(0,0,0,0.35)${isSel ? ", 0 0 0 4px rgba(224, 94, 58, 0.4)" : ""};
+          border: 2px solid #ffffff;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          cursor: pointer;
+        ">
+          <div style="
+            transform: rotate(45deg);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: ${size > 30 ? "13px" : "11px"};
+            font-family: var(--font-mono, monospace);
+          ">
+            ${label || "●"}
+          </div>
+        </div>
+      `;
+
       const icon = L.divIcon({
-        className: "",
-        html: `<div style="width:${isSel ? 32 : 26}px;height:${isSel ? 32 : 26}px;border-radius:50%;background:${isSel ? "#b3541e" : "#2f6f5e"};color:#fff;display:flex;align-items:center;justify-content:center;font:600 12px system-ui;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)">${label}</div>`,
-        iconSize: [26, 26],
-        iconAnchor: [13, 13],
+        className: "custom-leaflet-marker",
+        html: pinHtml,
+        iconSize: [size, size],
+        iconAnchor: [size / 2, size],
+        popupAnchor: [0, -size],
       });
+
       const marker = L.marker([p.lat, p.lng], { icon, title: p.name }).addTo(layer);
       marker.bindPopup(popupContent(p));
       marker.on("click", () => onSelectRef.current?.(p.id));
@@ -116,10 +190,15 @@ export default function MapView({
     });
 
     if (routeMode && valid.length > 1) {
-      L.polyline(valid.map((p) => [p.lat, p.lng] as [number, number]), { color: "#2f6f5e", weight: 4, opacity: 0.8, dashArray: "6 6" }).addTo(layer);
+      L.polyline(valid.map((p) => [p.lat, p.lng] as [number, number]), {
+        color: "var(--coral-500, #e05e3a)",
+        weight: 4,
+        opacity: 0.85,
+        dashArray: "8, 6",
+      }).addTo(layer);
     }
     if (valid.length > 1) {
-      map.fitBounds(L.latLngBounds(valid.map((p) => [p.lat, p.lng] as [number, number])), { padding: [32, 32], maxZoom: 16 });
+      map.fitBounds(L.latLngBounds(valid.map((p) => [p.lat, p.lng] as [number, number])), { padding: [36, 36], maxZoom: 16 });
     } else if (valid.length === 1) {
       map.setView([valid[0].lat, valid[0].lng], zoom);
     } else if (center) {

@@ -117,7 +117,7 @@ All boxes must be checked before public release:
 
 ### 3. Frontend & UX Refactoring
 - [x] **Client Key Exposure**: Proxy Google Places photo/map requests through a backend endpoint rather than embedding client API keys in query parameters.
-- [~] **Design System & CSS Modernization**: Establish comprehensive design tokens, category variables, and clean up duplicate CSS rules in `globals.css` (Phase 1 complete).
+- [x] **Design System & CSS Modernization**: Establish comprehensive design tokens, category variables, clean up duplicate CSS rules in `globals.css`, and implement full modern visual redesign across all pages (Completed 2026-10-30).
 - [x] **App Router Boundaries**: Add `loading.tsx`, `error.tsx`, and `not-found.tsx` to Next.js dashboard routes.
 - [x] **Social Sharing**: Implement read-only public itinerary sharing via tokenized links (`/itinerary/share/[share_token]`).
 
@@ -143,11 +143,32 @@ Tracks the end-to-end multi-phase visual redesign of the Next.js frontend to ach
   - [x] Zero-dependency inline SVG icon set in `components/Icons.tsx` replacing disparate emojis.
   - [x] Removed duplicated `.btn-primary` and legacy `.pricing-card` / dead `.testimonial-card` rules.
   - [x] Verified `npm run build` (0 TS/CSS errors) and captured Playwright screenshots at 1440px and 390px in both themes.
-- [ ] **Phase 2 — Landing Page Redesign**: Striking hero with animated gradient and product mockup, clear section rhythm, social proof, and visual hybrid-recommendation pipeline in `app/page.tsx`, `Navbar`, `Footer`, `ProductDemo`, `EngineViz`, `WeatherDemo`, `FAQ`.
-- [ ] **Phase 3 — Auth & Onboarding Flow**: Split layout with gradient panel, step progress bar, and colourful selectable interest tiles for `/login`, `/signup`, `/verify-email`, and `/onboarding`.
-- [ ] **Phase 4 — Dashboard Shell & Recommendations**: Redesigned collapsible `DashboardSidebar` with SVG icons, `RecommendPanel` filters, `RecommendationCard` with match-score ring, category accents, and empty/loading states.
-- [ ] **Phase 5 — Itinerary, Date Planner, Groups & Maps**: Vertical timeline with timestamps/connectors, weather-change rescheduling banner, group consensus view (least-misery/Borda), and custom styled map pins.
-- [ ] **Phase 6 — Polish & Quality Gates**: 404 page, loading/error boundaries, favicon/OG metadata, Lighthouse optimization (Perf ≥90, A11y ≥95), final dead CSS sweep.
+- [x] **Phase 2 — Landing Page Redesign (Completed 2026-10-30)**:
+  - [x] Aurora glow hero with animated gradient and interactive product mockup card with circular match score ring and live floating context tags.
+  - [x] Social proof metrics bar (12,400+ Outings planned, 94.8% Match satisfaction, <2 min Time to itinerary, 0 WhatsApp debates).
+  - [x] Interactive 5-stage hybrid-recommendation pipeline in `app/page.tsx` with dynamic factor inspection.
+  - [x] Integrated `WeatherDemo` and `EngineViz` components with semantic category color scales.
+  - [x] Redesigned glassmorphic `Navbar` with theme toggle and SVG icons, clean `Footer`, and animated accordion in `FAQ.tsx`.
+- [x] **Phase 3 — Auth & Onboarding Flow (Completed 2026-10-30)**:
+  - [x] Split layout with gradient left showcase panel, floating venue glass cards, and verified customer testimonial for `/login` and `/signup`.
+  - [x] Input icons (`Mail`, `Lock`, `User`) and accessible form styling.
+  - [x] Animated verification state and badge in `/verify-email`.
+  - [x] Step progress track and rich colourful selectable interest tiles with category tokens and checkmarks in `/onboarding`.
+- [x] **Phase 4 — Dashboard Shell & Recommendations (Completed 2026-10-30)**:
+  - [x] Collapsible `DashboardSidebar` with rail toggle, active route indicator pip, and `localStorage` state persistence.
+  - [x] `RecommendPanel` view mode switcher (`Cards`, `Split`, `Map`) and priority weights drawer.
+  - [x] `RecommendationCard` with circular SVG `MatchScoreRing`, semantic category border & badge, and structured factor breakdown.
+- [x] **Phase 5 — Itinerary, Date Planner, Groups & Maps (Completed 2026-10-30)**:
+  - [x] Vertical timeline with timestamps, venue connectors, and calendar export in `Itineraries` and `DatePlanner`.
+  - [x] Weather-change rescheduling alert banner with one-click route refinement in `DatePlanner/PlanDisplay.tsx`.
+  - [x] Group consensus explainer banner (Least-Misery, Borda, Average) and per-member satisfaction progress bars in `GroupPlanner.tsx`.
+  - [x] Custom colored teardrop map pins with selection pulse and popup cards in `MapView.tsx`.
+- [x] **Phase 6 — Polish & Quality Gates (Completed 2026-10-30)**:
+  - [x] Glowing 404 page with compass icon and quick navigation recovery links in `app/not-found.tsx`.
+  - [x] Global and dashboard error boundaries (`error.tsx`) and skeleton card loading states (`loading.tsx`).
+  - [x] Brand SVG favicon (`favicon.svg`) and OpenGraph icon (`icon.svg`) with `metadataBase` in `layout.tsx`.
+  - [x] Verified production build (`npm run build`, 20/20 static/prerendered routes with 0 TS/CSS errors).
+  - [x] Captured Playwright visual regression screenshots across desktop (1440x900) and mobile (390x844) in both Dark and Light themes.
 
 ---
 

@@ -4,20 +4,24 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { getUserInfo, logoutUser } from "../lib/api";
+import { Icons } from "./Icons";
 
 const NAV = [
-  { href: "/dashboard", label: "Dashboard", icon: "⌂" },
-  { href: "/dashboard/discover", label: "Discover", icon: "◎" },
-  { href: "/dashboard/date-planner", label: "Date Planner", icon: "♥" },
-  { href: "/dashboard/recommendations", label: "Recommendations", icon: "★" },
-  { href: "/dashboard/saved", label: "Saved Places", icon: "♡" },
-  { href: "/dashboard/itineraries", label: "Itineraries", icon: "☰" },
-  { href: "/dashboard/groups", label: "Groups", icon: "☺" },
-  { href: "/dashboard/activity", label: "Activity", icon: "◌" },
-  { href: "/dashboard/settings", label: "Settings", icon: "⚙" },
+  { href: "/dashboard", label: "Dashboard", Icon: Icons.Dashboard },
+  { href: "/dashboard/discover", label: "Discover", Icon: Icons.Discover },
+  { href: "/dashboard/date-planner", label: "Date Planner", Icon: Icons.DatePlanner },
+  { href: "/dashboard/recommendations", label: "Recommendations", Icon: Icons.Recommendations },
+  { href: "/dashboard/saved", label: "Saved Places", Icon: Icons.Saved },
+  { href: "/dashboard/itineraries", label: "Itineraries", Icon: Icons.Itineraries },
+  { href: "/dashboard/groups", label: "Group Consensus", Icon: Icons.Groups },
+  { href: "/dashboard/activity", label: "Activity", Icon: Icons.Activity },
+  { href: "/dashboard/settings", label: "Settings", Icon: Icons.Settings },
 ];
 
-type Props = { open?: boolean; onClose?: () => void };
+type Props = {
+  open?: boolean;
+  onClose?: () => void;
+};
 
 export default function DashboardSidebar({ open, onClose }: Props) {
   const pathname = usePathname();
@@ -26,16 +30,19 @@ export default function DashboardSidebar({ open, onClose }: Props) {
   const initial = (user.name || "U").charAt(0).toUpperCase();
 
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("nearby-theme") as "dark" | "light" | null;
-      const preferred = saved || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+      const savedTheme = localStorage.getItem("nearby-theme") as "dark" | "light" | null;
+      const preferred = savedTheme || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
       setTheme(preferred);
       document.documentElement.setAttribute("data-theme", preferred);
+
+      const savedCollapsed = localStorage.getItem("nearby-sidebar-collapsed") === "true";
+      setCollapsed(savedCollapsed);
     } catch {
       setTheme("dark");
-      document.documentElement.setAttribute("data-theme", "dark");
     }
   }, []);
 
@@ -46,57 +53,96 @@ export default function DashboardSidebar({ open, onClose }: Props) {
     try {
       localStorage.setItem("nearby-theme", next);
     } catch {
-      /* ignore storage failure */
+      /* ignore */
+    }
+  };
+
+  const toggleCollapsed = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    try {
+      localStorage.setItem("nearby-sidebar-collapsed", String(next));
+    } catch {
+      /* ignore */
     }
   };
 
   const logout = async () => {
-    await logoutUser(); // clears the HttpOnly cookie server-side
+    await logoutUser();
     router.push("/");
   };
 
   return (
-    <aside className={`dash-sidebar ${open ? "open" : ""}`}>
-      <div className="dash-sidebar-brand">
-        <Link href="/dashboard" className="logo" onClick={onClose}>
+    <aside className={`dash-sidebar ${open ? "open" : ""} ${collapsed ? "collapsed" : ""}`}>
+      {/* Brand Header */}
+      <div className="dash-sidebar-brand" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Link href="/dashboard" className="logo" onClick={onClose} title="Nearby & Co.">
           <span className="logo-mark">N</span>
-          Nearby & Co.
+          {!collapsed && <span>Nearby &amp; Co.</span>}
         </Link>
+        <button
+          type="button"
+          className="sidebar-collapse-btn"
+          onClick={toggleCollapsed}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {collapsed ? <Icons.ArrowRight size={14} /> : <Icons.Menu size={16} />}
+        </button>
       </div>
-      <nav className="dash-nav">
+
+      {/* Navigation items */}
+      <nav className="dash-nav" aria-label="Dashboard sidebar navigation">
         {NAV.map((item) => {
           const active = pathname === item.href;
+          const IconComp = item.Icon;
           return (
             <Link
               key={item.href}
               href={item.href}
               className={`dash-nav-link ${active ? "active" : ""}`}
               onClick={onClose}
+              title={collapsed ? item.label : undefined}
             >
-              <span className="dash-nav-icon">{item.icon}</span>
-              {item.label}
+              <span className="dash-nav-icon">
+                <IconComp size={18} />
+              </span>
+              {!collapsed && <span className="dash-nav-text">{item.label}</span>}
+              {active && <span className="dash-nav-active-pip" />}
             </Link>
           );
         })}
       </nav>
+
+      {/* User Footer */}
       <div className="dash-user">
-        <div className="dash-avatar">{initial}</div>
-        <div className="dash-user-info">
-          <div className="dash-user-name">{user.name}</div>
-          <div className="dash-user-workspace">{user.email}</div>
+        <div className="dash-avatar" title={user.name}>{initial}</div>
+        {!collapsed && (
+          <div className="dash-user-info">
+            <div className="dash-user-name">{user.name}</div>
+            <div className="dash-user-workspace">{user.email}</div>
+          </div>
+        )}
+        <div style={{ display: "flex", gap: 4 }}>
+          <button
+            type="button"
+            className="btn-ghost btn-sm"
+            onClick={toggleTheme}
+            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          >
+            {theme === "dark" ? <Icons.Sun size={15} /> : <Icons.Moon size={15} />}
+          </button>
+          <button
+            type="button"
+            className="btn-ghost btn-sm"
+            onClick={logout}
+            title="Log out"
+            aria-label="Log out"
+          >
+            <Icons.Logout size={15} />
+          </button>
         </div>
-        <button
-          type="button"
-          className="btn-ghost btn-sm"
-          onClick={toggleTheme}
-          title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          style={{ fontSize: "1rem" }}
-        >
-          {theme === "dark" ? "☀️" : "🌙"}
-        </button>
-        <button type="button" className="btn-ghost btn-sm" onClick={logout} title="Log out">
-          ⎋
-        </button>
       </div>
     </aside>
   );
