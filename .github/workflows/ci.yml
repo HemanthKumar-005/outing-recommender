@@ -52,9 +52,9 @@ jobs:
       - name: Load schema exactly as the postgres container does
         run: |
           export POSTGRES_USER=postgres POSTGRES_DB=outing APP_ROLE_PW=ci_app GATEWAY_ROLE_PW=ci_gw WORKER_ROLE_PW=ci_wk TRAINER_ROLE_PW=ci_tr
-          sh postgres/init/00-roles.sh
+          bash postgres/init/00-roles.sh
           psql -h 127.0.0.1 -U postgres -d outing -v ON_ERROR_STOP=1 -f postgres/init/01-schema.sql
-          sh postgres/init/02-seed.sh
+          bash postgres/init/02-seed.sh
         env: { PGHOST: 127.0.0.1 }
       - name: RLS isolation + auth/ownership integration tests
         run: python -m pytest tests -q
@@ -86,16 +86,20 @@ jobs:
       - run: npm ci
       - run: npx tsc --noEmit
       - run: npm run build
-      - run: npm audit --audit-level=high || true
+      - run: npm audit --audit-level=high
 
   trivy:
     name: Trivy filesystem scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run Trivy via Docker
-        run: |
-          docker run --rm -v ${{ github.workspace }}:/app aquasec/trivy:latest fs --scanners vuln,secret,misconfig --severity CRITICAL,HIGH --ignore-unfixed --exit-code 0 /app
+      - uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scanners: vuln,secret,misconfig
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "0"   # report-only until the baseline is clean
 
   e2e:
     name: Playwright end-to-end (signup -> email -> onboarding -> recommendations -> plan)
@@ -112,34 +116,12 @@ jobs:
             echo "REQUIRE_EMAIL_VERIFICATION=true"
           } >> .env
       - name: Start the stack
-        run: |
-          docker compose up -d --build
-          echo "Waiting for services to be ready..."
-          timeout=180
-          start_time=$(date +%s)
-          while true; do
-            if curl -s -f http://127.0.0.1:19000/ready > /dev/null 2>&1 && \
-               curl -s -f http://127.0.0.1:19080 > /dev/null 2>&1 && \
-               curl -s -f http://127.0.0.1:19300 > /dev/null 2>&1; then
-              echo "Stack is ready and responding on ports 19300, 19000, and 19080!"
-              break
-            fi
-            current_time=$(date +%s)
-            elapsed=$((current_time - start_time))
-            if [ $elapsed -ge $timeout ]; then
-              echo "Timed out waiting for stack to be ready ($timeout seconds)"
-              docker compose ps
-              docker compose logs --tail=100
-              exit 1
-            fi
-            sleep 3
-          done
-          docker compose ps
+        run: docker compose up -d --build --wait --wait-timeout 600
       - name: Seed the curated catalog into the consumer tenant
         run: |
           pip install pyyaml "psycopg[binary]"
           set -a; . ./.env; set +a
-          DB_HOST=127.0.0.1 DB_PORT=19432 DB_PASS="$POSTGRES_PASSWORD" python scripts/sync_database_places.py
+          DB_HOST=127.0.0.1 DB_PASS="$POSTGRES_PASSWORD" python scripts/sync_database_places.py
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - name: Run Playwright
@@ -153,3 +135,4 @@ jobs:
         run: docker compose logs --tail=200
       - run: docker compose down -v
         if: always()
+.

@@ -42,3 +42,4 @@ def send_email(to: str, subject: str, text: str) -> bool:
     except Exception as e:  # noqa: BLE001
         log.error("failed to send email to %s: %s", to, e)
         return False
+    
