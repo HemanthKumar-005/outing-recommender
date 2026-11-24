@@ -12,16 +12,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Start Postgres only
         run: |
           docker compose up -d postgres
-          sleep 5
+          echo "Waiting for Postgres to be healthy..."
+          for i in {1..30}; do
+            if docker compose exec -T postgres pg_isready -U postgres -d outing 2>/dev/null; then
+              echo "Postgres is ready!"
+              break
+            fi
+            sleep 1
+          done
+
       - name: Run backup
         run: bash deploy/backup-db.sh /tmp/ci-backups
-        env:
-          POSTGRES_CONTAINER: outing-recommender-main-postgres-1
+
       - name: Run restore verification
-        run: bash deploy/restore-verify.sh /tmp/ci-backups/$(ls /tmp/ci-backups | tail -1)
+        run: |
+          LATEST_BACKUP=$(ls -t /tmp/ci-backups/outing_*.sql.gz | head -1)
+          echo "Verifying backup: $LATEST_BACKUP"
+          bash deploy/restore-verify.sh "$LATEST_BACKUP"
+
       - name: Tear down
         if: always()
         run: docker compose down -v

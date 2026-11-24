@@ -8,10 +8,28 @@ set -euo pipefail
 OUTPUT_DIR="${1:-./backups}"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 BACKUP_FILE="${OUTPUT_DIR}/outing_${TIMESTAMP}.sql.gz"
-CONTAINER="${POSTGRES_CONTAINER:-outing-recommender-main-postgres-1}"
+CONTAINER="${POSTGRES_CONTAINER:-}"
+if [ -n "$CONTAINER" ] && ! docker inspect "$CONTAINER" >/dev/null 2>&1; then
+  echo "[backup] Warning: Container '$CONTAINER' not found. Auto-detecting postgres container..." >&2
+  CONTAINER=""
+fi
+
+if [ -z "$CONTAINER" ]; then
+  CONTAINER=$(docker compose ps -q postgres 2>/dev/null || true)
+fi
+
+if [ -z "$CONTAINER" ]; then
+  CONTAINER=$(docker ps --filter "name=postgres" --format "{{.Names}}" 2>/dev/null | head -n1 || true)
+fi
+
+if [ -z "$CONTAINER" ]; then
+  echo "[backup] Error: No running postgres container found." >&2
+  exit 1
+fi
 
 mkdir -p "$OUTPUT_DIR"
 
+echo "[backup] Using container: $CONTAINER"
 echo "[backup] Starting backup to $BACKUP_FILE"
 docker exec "$CONTAINER" \
   pg_dump -U postgres -d outing --no-owner --no-acl \

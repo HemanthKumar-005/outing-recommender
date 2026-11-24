@@ -7,7 +7,7 @@ set -euo pipefail
 
 BACKUP_FILE="${1:?Usage: restore-verify.sh <backup_file.sql.gz>}"
 VERIFY_CONTAINER="outing-restore-verify-$$"
-POSTGRES_IMAGE="postgres:15-alpine"
+POSTGRES_IMAGE="postgres:16-alpine"
 
 echo "[restore-verify] Using backup: $BACKUP_FILE"
 echo "[restore-verify] Starting isolated Postgres container: $VERIFY_CONTAINER"
@@ -31,7 +31,7 @@ for i in $(seq 1 20); do
 done
 
 echo "[restore-verify] Restoring backup..."
-zcat "$BACKUP_FILE" | docker exec -i "$VERIFY_CONTAINER" \
+gzip -dc "$BACKUP_FILE" | docker exec -i "$VERIFY_CONTAINER" \
   psql -U postgres -d outing -q
 
 echo "[restore-verify] Verifying row counts..."
