@@ -17,7 +17,6 @@ shared/pgdb_platform.py) and then calls place-service once per tenant with
 that tenant's X-Tenant-Id header - no cross-tenant read ever happens.
 """
 import os
-import random
 import sys
 import time
 
@@ -39,30 +38,6 @@ NEGATIVE_WORDS = {
     "bland", "cramped", "cold", "unfriendly", "mediocre",
 }
 
-TEMPLATES = [
-    "The {adj1} staff made this {adj2} spot even better.",
-    "A bit {adj_neg} but overall {adj1} experience.",
-    "{adj1} atmosphere, would come back.",
-    "Honestly {adj_neg} and {adj_neg2} for the price.",
-    "{adj1} and {adj2}, perfect for a weekend visit.",
-]
-
-
-def _synthetic_reviews(place: dict, n: int = 5) -> list:
-    rng = random.Random(place["id"])
-    reviews = []
-    for _ in range(n):
-        template = rng.choice(TEMPLATES)
-        review = template.format(
-            adj1=rng.choice(list(POSITIVE_WORDS)),
-            adj2=rng.choice(list(POSITIVE_WORDS)),
-            adj_neg=rng.choice(list(NEGATIVE_WORDS)),
-            adj_neg2=rng.choice(list(NEGATIVE_WORDS)),
-        )
-        reviews.append(review)
-    return reviews
-
-
 def score_text(text: str) -> float:
     words = text.lower().replace(".", "").replace(",", "").split()
     pos = sum(1 for w in words if w in POSITIVE_WORDS)
@@ -73,9 +48,18 @@ def score_text(text: str) -> float:
     return pos / total
 
 
+# Removed: runtime load of synthetic reviews.csv — use real DB data only
 def score_place(place: dict) -> float:
-    reviews = _synthetic_reviews(place)
-    scores = [score_text(r) for r in reviews]
+    """
+    Computes sentiment score for a place from real review records.
+    If no real review data exists yet in the DB/place object, returns a neutral default (0.0).
+    """
+    reviews = place.get("reviews") or []
+    if not reviews:
+        return 0.0
+    scores = [score_text(r) for r in reviews if isinstance(r, str)]
+    if not scores:
+        return 0.0
     return round(sum(scores) / len(scores), 3)
 
 

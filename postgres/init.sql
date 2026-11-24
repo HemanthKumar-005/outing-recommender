@@ -36,17 +36,27 @@ CREATE SCHEMA platform;
 CREATE TABLE platform.tenants (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name        TEXT NOT NULL,
-    api_key     TEXT UNIQUE NOT NULL,
+    api_key     TEXT UNIQUE,
+    key_prefix  TEXT,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+ALTER TABLE platform.tenants ADD COLUMN IF NOT EXISTS key_prefix TEXT;
+ALTER TABLE platform.tenants ALTER COLUMN api_key DROP NOT NULL;
+
 GRANT USAGE ON SCHEMA platform TO gateway_role, worker_role;
-GRANT SELECT, INSERT ON platform.tenants TO gateway_role;  -- INSERT for self-serve tenant signup
+GRANT SELECT, INSERT, UPDATE ON platform.tenants TO gateway_role;  -- INSERT for self-serve tenant signup, UPDATE for key rotation/revocation
 GRANT SELECT ON platform.tenants TO worker_role;
 
 -- Seed a demo tenant so the existing demo API key keeps working unchanged.
-INSERT INTO platform.tenants (name, api_key)
-VALUES ('Demo Tenant', 'demo-key');
+INSERT INTO platform.tenants (name, api_key, key_prefix)
+VALUES ('Demo Tenant', encode(sha256('demo-key'::bytea), 'hex'), 'demo-key')
+ON CONFLICT DO NOTHING;
+
+UPDATE platform.tenants
+SET api_key = encode(sha256('demo-key'::bytea), 'hex'),
+    key_prefix = 'demo-key'
+WHERE name = 'Demo Tenant';
 
 -- ---------------------------------------------------------------------
 -- users schema
@@ -108,8 +118,39 @@ CREATE TABLE places.places (
     opening_hours       JSONB NOT NULL DEFAULT '{}',
     sentiment_score     REAL NOT NULL DEFAULT 0.5,
     popularity_score    REAL NOT NULL DEFAULT 0.5,
+    hours_verified      BOOLEAN NOT NULL DEFAULT false,
+    data_source         TEXT NOT NULL DEFAULT 'estimated',
+    verified_at         TIMESTAMPTZ DEFAULT NULL,
+    verification_notes  TEXT DEFAULT NULL,
+    booking_url         TEXT DEFAULT NULL,
     created_at          TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+ALTER TABLE places.places ADD COLUMN IF NOT EXISTS hours_verified BOOLEAN DEFAULT FALSE;
+ALTER TABLE places.places ADD COLUMN IF NOT EXISTS data_source TEXT DEFAULT 'estimated';
+ALTER TABLE places.places ADD COLUMN IF NOT EXISTS verified_at TIMESTAMPTZ DEFAULT NULL;
+ALTER TABLE places.places ADD COLUMN IF NOT EXISTS verification_notes TEXT DEFAULT NULL;
+ALTER TABLE places.places ADD COLUMN IF NOT EXISTS booking_url TEXT DEFAULT NULL;
+
+CREATE TABLE IF NOT EXISTS places.venue_reports (
+    id          SERIAL PRIMARY KEY,
+    tenant_id   UUID NOT NULL REFERENCES platform.tenants(id),
+    place_id    BIGINT NOT NULL REFERENCES places.places(id) ON DELETE CASCADE,
+    user_id     BIGINT NOT NULL,
+    issue_type  TEXT NOT NULL,
+    description TEXT,
+    created_at  TIMESTAMPTZ DEFAULT now(),
+    resolved    BOOLEAN DEFAULT FALSE
+);
+
+CREATE INDEX IF NOT EXISTS idx_venue_reports_tenant ON places.venue_reports (tenant_id, place_id);
+CREATE INDEX IF NOT EXISTS idx_venue_reports_user ON places.venue_reports (tenant_id, user_id, created_at);
+
+ALTER TABLE places.venue_reports ENABLE ROW LEVEL SECURITY;
+ALTER TABLE places.venue_reports FORCE ROW LEVEL SECURITY;
+CREATE POLICY tenant_isolation ON places.venue_reports
+    USING (tenant_id = current_setting('app.tenant_id', true)::uuid)
+    WITH CHECK (tenant_id = current_setting('app.tenant_id', true)::uuid);
 
 CREATE INDEX idx_places_tenant_category ON places.places (tenant_id, category);
 CREATE INDEX idx_places_tenant_lat ON places.places (tenant_id, lat);
@@ -193,8 +234,13 @@ CREATE TABLE itineraries.itineraries (
     user_id     BIGINT,
     start_time  TIMESTAMPTZ NOT NULL,
     end_time    TIMESTAMPTZ NOT NULL,
+    share_token TEXT UNIQUE DEFAULT NULL,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+ALTER TABLE itineraries.itineraries
+  ADD COLUMN IF NOT EXISTS share_token TEXT UNIQUE DEFAULT NULL;
+-- Populated on demand when user clicks "Share". NULL = not shared.
 
 CREATE TABLE itineraries.itinerary_items (
     id                  BIGSERIAL PRIMARY KEY,
@@ -218,14 +264,23 @@ CREATE INDEX idx_itinerary_items_tenant ON itineraries.itinerary_items (tenant_i
 ALTER TABLE itineraries.itineraries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE itineraries.itineraries FORCE ROW LEVEL SECURITY;
 CREATE POLICY tenant_isolation ON itineraries.itineraries
-    USING (tenant_id = current_setting('app.tenant_id', true)::uuid)
-    WITH CHECK (tenant_id = current_setting('app.tenant_id', true)::uuid);
+    USING (
+        tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::uuid
+        OR (share_token IS NOT NULL AND share_token = NULLIF(current_setting('app.share_token', true), ''))
+    )
+    WITH CHECK (tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::uuid);
 
 ALTER TABLE itineraries.itinerary_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE itineraries.itinerary_items FORCE ROW LEVEL SECURITY;
 CREATE POLICY tenant_isolation ON itineraries.itinerary_items
-    USING (tenant_id = current_setting('app.tenant_id', true)::uuid)
-    WITH CHECK (tenant_id = current_setting('app.tenant_id', true)::uuid);
+    USING (
+        tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::uuid
+        OR itinerary_id IN (
+            SELECT id FROM itineraries.itineraries
+            WHERE share_token IS NOT NULL AND share_token = NULLIF(current_setting('app.share_token', true), '')
+        )
+    )
+    WITH CHECK (tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::uuid);
 
 GRANT USAGE ON SCHEMA itineraries TO app_role;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA itineraries TO app_role;

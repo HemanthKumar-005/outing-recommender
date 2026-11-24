@@ -1,0 +1,292 @@
+/* Part of the Nearby & Co. design system — imported via globals.css */
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin: 0 0 10px;
+}
+
+.subtitle {
+  color: var(--slate);
+  margin: 0;
+  font-size: 0.95rem;
+  max-width: 42ch;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 3px;
+  padding: 11px 20px;
+  font-size: 0.9rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+button:active {
+  transform: scale(0.98);
+}
+button:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--brass-bright);
+  margin-top: 20px;
+}
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--brass-dim);
+  border: 1px solid var(--brass-dim);
+  padding: 7px 12px;
+  font-size: 0.78rem;
+  margin-top: 8px;
+}
+
+.btn-tiny {
+  background: transparent;
+  color: var(--on-paper-muted);
+  border: 1px solid var(--hairline-paper);
+  padding: 5px 11px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.btn-tiny:hover {
+  border-color: var(--brass-dim);
+  color: var(--on-paper-ink);
+}
+
+.slider-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+.slider-row label {
+  margin: 0;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.82rem;
+}
+
+.hint {
+  font-size: 0.78rem;
+  color: var(--on-paper-muted);
+  margin: 4px 0 0;
+}
+
+.error {
+  color: var(--burgundy);
+  background: rgba(176, 80, 92, 0.08);
+  border: 1px solid rgba(176, 80, 92, 0.35);
+  border-radius: 3px;
+  padding: 10px 12px;
+  margin-top: 14px;
+  font-size: 0.85rem;
+}
+
+/* ---------- ticket-stub recommendation cards ---------- */
+
+.ticket {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  background: var(--paper);
+  color: var(--on-paper-ink);
+  border-radius: 4px;
+  margin-bottom: 14px;
+  box-shadow: 0 14px 34px -18px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+}
+
+.ticket-stub {
+  position: relative;
+  background: var(--paper-dim);
+  padding: 16px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-right: 2px dashed var(--hairline-paper);
+}
+
+.ticket-stub::before,
+.ticket-stub::after {
+  content: "";
+  position: absolute;
+  right: -9px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+}
+.ticket-stub::before {
+  top: -9px;
+}
+.ticket-stub::after {
+  bottom: -9px;
+}
+
+.ticket-score {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--brass-dim);
+  line-height: 1;
+}
+.ticket-score-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-paper-muted);
+  margin-top: 4px;
+}
+.ticket-category {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-paper-muted);
+  margin-top: 10px;
+}
+
+.ticket-main {
+  padding: 16px 18px 14px;
+  min-width: 0;
+}
+
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.ticket-name {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.15rem;
+  color: var(--on-paper-ink);
+  margin: 0;
+}
+
+.ticket-meta {
+  color: var(--on-paper-muted);
+  font-size: 0.82rem;
+  margin: 3px 0 10px;
+}
+
+.reasons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.reason-chip {
+  background: rgba(201, 161, 90, 0.14);
+  border: 1px solid rgba(201, 161, 90, 0.3);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  color: var(--brass-dim);
+}
+
+.hours-unverified-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--brass-dim);
+  border: 1px solid var(--brass-dim);
+  border-radius: 3px;
+  padding: 1px 5px;
+  display: inline-block;
+}
+
+.action-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.breakdown {
+  margin-top: 12px;
+  background: var(--ink);
+  color: var(--slate-strong);
+  border-radius: 3px;
+  padding: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  overflow-x: auto;
+}
+
+/* ---------- model-card page ---------- */
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.metric-tile {
+  background: var(--paper-dim);
+  border-radius: 3px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--brass);
+}
+
+.metric-value {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  color: var(--on-paper-ink);
+}
+
+.metric-label {
+  font-size: 0.72rem;
+  color: var(--on-paper-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+table.eval-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  margin-top: 8px;
+}
+table.eval-table th,
+table.eval-table td {
+  text-align: left;
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--hairline-paper);
+}
+table.eval-table th {
+  color: var(--on-paper-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 520px) {
+  .ticket {
+    grid-template-columns: 72px 1fr;
+  }
+}

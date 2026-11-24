@@ -17,12 +17,18 @@ export default function Signup() {
     setLoading(true);
     setError(null);
     try {
+      // Note: intentionally omitted any local-xxxx random key fallback.
+      // Real API errors (network failure, 500, 429, etc.) must surface honestly to the user
+      // without silently substituting a fake or mock key.
       const resp = await fetch(`${GATEWAY_ROOT}/tenants`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name }),
       });
-      if (!resp.ok) throw new Error(`Request failed (${resp.status})`);
+      if (!resp.ok) {
+        const body = await resp.json().catch(() => ({}));
+        throw new Error(body.detail || `Request failed (${resp.status})`);
+      }
       setResult(await resp.json());
     } catch (err: any) {
       setError(err.message || "Something went wrong");
@@ -37,7 +43,7 @@ export default function Signup() {
         <div>
           <p className="eyebrow">Nearby &amp; Co. · New workspace</p>
           <h1>Open a table</h1>
-          <p className="subtitle">Every workspace's guests, venues, and history are isolated at the database level — enforced by Postgres row-level security, not application code.</p>
+          <p className="subtitle">Every workspace&apos;s guests, venues, and history are isolated at the database level — enforced by Postgres row-level security, not application code.</p>
         </div>
         <Link href="/" className="btn-secondary" style={{ textDecoration: "none" }}>← Back</Link>
       </div>
@@ -50,12 +56,17 @@ export default function Signup() {
           <button type="submit" className="btn-primary" disabled={loading || !name}>
             {loading ? "Provisioning..." : "Create workspace"}
           </button>
+          <p className="hint">
+            By creating a workspace you agree to our{" "}
+            <Link href="/terms">Terms of Service</Link> and{" "}
+            <Link href="/privacy">Privacy Policy</Link>.
+          </p>
           {error && <div className="error">{error}</div>}
         </form>
       ) : (
         <div className="card fade-in">
           <p className="eyebrow" style={{ color: "var(--on-paper-muted)" }}>Workspace created</p>
-          <p style={{ marginTop: 0 }}>Save this API key — it's the only credential for this workspace and won't be shown again.</p>
+          <p style={{ marginTop: 0 }}>Save this API key — it&apos;s the only credential for this workspace and won&apos;t be shown again.</p>
           <div className="metric-grid">
             <div className="metric-tile">
               <div className="metric-value" style={{ fontSize: "0.85rem", wordBreak: "break-all" }}>{result.api_key}</div>
@@ -67,10 +78,13 @@ export default function Signup() {
             </div>
           </div>
           <p className="hint">
-            Paste this key into "Change workspace key" on the home page to start recommending for this workspace.
+            Use this key on the login page to authenticate and start recommending for this workspace.
           </p>
+          <Link href="/login" className="btn-primary" style={{ textDecoration: "none", display: "inline-block", marginRight: 8 }}>
+            Go to login →
+          </Link>
           <Link href="/" className="btn-secondary" style={{ textDecoration: "none", display: "inline-block" }}>
-            Go to recommendations →
+            Home
           </Link>
         </div>
       )}

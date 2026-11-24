@@ -1,7 +1,59 @@
 import sys
+from contextlib import contextmanager
+from psycopg.rows import dict_row
 
 sys.path.insert(0, "/shared")
-from pgdb import tenant_cursor  # noqa: E402
+try:
+    from pgdb import get_pool, tenant_cursor  # noqa: E402
+except ImportError:
+    from shared.pgdb import get_pool, tenant_cursor  # noqa: E402
+
+
+@contextmanager
+def share_token_cursor(share_token: str):
+    """Yields a cursor scoped to access the specific shared itinerary via RLS."""
+    pool = get_pool()
+    with pool.connection() as conn:
+        with conn.cursor(row_factory=dict_row) as cur:
+            cur.execute("SELECT set_config('app.share_token', %s, true)", (str(share_token),))
+            yield cur
+
+
+def set_share_token(tenant_id: str, itinerary_id: int, share_token: str) -> None:
+    with tenant_cursor(tenant_id) as cur:
+        cur.execute(
+            "UPDATE itineraries.itineraries SET share_token = %s WHERE id = %s",
+            (share_token, itinerary_id),
+        )
+
+
+def clear_share_token(tenant_id: str, itinerary_id: int) -> None:
+    with tenant_cursor(tenant_id) as cur:
+        cur.execute(
+            "UPDATE itineraries.itineraries SET share_token = NULL WHERE id = %s",
+            (itinerary_id,),
+        )
+
+
+def get_itinerary_by_share_token(share_token: str) -> dict | None:
+    with share_token_cursor(share_token) as cur:
+        cur.execute(
+            "SELECT * FROM itineraries.itineraries WHERE share_token = %s",
+            (share_token,),
+        )
+        itinerary = cur.fetchone()
+        if not itinerary:
+            return None
+        cur.execute("SELECT set_config('app.tenant_id', %s, true)", (str(itinerary["tenant_id"]),))
+        cur.execute(
+            """SELECT ii.*, p.booking_url, p.description AS place_description
+               FROM itineraries.itinerary_items ii
+               LEFT JOIN places.places p ON p.id = ii.place_id
+               WHERE ii.itinerary_id = %s ORDER BY ii.arrival""",
+            (itinerary["id"],),
+        )
+        items = cur.fetchall()
+    return {**itinerary, "items": items}
 
 
 def create_itinerary(tenant_id: str, user_id: int | None, start_time: str, end_time: str, items: list) -> dict:
@@ -31,7 +83,10 @@ def get_itinerary(tenant_id: str, itinerary_id: int) -> dict | None:
         if not itinerary:
             return None
         cur.execute(
-            "SELECT * FROM itineraries.itinerary_items WHERE itinerary_id = %s ORDER BY arrival",
+            """SELECT ii.*, p.booking_url, p.description AS place_description
+               FROM itineraries.itinerary_items ii
+               LEFT JOIN places.places p ON p.id = ii.place_id
+               WHERE ii.itinerary_id = %s ORDER BY ii.arrival""",
             (itinerary_id,),
         )
         items = cur.fetchall()

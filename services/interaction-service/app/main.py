@@ -1,6 +1,7 @@
+import os
 import sys
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
 sys.path.insert(0, "/shared")
@@ -9,7 +10,37 @@ from tenant import require_tenant  # noqa: E402
 
 from app import db
 
+try:
+    from shared.logging_config import configure_logging
+    from shared.request_id_middleware import RequestIdMiddleware
+    from shared.sentry_config import init_sentry
+except ImportError:
+    from logging_config import configure_logging
+    from request_id_middleware import RequestIdMiddleware
+    from sentry_config import init_sentry
+
+init_sentry("interaction-service")
+logger = configure_logging("interaction-service")
+
 app = FastAPI(title="Interaction Tracking Service")
+app.add_middleware(RequestIdMiddleware)
+
+RETRAIN_THRESHOLD = int(os.environ.get("RETRAIN_INTERACTION_THRESHOLD", "100"))
+_interaction_counter = 0
+
+
+def _maybe_trigger_retrain(tenant_id: str):
+    global _interaction_counter
+    _interaction_counter += 1
+    if _interaction_counter % 50 != 0:
+        return
+    try:
+        count = db.count_interactions(tenant_id)
+        if count >= RETRAIN_THRESHOLD:
+            publish("interactions.threshold_reached", {"count": count, "tenant_id": tenant_id})
+            logger.info(f"Published interactions.threshold_reached (count={count})")
+    except Exception as e:
+        logger.warning(f"Could not check interaction count for retrain trigger: {e}")
 
 
 class InteractionCreate(BaseModel):
@@ -35,18 +66,29 @@ def ready(tenant_id: str = Depends(require_tenant)):
 
 
 @app.post("/interactions", status_code=201)
-def create_interaction(payload: InteractionCreate, tenant_id: str = Depends(require_tenant)):
+def create_interaction(payload: InteractionCreate, request: Request, tenant_id: str = Depends(require_tenant)):
+    # IDOR fix: user_id in payload must match the authenticated caller
+    x_user_id = request.headers.get("x-user-id")
+    if not x_user_id or str(payload.user_id) != str(x_user_id):
+        raise HTTPException(status_code=403, detail="Forbidden: user_id in payload must match the authenticated caller")
+
     if payload.type not in db.VALID_TYPES:
         raise HTTPException(status_code=400, detail=f"type must be one of {sorted(db.VALID_TYPES)}")
     interaction = db.create_interaction(
         tenant_id, payload.user_id, payload.place_id, payload.type, payload.rating, payload.context,
     )
     publish("interactions", interaction)
+    _maybe_trigger_retrain(tenant_id)
     return interaction
 
 
 @app.get("/users/{user_id}/interactions")
-def get_user_interactions(user_id: int, tenant_id: str = Depends(require_tenant)):
+def get_user_interactions(user_id: int, request: Request, tenant_id: str = Depends(require_tenant)):
+    # IDOR fix: user_id in payload must match the authenticated caller
+    x_user_id = request.headers.get("x-user-id")
+    if not x_user_id or str(user_id) != str(x_user_id):
+        raise HTTPException(status_code=403, detail="Forbidden: user_id in payload must match the authenticated caller")
+
     return db.list_by_user(tenant_id, user_id)
 
 

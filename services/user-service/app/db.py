@@ -5,21 +5,32 @@ from pgdb import tenant_cursor  # noqa: E402
 from psycopg.types.json import Json  # noqa: E402
 
 
-def create_user(tenant_id: str, name: str, email: str, budget_min: int, budget_max: int,
-                 preferred_categories: list, ambience_preferences: list,
-                 home_lat: float | None, home_lng: float | None,
-                 age_group: str | None = None, preferred_distance_km: float = 10,
-                 preferred_outing_type: str = "friends") -> dict:
+def create_user(tenant_id: str, name: str, email: str, budget_min: int = 0, budget_max: int = 4,
+                preferred_categories: list | None = None, ambience_preferences: list | None = None,
+                home_lat: float | None = None, home_lng: float | None = None,
+                age_group: str | None = None, preferred_distance_km: float = 10,
+                preferred_outing_type: str = "friends",
+                password_hash: str | None = None) -> dict:
+    if preferred_categories is None:
+        preferred_categories = []
+    if ambience_preferences is None:
+        ambience_preferences = []
     with tenant_cursor(tenant_id) as cur:
         cur.execute(
             """INSERT INTO users.users
-               (tenant_id, name, email, age_group, budget_min, budget_max, preferred_categories,
+               (tenant_id, name, email, password_hash, age_group, budget_min, budget_max, preferred_categories,
                 ambience_preferences, preferred_distance_km, preferred_outing_type, home_lat, home_lng)
-               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+               VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                RETURNING *""",
-            (tenant_id, name, email, age_group, budget_min, budget_max, Json(preferred_categories),
+            (tenant_id, name, email, password_hash, age_group, budget_min, budget_max, Json(preferred_categories),
              Json(ambience_preferences), preferred_distance_km, preferred_outing_type, home_lat, home_lng),
         )
+        return cur.fetchone()
+
+
+def get_user_by_email(tenant_id: str, email: str) -> dict | None:
+    with tenant_cursor(tenant_id) as cur:
+        cur.execute("SELECT * FROM users.users WHERE email = %s", (email,))
         return cur.fetchone()
 
 
@@ -50,6 +61,12 @@ def update_preferences(tenant_id: str, user_id: int, budget_min=None, budget_max
              preferred_distance_km, preferred_outing_type, user_id),
         )
         return cur.fetchone()
+
+
+def delete_user(tenant_id: str, user_id: int) -> bool:
+    with tenant_cursor(tenant_id) as cur:
+        cur.execute("DELETE FROM users.users WHERE id = %s", (user_id,))
+        return cur.rowcount > 0
 
 
 def list_users(tenant_id: str) -> list:

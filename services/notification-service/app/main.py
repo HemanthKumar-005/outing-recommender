@@ -9,7 +9,20 @@ from tenant import require_tenant  # noqa: E402
 
 from app import db
 
+try:
+    from shared.logging_config import configure_logging
+    from shared.request_id_middleware import RequestIdMiddleware
+    from shared.sentry_config import init_sentry
+except ImportError:
+    from logging_config import configure_logging
+    from request_id_middleware import RequestIdMiddleware
+    from sentry_config import init_sentry
+
+init_sentry("notification-service")
+logger = configure_logging("notification-service")
+
 app = FastAPI(title="Notification Service")
+app.add_middleware(RequestIdMiddleware)
 
 
 class NotificationCreate(BaseModel):
@@ -23,14 +36,14 @@ def _on_message(routing_key: str, payload: dict):
     if routing_key == "notification.send":
         tenant_id = payload.get("tenant_id")
         if not tenant_id:
-            print(f"[notification-service] dropping notification.send with no tenant_id: {payload}")
+            logger.warning(f"dropping notification.send with no tenant_id: {payload}")
             return
         db.create_notification(
             tenant_id, payload.get("user_id"), payload.get("title", ""), payload.get("body", ""),
             payload.get("channel", "push"),
         )
-        print(f"[notification-service] (simulated send) tenant={tenant_id} -> "
-              f"user {payload.get('user_id')}: {payload.get('title')}")
+        logger.info(f"(simulated send) tenant={tenant_id} -> "
+                    f"user {payload.get('user_id')}: {payload.get('title')}")
 
 
 @app.on_event("startup")

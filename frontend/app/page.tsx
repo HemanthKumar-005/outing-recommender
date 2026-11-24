@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-const DEFAULT_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-const DEFAULT_API_KEY = process.env.NEXT_PUBLIC_API_KEY || "demo-key";
+// Decommissioned: NEXT_PUBLIC_API_KEY demo-key fallback has been removed.
+// API keys are stored exclusively in HttpOnly cookies and never pre-filled or exposed to client-side JS.
+const DEFAULT_API_KEY = "";
 
 const CATEGORIES = ["", "cafe", "restaurant", "bar", "museum", "park", "cinema", "shopping", "attraction"];
 const OUTING_TYPES = ["friends", "couple", "family", "solo"];
@@ -29,6 +31,7 @@ type Recommendation = {
     price_range: number;
     distance_km: number;
     rating?: number;
+    booking_url?: string | null;
   };
   score: number;
   score_breakdown: ScoreBreakdown;
@@ -50,13 +53,15 @@ type RecommendResponse = {
 };
 
 export default function Home() {
-  const [apiUrl] = useState(DEFAULT_API_URL);
-  const [apiKey, setApiKey] = useState(DEFAULT_API_KEY);
-  const [showKeyField, setShowKeyField] = useState(false);
+  const router = useRouter();
+  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
 
   const [userId, setUserId] = useState("1");
   const [groupMode, setGroupMode] = useState(false);
   const [extraUserIds, setExtraUserIds] = useState("2, 3");
+  const [showLocationConsent, setShowLocationConsent] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
   const [aggregation, setAggregation] = useState("least_misery");
   const [lat, setLat] = useState("12.9716");
   const [lng, setLng] = useState("77.5946");
@@ -73,8 +78,51 @@ export default function Home() {
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [dismissed, setDismissed] = useState<Set<number>>(new Set());
 
-  function useMyLocation() {
-    if (!navigator.geolocation) return;
+  // Venue reporting state
+  const [reportingPlaceId, setReportingPlaceId] = useState<number | null>(null);
+  const [reportIssueType, setReportIssueType] = useState<string>("wrong_hours");
+  const [reportDescription, setReportDescription] = useState<string>("");
+  const [reportSubmitting, setReportSubmitting] = useState<boolean>(false);
+  const [reportStatus, setReportStatus] = useState<Record<number, "success" | "error" | null>>({});
+
+  // Offline detection state
+  const [isOffline, setIsOffline] = useState(false);
+
+  useEffect(() => {
+    const handleOffline = () => setIsOffline(true);
+    const handleOnline = () => setIsOffline(false);
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("online", handleOnline);
+    return () => {
+      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("online", handleOnline);
+    };
+  }, []);
+
+  // Verified session check: if not authenticated, redirect to /login
+  useEffect(() => {
+    async function checkSession() {
+      try {
+        const resp = await fetch("/api/session");
+        const data = await resp.json();
+        if (!data.authenticated) {
+          router.push("/login");
+        } else {
+          setAuthenticated(true);
+        }
+      } catch {
+        router.push("/login");
+      }
+    }
+    checkSession();
+  }, [router]);
+
+  function confirmLocation() {
+    setShowLocationConsent(false);
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser");
+      return;
+    }
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setLat(pos.coords.latitude.toFixed(4));
@@ -82,6 +130,43 @@ export default function Home() {
       },
       () => setError("Could not get your location"),
     );
+  }
+
+  async function deleteAccount() {
+    setDeletingAccount(true);
+    try {
+      await fetch("/api/users/me", { method: "DELETE" });
+      await fetch("/api/session", { method: "DELETE" });
+      router.push("/signup");
+    } catch {
+      setError("Failed to delete account. Please try again.");
+      setDeletingAccount(false);
+    }
+  }
+
+  async function submitVenueReport(placeId: number) {
+    setReportSubmitting(true);
+    try {
+      const resp = await fetch(`/api/places/${placeId}/report`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          issue_type: reportIssueType,
+          description: reportDescription.trim() || undefined,
+        }),
+      });
+      if (resp.ok) {
+        setReportStatus((prev) => ({ ...prev, [placeId]: "success" }));
+        setReportingPlaceId(null);
+        setReportDescription("");
+      } else {
+        setReportStatus((prev) => ({ ...prev, [placeId]: "error" }));
+      }
+    } catch {
+      setReportStatus((prev) => ({ ...prev, [placeId]: "error" }));
+    } finally {
+      setReportSubmitting(false);
+    }
   }
 
   function updateWeight(key: string, value: number) {
@@ -99,9 +184,10 @@ export default function Home() {
         ? [Number(userId), ...extraUserIds.split(",").map((s) => s.trim()).filter(Boolean).map(Number)]
         : undefined;
 
-      const resp = await fetch(`${apiUrl}/recommendations/recommendations`, {
+      // Proxied through Next.js API route; server attaches API key from HttpOnly cookie
+      const resp = await fetch("/api/recommendations/recommendations", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "X-API-Key": apiKey },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           user_id: Number(userId),
           user_ids,
@@ -116,6 +202,10 @@ export default function Home() {
           top_k: 10,
         }),
       });
+      if (resp.status === 401) {
+        router.push("/login");
+        return;
+      }
       if (!resp.ok) {
         const body = await resp.json().catch(() => ({}));
         throw new Error(body.detail || `Request failed (${resp.status})`);
@@ -135,20 +225,38 @@ export default function Home() {
       setDismissed((prev) => new Set(prev).add(placeId));
     }
     try {
+      // Proxied through Next.js API route; server attaches API key from HttpOnly cookie
       const resp = await fetch(
-        `${apiUrl}/recommendations/recommendations/${result.session_id}/feedback`,
+        `/api/recommendations/recommendations/${result.session_id}/feedback`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json", "X-API-Key": apiKey },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ place_id: placeId, action }),
         },
       );
+      if (resp.status === 401) {
+        router.push("/login");
+        return;
+      }
       if (!resp.ok) return;
       const data = await resp.json();
       setResult({ ...result, recommendations: data.recommendations });
     } catch {
       // live re-rank is best-effort; the dismissal already hid the card
     }
+  }
+
+  async function logout() {
+    try {
+      await fetch("/api/session", { method: "DELETE" });
+    } finally {
+      router.push("/login");
+    }
+  }
+
+  // Prevent flash of unauthenticated content
+  if (authenticated !== true) {
+    return null;
   }
 
   const visibleRecs = result?.recommendations.filter((r) => !dismissed.has(r.place.id)) || [];
@@ -163,13 +271,14 @@ export default function Home() {
             Ranked by fit, weather, budget and reviews — not just distance.
           </p>
         </div>
-        <Link href="/model-card" className="btn-secondary" style={{ textDecoration: "none" }}>
-          How does this rank?
-        </Link>
-      </div>
-
-      <div style={{ marginTop: -18, marginBottom: 22 }}>
-        <Link href="/signup" className="hint" style={{ color: "var(--slate)" }}>New here? Open a workspace →</Link>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <Link href="/model-card" className="btn-secondary" style={{ textDecoration: "none" }}>
+            How does this rank?
+          </Link>
+          <button type="button" className="btn-secondary" onClick={logout}>
+            Log out
+          </button>
+        </div>
       </div>
 
       <form className="card fade-in" onSubmit={submit}>
@@ -207,7 +316,22 @@ export default function Home() {
             </select>
           </div>
         </div>
-        <button type="button" className="btn-secondary" onClick={useMyLocation}>Use my location</button>
+        <button type="button" className="btn-secondary" onClick={() => setShowLocationConsent(true)}>
+          Use my location
+        </button>
+
+        {showLocationConsent && (
+          <div className="card fade-in" style={{ padding: "1rem", marginTop: "0.5rem" }}>
+            <p style={{ margin: 0, fontSize: "0.9rem" }}>
+              <strong>Location access</strong><br />
+              We&apos;ll use your coordinates to find venues nearby. Your location is sent to our server only for this request and is not stored. This processing is covered by our <Link href="/privacy">Privacy Policy</Link>.
+            </p>
+            <div style={{ marginTop: "0.75rem", display: "flex", gap: "0.5rem" }}>
+              <button type="button" className="btn-primary" onClick={confirmLocation}>Allow</button>
+              <button type="button" className="btn-secondary" onClick={() => setShowLocationConsent(false)}>Cancel</button>
+            </div>
+          </div>
+        )}
 
         <div className="toggle-row">
           <label className="checkbox-label">
@@ -236,17 +360,8 @@ export default function Home() {
           <button type="button" className="btn-secondary" onClick={() => setShowAdvanced((s) => !s)}>
             {showAdvanced ? "Hide" : "Show"} advanced controls
           </button>
-          <button type="button" className="btn-secondary" style={{ marginLeft: 8 }} onClick={() => setShowKeyField((s) => !s)}>
-            {showKeyField ? "Hide" : "Change"} workspace key
-          </button>
         </div>
-        {showKeyField && (
-          <div>
-            <label>Workspace API key</label>
-            <input value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
-            <p className="hint">Every workspace's data is isolated at the database level — see the model card page.</p>
-          </div>
-        )}
+        
         {showAdvanced && (
           <div className="advanced-panel">
             <label>Explore vs. exploit ({Math.round(diversity * 100)}% variety)</label>
@@ -282,6 +397,14 @@ export default function Home() {
         {error && <div className="error">{error}</div>}
       </form>
 
+      {isOffline && result && (
+        <div className="card fade-in" style={{ background: "#fef3c7", border: "1px solid #fcd34d", padding: "0.75rem 1rem", marginBottom: "1rem" }}>
+          <p style={{ margin: 0, fontSize: "0.85rem", color: "#92400e" }}>
+            ⚠️ You&apos;re offline — showing cached results. Reconnect for fresh recommendations.
+          </p>
+        </div>
+      )}
+
       {result && (
         <div className="results-card fade-in">
           <div className="context-line">
@@ -310,6 +433,17 @@ export default function Home() {
                     <span className="reason-chip" key={i}>{r}</span>
                   ))}
                 </div>
+                {rec.place.booking_url && (
+                  <a
+                    href={rec.place.booking_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-secondary"
+                    style={{ display: "inline-block", fontSize: "0.82rem", marginTop: "0.5rem", textDecoration: "none" }}
+                  >
+                    Reserve a spot →
+                  </a>
+                )}
                 <div className="action-row">
                   <button type="button" className="btn-tiny" onClick={() => sendFeedback(rec.place.id, "like")}>
                     More like this
@@ -327,11 +461,165 @@ export default function Home() {
                 {expandedId === rec.place.id && (
                   <pre className="breakdown">{JSON.stringify(rec.score_breakdown, null, 2)}</pre>
                 )}
+
+                {/* Inline venue issue reporting */}
+                <div style={{ marginTop: "10px", display: "flex", alignItems: "center", gap: "10px" }}>
+                  {reportStatus[rec.place.id] === "success" ? (
+                    <span style={{ fontSize: "0.75rem", color: "#2e7d32" }}>
+                      ✓ Thanks — we&apos;ll review this venue.
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      style={{
+                        background: "none",
+                        border: "none",
+                        padding: 0,
+                        color: "var(--on-paper-muted)",
+                        fontSize: "0.75rem",
+                        cursor: "pointer",
+                        textDecoration: "underline",
+                      }}
+                      onClick={() => {
+                        if (reportingPlaceId === rec.place.id) {
+                          setReportingPlaceId(null);
+                        } else {
+                          setReportingPlaceId(rec.place.id);
+                          setReportIssueType("wrong_hours");
+                          setReportDescription("");
+                        }
+                      }}
+                    >
+                      {reportingPlaceId === rec.place.id ? "Cancel report" : "Report an issue"}
+                    </button>
+                  )}
+                  {reportStatus[rec.place.id] === "error" && (
+                    <span style={{ fontSize: "0.75rem", color: "var(--burgundy, #b0505c)" }}>
+                      Couldn&apos;t submit report. Please try again.
+                    </span>
+                  )}
+                </div>
+
+                {reportingPlaceId === rec.place.id && (
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      padding: "10px 12px",
+                      background: "var(--paper-dim, rgba(0,0,0,0.03))",
+                      borderRadius: "4px",
+                      border: "1px solid var(--hairline-paper, rgba(0,0,0,0.1))",
+                    }}
+                  >
+                    <div style={{ marginBottom: "8px" }}>
+                      <label style={{ fontSize: "0.7rem", marginTop: 0, marginBottom: "4px" }}>
+                        Issue type
+                      </label>
+                      <select
+                        value={reportIssueType}
+                        onChange={(e) => setReportIssueType(e.target.value)}
+                        style={{ fontSize: "0.82rem", padding: "6px 8px" }}
+                      >
+                        <option value="wrong_hours">Wrong operating hours</option>
+                        <option value="wrong_price">Wrong price range</option>
+                        <option value="closed_permanently">Permanently closed</option>
+                        <option value="wrong_location">Wrong location / address</option>
+                        <option value="other">Other issue</option>
+                      </select>
+                    </div>
+                    <div style={{ marginBottom: "8px" }}>
+                      <label style={{ fontSize: "0.7rem", marginTop: 0, marginBottom: "4px" }}>
+                        Details (optional, max 280 chars)
+                      </label>
+                      <textarea
+                        value={reportDescription}
+                        onChange={(e) => setReportDescription(e.target.value)}
+                        maxLength={280}
+                        rows={2}
+                        placeholder="e.g. Closed on Tuesdays, moved across the street, etc."
+                        style={{
+                          width: "100%",
+                          padding: "6px 8px",
+                          border: "1px solid var(--hairline-paper)",
+                          borderRadius: "3px",
+                          fontSize: "0.82rem",
+                          fontFamily: "var(--font-body)",
+                          boxSizing: "border-box",
+                        }}
+                      />
+                    </div>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <button
+                        type="button"
+                        className="btn-tiny"
+                        style={{ background: "var(--brass-dim)", color: "#fff" }}
+                        disabled={reportSubmitting}
+                        onClick={() => submitVenueReport(rec.place.id)}
+                      >
+                        {reportSubmitting ? "Submitting..." : "Submit report"}
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-tiny"
+                        disabled={reportSubmitting}
+                        onClick={() => setReportingPlaceId(null)}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           ))}
+
+          <p style={{ fontSize: "0.72rem", color: "var(--on-paper-muted)", marginTop: "1rem" }}>
+            Venue data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors, available under the <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" rel="noopener noreferrer">Open Database Licence</a>.
+          </p>
         </div>
       )}
+
+      <div className="card fade-in" style={{ marginTop: "2rem", border: "1px solid var(--danger, #e53935)" }}>
+        <p className="eyebrow" style={{ color: "var(--danger, #e53935)" }}>Danger Zone · Privacy &amp; Data</p>
+        <h3 style={{ margin: "0.5rem 0" }}>Delete Account</h3>
+        <p className="hint" style={{ margin: "0 0 1rem 0" }}>
+          Permanently delete your user profile, preferences, interaction history, and saved itineraries. Under India DPDP Act 2023 and GDPR Art. 17, your data is erased immediately.
+        </p>
+        {!showDeleteConfirm ? (
+          <button
+            type="button"
+            className="btn-secondary"
+            style={{ color: "var(--danger, #e53935)", borderColor: "var(--danger, #e53935)" }}
+            onClick={() => setShowDeleteConfirm(true)}
+          >
+            Delete my account
+          </button>
+        ) : (
+          <div style={{ padding: "0.75rem", background: "var(--paper-subtle, rgba(0,0,0,0.03))", borderRadius: 6 }}>
+            <p style={{ margin: "0 0 0.75rem 0", fontSize: "0.85rem", color: "var(--danger, #e53935)" }}>
+              <strong>This will permanently delete your account and all your data. This cannot be undone.</strong>
+            </p>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <button
+                type="button"
+                className="btn-primary"
+                style={{ background: "var(--danger, #e53935)", borderColor: "var(--danger, #e53935)" }}
+                disabled={deletingAccount}
+                onClick={deleteAccount}
+              >
+                {deletingAccount ? "Deleting..." : "Yes, permanently delete"}
+              </button>
+              <button
+                type="button"
+                className="btn-secondary"
+                disabled={deletingAccount}
+                onClick={() => setShowDeleteConfirm(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </main>
   );
 }

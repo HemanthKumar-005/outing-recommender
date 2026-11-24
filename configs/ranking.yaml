@@ -59,6 +59,11 @@ diversity:
   category_similarity_weight: 0.7
   ambience_similarity_weight: 0.3
 
+# Feature flags for machine learning and experimental capabilities
+feature_flags:
+  xgboost_enabled: false  # Set to true only after sufficient real interaction data is collected
+  xgboost_min_interactions: 1000  # Minimum real (non-synthetic) interactions before enabling
+
 # Place-side cold start (Uniqueness §7): a small UCB-style exploration bonus
 # for low-review-count places so the system doesn't calcify around already-
 # popular spots. bonus = strength / sqrt(review_count + 1), capped.

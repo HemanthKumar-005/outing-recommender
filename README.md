@@ -159,7 +159,7 @@ curl -H 'X-API-Key: demo-key' -H 'Content-Type: application/json' \
 
 # Build an itinerary from a chosen set of places
 curl -H 'X-API-Key: demo-key' -H 'Content-Type: application/json' \
-  -X POST http://localhost:8000/api/itinerary/itinerary \
+  -X POST http://localhost:8000/api/itinerary/generate-plan \
   -d '{"user_id": 1, "places": [{"id":1,"name":"Blue Tokai","category":"cafe","lat":12.97,"lng":77.59}],
        "start_time": "2026-08-15T10:00:00", "end_time": "2026-08-15T18:00:00"}'
 

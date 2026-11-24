@@ -5,6 +5,35 @@ from datetime import datetime
 sys.path.insert(0, "/shared")
 from ranking_config import load_config  # noqa: E402
 
+try:
+    from shared.features import (  # noqa: E402
+        FEATURE_NAMES,
+        INTERACTION_WEIGHTS,
+        POSITIVE_INTERACTION_TYPES,
+        build_feature_vector,
+    )
+except ImportError:
+    from features import (  # noqa: E402
+        FEATURE_NAMES,
+        INTERACTION_WEIGHTS,
+        POSITIVE_INTERACTION_TYPES,
+        build_feature_vector,
+    )
+
+ranking_config = load_config()
+XGBOOST_ENABLED = ranking_config.get("feature_flags", {}).get("xgboost_enabled", False)
+
+
+def compute_ml_score(features: list, predict_fn=None) -> float | list:
+    if XGBOOST_ENABLED and predict_fn is not None:
+        return predict_fn(features)
+    else:
+        # Feature flag: xgboost_enabled=false in configs/ranking.yaml
+        # Enable only after collecting >= 1000 real user interactions
+        if isinstance(features, list) and features and isinstance(features[0], list):
+            return [0.5] * len(features)
+        return 0.5
+
 
 def _vector_for_place(place: dict, all_categories: list, all_ambience: list) -> list:
     cat_vec = [1.0 if place.get("category") == c else 0.0 for c in all_categories]
@@ -52,12 +81,12 @@ def cf_scores(user_id: int, places: list, all_interactions: list) -> tuple:
     Returns (scores_dict, prior_positive_interaction_count)."""
     place_to_users: dict = {}
     for it in all_interactions:
-        if it.get("type") in ("save", "visit", "rating", "share"):
+        if it.get("type") in POSITIVE_INTERACTION_TYPES:
             place_to_users.setdefault(it["place_id"], set()).add(it["user_id"])
 
     user_liked_places = {
         it["place_id"] for it in all_interactions
-        if it["user_id"] == user_id and it.get("type") in ("save", "visit", "rating", "share")
+        if it["user_id"] == user_id and it.get("type") in POSITIVE_INTERACTION_TYPES
     }
     users_who_like_similar_places: set = set()
     for pid in user_liked_places:

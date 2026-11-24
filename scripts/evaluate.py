@@ -1,3 +1,6 @@
+# OFFLINE ONLY — this script reads from tests/fixtures/reviews.csv.
+# Do not import or load this file from any runtime service.
+
 """
 Offline evaluation + ablation study (Review §37-39).
 
@@ -37,6 +40,18 @@ K = 5
 N_SESSIONS = 300
 CANDIDATES_PER_SESSION = 20
 SEED = 7
+
+# Offline fixture path for review evaluations
+REVIEWS_CSV_PATH = "tests/fixtures/reviews.csv"
+
+
+def load_review_fixtures(path: str = REVIEWS_CSV_PATH) -> list:
+    """Offline helper to read review fixtures without runtime service access."""
+    import csv, os
+    if not os.path.exists(path):
+        return []
+    with open(path, "r", encoding="utf-8") as f:
+        return list(csv.DictReader(f))
 
 COMPONENT_INDEX = {
     "distance": 0, "price_fit": 1, "content": 2, "collaborative": 3,

@@ -7,7 +7,20 @@ import httpx
 import redis
 from fastapi import FastAPI, Query
 
+try:
+    from shared.logging_config import configure_logging
+    from shared.request_id_middleware import RequestIdMiddleware
+    from shared.sentry_config import init_sentry
+except ImportError:
+    from logging_config import configure_logging
+    from request_id_middleware import RequestIdMiddleware
+    from sentry_config import init_sentry
+
+init_sentry("context-service")
+logger = configure_logging("context-service")
+
 app = FastAPI(title="Context Service")
+app.add_middleware(RequestIdMiddleware)
 
 REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379/0")
 CACHE_TTL_SECONDS = 600
@@ -72,7 +85,7 @@ def _live_weather(lat: float, lng: float) -> dict | None:
         condition = "clear" if code == 0 else ("clouds" if code < 4 else "rain")
         return {"temp_c": cw.get("temperature"), "condition": condition, "source": "open-meteo"}
     except Exception as e:  # noqa: BLE001
-        print(f"[context-service] live weather fetch failed: {e}")
+        logger.warning(f"live weather fetch failed: {e}")
         return None
 
 
@@ -89,7 +102,7 @@ def get_context(lat: float, lng: float, at: str | None = Query(None, description
             import json
             weather = json.loads(cached)
     except Exception as e:  # noqa: BLE001
-        print(f"[context-service] redis read failed: {e}")
+        logger.warning(f"redis read failed: {e}")
 
     if weather is None:
         weather = _live_weather(lat, lng) or _mock_weather(lat, lng, dt)
@@ -97,7 +110,7 @@ def get_context(lat: float, lng: float, at: str | None = Query(None, description
             import json
             r.setex(cache_key, CACHE_TTL_SECONDS, json.dumps(weather))
         except Exception as e:  # noqa: BLE001
-            print(f"[context-service] redis write failed: {e}")
+            logger.warning(f"redis write failed: {e}")
 
     return {
         "lat": lat,

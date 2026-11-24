@@ -7,3 +7,4 @@ xgboost==2.1.1
 numpy==1.26.4
 pyyaml==6.0.2
 redis==5.0.8
+sentry-sdk[fastapi]

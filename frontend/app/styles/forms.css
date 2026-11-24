@@ -1,0 +1,61 @@
+/* Part of the Nearby & Co. design system — imported via globals.css */
+
+label {
+  display: block;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--on-paper-muted);
+  margin-bottom: 5px;
+  margin-top: 14px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--hairline-paper);
+  border-radius: 3px;
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  background: #fff;
+  color: var(--on-paper-ink);
+}
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 2px;
+}
+
+input[type="range"] {
+  padding: 0;
+  accent-color: var(--brass-dim);
+}
+
+.toggle-row {
+  margin-top: 16px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--on-paper-ink);
+  margin: 0;
+  cursor: pointer;
+}
+.checkbox-label input {
+  width: auto;
+}
+
+.advanced-panel {
+  border-top: 1px dashed var(--hairline-paper);
+  margin-top: 16px;
+  padding-top: 14px;
+}

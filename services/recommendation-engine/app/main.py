@@ -19,7 +19,20 @@ from tenant import require_tenant  # noqa: E402
 
 from app import clients, scoring
 
+try:
+    from shared.logging_config import configure_logging
+    from shared.request_id_middleware import RequestIdMiddleware
+    from shared.sentry_config import init_sentry
+except ImportError:
+    from logging_config import configure_logging
+    from request_id_middleware import RequestIdMiddleware
+    from sentry_config import init_sentry
+
+init_sentry("recommendation-engine")
+logger = configure_logging("recommendation-engine")
+
 app = FastAPI(title="Recommendation Engine")
+app.add_middleware(RequestIdMiddleware)
 
 MODEL_PATH = os.environ.get("MODEL_PATH", "/models/xgboost_model.json")
 MODEL_METADATA_PATH = os.environ.get("MODEL_METADATA_PATH", "/models/xgboost_model.meta.json")
@@ -29,24 +42,33 @@ SESSION_TTL_SECONDS = 1800
 
 _model_lock = threading.Lock()
 _model: xgb.Booster | None = None
+_model_mtime: float = 0.0
 _model_metadata: dict | None = None
 _redis = redis.from_url(REDIS_URL, decode_responses=True)
 
 
 def _load_model() -> None:
-    global _model, _model_metadata
-    if os.path.exists(MODEL_PATH):
-        booster = xgb.Booster()
-        booster.load_model(MODEL_PATH)
-        with _model_lock:
-            _model = booster
-        print(f"[recommendation-engine] loaded model from {MODEL_PATH}")
-    else:
-        print(f"[recommendation-engine] no model found at {MODEL_PATH} yet, using neutral fallback score")
+    global _model, _model_mtime, _model_metadata
+    try:
+        mtime = os.path.getmtime(MODEL_PATH)
+        if mtime > _model_mtime:
+            new_model = xgb.Booster()
+            new_model.load_model(MODEL_PATH)
+            with _model_lock:
+                _model = new_model
+                _model_mtime = mtime
+            logger.info(f"Model reloaded from {MODEL_PATH} (mtime={mtime})")
+    except FileNotFoundError:
+        logger.warning(f"Model file not found at {MODEL_PATH} — XGBoost scoring disabled")
+    except Exception as e:
+        logger.warning(f"Error loading model from {MODEL_PATH}: {e}")
 
     if os.path.exists(MODEL_METADATA_PATH):
-        with open(MODEL_METADATA_PATH) as f:
-            _model_metadata = json.load(f)
+        try:
+            with open(MODEL_METADATA_PATH) as f:
+                _model_metadata = json.load(f)
+        except Exception:
+            pass
 
 
 def _predict(feature_rows: list) -> list:
@@ -60,13 +82,14 @@ def _predict(feature_rows: list) -> list:
 
 def _on_event(routing_key: str, payload: dict):
     if routing_key == "model.updated":
-        print(f"[recommendation-engine] model.updated received: {payload}, reloading")
+        logger.info("model.updated event received — reloading model")
         _load_model()
 
 
 @app.on_event("startup")
 def startup():
     _load_model()
+    logger.info(f"XGBoost enabled: {scoring.XGBOOST_ENABLED}")
     consume_in_background("recommendation-engine.model-updates", ["model.updated"], _on_event)
 
 
@@ -119,6 +142,7 @@ def model_card():
     if os.path.exists(EVALUATION_RESULTS_PATH):
         with open(EVALUATION_RESULTS_PATH) as f:
             evaluation_rows = list(csv.DictReader(io.StringIO(f.read())))
+    flags = load_config().get("feature_flags", {})
     return {
         "model_loaded": _model is not None,
         "metadata": _model_metadata,
@@ -128,6 +152,8 @@ def model_card():
             "Offline metrics are computed against a synthetic ground-truth "
             "generator (no real interaction dataset yet) - see scripts/evaluate.py."
         ),
+        "xgboost_enabled": flags.get("xgboost_enabled", False),
+        "xgboost_min_interactions": flags.get("xgboost_min_interactions", 1000),
     }
 
 
@@ -139,11 +165,16 @@ def _score_candidates_for_user(user: dict, candidates: list, context: dict, outi
     profile_name, base_weights = scoring.resolve_weight_profile(prior_positive_count)
     weights = scoring.merge_weight_overrides(base_weights, weight_overrides)
 
-    feature_rows = [
-        build_feature_vector(place, context, user, cbf[place["id"]], cf[place["id"]])
-        for place in candidates
-    ]
-    xgb_scores = _predict(feature_rows)
+    if scoring.XGBOOST_ENABLED:
+        feature_rows = [
+            build_feature_vector(place, context, user, cbf[place["id"]], cf[place["id"]])
+            for place in candidates
+        ]
+        xgb_scores = _predict(feature_rows)
+    else:
+        xgb_scores = [0.5] * len(candidates)
+        # Feature flag: xgboost_enabled=false in configs/ranking.yaml
+        # Enable only after collecting >= 1000 real user interactions
 
     scores, breakdowns = {}, {}
     for place, xgb_score in zip(candidates, xgb_scores):
@@ -244,7 +275,7 @@ def recommend(req: RecommendationRequest, tenant_id: str = Depends(require_tenan
     try:
         _redis.setex(f"session:{session_id}", SESSION_TTL_SECONDS, json.dumps(session_payload))
     except Exception as e:  # noqa: BLE001
-        print(f"[recommendation-engine] could not cache session: {e}")
+        logger.warning(f"could not cache session: {e}")
 
     return {
         "session_id": session_id,
@@ -261,6 +292,7 @@ def recommend(req: RecommendationRequest, tenant_id: str = Depends(require_tenan
 
 @app.post("/recommendations/{session_id}/feedback")
 def feedback(session_id: str, req: FeedbackRequest, tenant_id: str = Depends(require_tenant)):
+    # Documented in README: live re-ranking via Redis candidate pool
     """Live re-ranking within a session (Uniqueness §3): skip/like an item
     without a full re-query, so the list responds within the same session."""
     raw = _redis.get(f"session:{session_id}")
@@ -296,6 +328,6 @@ def feedback(session_id: str, req: FeedbackRequest, tenant_id: str = Depends(req
     try:
         _redis.setex(f"session:{session_id}", SESSION_TTL_SECONDS, json.dumps(session))
     except Exception as e:  # noqa: BLE001
-        print(f"[recommendation-engine] could not update session cache: {e}")
+        logger.warning(f"could not update session cache: {e}")
 
     return {"session_id": session_id, "recommendations": remaining[: session["top_k"]]}

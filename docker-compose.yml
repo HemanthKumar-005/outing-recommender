@@ -2,6 +2,9 @@ version: "3.9"
 
 x-python-env: &python-env
   PYTHONUNBUFFERED: "1"
+  SENTRY_DSN: "${SENTRY_DSN:-}"
+  ENVIRONMENT: "${ENVIRONMENT:-development}"
+  GIT_SHA: "${GIT_SHA:-}"
 
 services:
   postgres:
@@ -63,6 +66,7 @@ services:
       # app_role: CRUD on tenant-owned schemas only, enforced by RLS (see postgres/init.sql)
       DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/outing
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+      GOOGLE_PLACES_API_KEY: "${GOOGLE_PLACES_API_KEY:-}"
     depends_on:
       postgres:
         condition: service_healthy
@@ -237,17 +241,49 @@ services:
     build:
       context: .
       dockerfile: services/model-training-worker/Dockerfile
+    command: python trigger_listener.py  # long-lived listener
     environment:
       <<: *python-env
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/outing
+      PLATFORM_DATABASE_URL: postgresql://worker_role:worker_role_pw@postgres:5432/outing
       MODEL_PATH: /models/xgboost_model.json
       MODEL_METADATA_PATH: /models/xgboost_model.meta.json
+      RANKING_CONFIG_PATH: /configs/ranking.yaml
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+      RETRAIN_INTERACTION_THRESHOLD: "${RETRAIN_INTERACTION_THRESHOLD:-100}"
+      MIN_INTERACTIONS_TO_TRAIN: "${MIN_INTERACTIONS_TO_TRAIN:-100}"
+    volumes:
+      - models_data:/models
+      - ./configs:/configs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+  model-training-worker-oneoff:
+    build:
+      context: .
+      dockerfile: services/model-training-worker/Dockerfile
+    command: python train.py
+    profiles: ["train"]  # only runs with: docker compose --profile train run model-training-worker-oneoff
+    environment:
+      <<: *python-env
+      DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/outing
+      PLATFORM_DATABASE_URL: postgresql://worker_role:worker_role_pw@postgres:5432/outing
+      MODEL_PATH: /models/xgboost_model.json
+      MODEL_METADATA_PATH: /models/xgboost_model.meta.json
+      RANKING_CONFIG_PATH: /configs/ranking.yaml
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
     volumes:
       - models_data:/models
+      - ./configs:/configs
     depends_on:
+      postgres:
+        condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    profiles: ["tools"]   # run on demand: docker compose run --rm model-training-worker
 
   sentiment-worker:
     build:

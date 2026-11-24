@@ -1,7 +1,7 @@
 import sys
 from datetime import datetime
 
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from pydantic import BaseModel, Field
 
 sys.path.insert(0, "/shared")
@@ -10,7 +10,23 @@ from tenant import require_tenant  # noqa: E402
 
 from app import db, geo
 
+try:
+    from shared.logging_config import configure_logging
+    from shared.request_id_middleware import RequestIdMiddleware
+    from shared.sentry_config import init_sentry
+except ImportError:
+    from logging_config import configure_logging
+    from request_id_middleware import RequestIdMiddleware
+    from sentry_config import init_sentry
+
+init_sentry("place-service")
+logger = configure_logging("place-service")
+
+# FUTURE: if Google Places photos are added, proxy them through
+# GET /places/{place_id}/photo — never embed API keys in frontend URLs.
+
 app = FastAPI(title="Place Catalog Service")
+app.add_middleware(RequestIdMiddleware)
 
 
 class PlaceCreate(BaseModel):
@@ -31,6 +47,16 @@ class PlaceCreate(BaseModel):
     couple_friendly: bool = False
     friends_friendly: bool = False
     opening_hours: dict = {}  # e.g. {"mon": ["09:00","22:00"], ...}
+    hours_verified: bool = False
+    data_source: str = "estimated"
+    verified_at: str | None = None
+    verification_notes: str | None = None
+    booking_url: str | None = None
+
+
+class VenueReportCreate(BaseModel):
+    issue_type: str = Field(..., pattern="^(wrong_hours|wrong_price|closed_permanently|wrong_location|other)$")
+    description: str | None = Field(None, max_length=280)
 
 
 class SentimentUpdate(BaseModel):
@@ -67,6 +93,44 @@ def create_place(payload: PlaceCreate, tenant_id: str = Depends(require_tenant))
     place = db.create_place(tenant_id, payload.model_dump())
     publish("place.updated", {"tenant_id": tenant_id, "place_id": place["id"], "reason": "created"})
     return place
+
+
+@app.post("/places/{place_id}/report", status_code=201)
+def report_place(
+    place_id: int,
+    payload: VenueReportCreate,
+    request: Request,
+    tenant_id: str = Depends(require_tenant),
+):
+    x_user_id = request.headers.get("x-user-id")
+    if not x_user_id:
+        raise HTTPException(status_code=401, detail="Authentication required to report issues")
+
+    try:
+        user_id = int(x_user_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid user ID in auth header")
+
+    place = db.get_place(tenant_id, place_id)
+    if not place:
+        raise HTTPException(status_code=404, detail="place not found")
+
+    # Rate-limit to 5 reports per user per day in Postgres
+    recent_count = db.get_user_report_count_today(tenant_id, user_id)
+    if recent_count >= 5:
+        raise HTTPException(status_code=429, detail="Daily report limit reached (5 per day). Try again tomorrow.")
+
+    report = db.create_venue_report(
+        tenant_id=tenant_id,
+        place_id=place_id,
+        user_id=user_id,
+        issue_type=payload.issue_type,
+        description=payload.description,
+    )
+
+    publish("place.reported", {"tenant_id": tenant_id, "place_id": place_id, "user_id": user_id, "report_id": report["id"]})
+
+    return {"reported": True, "report_id": report["id"]}
 
 
 @app.get("/places/{place_id}")

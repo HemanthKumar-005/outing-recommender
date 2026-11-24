@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backup-restore-drill:
+    name: DB backup restore drill
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Start Postgres only
+        run: |
+          docker compose up -d postgres
+          sleep 5
+      - name: Run backup
+        run: bash deploy/backup-db.sh /tmp/ci-backups
+        env:
+          POSTGRES_CONTAINER: outing-recommender-main-postgres-1
+      - name: Run restore verification
+        run: bash deploy/restore-verify.sh /tmp/ci-backups/$(ls /tmp/ci-backups | tail -1)
+      - name: Tear down
+        if: always()
+        run: docker compose down -v

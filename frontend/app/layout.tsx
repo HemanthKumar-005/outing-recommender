@@ -1,6 +1,8 @@
+import Link from "next/link";
 import "./globals.css";
 import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 import type { Metadata } from "next";
+import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -30,7 +32,26 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable} ${mono.variable}`}>
-      <body>{children}</body>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#1a1a2e" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Nearby" />
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <meta name="mobile-web-app-capable" content="yes" />
+      </head>
+      <body>
+        {children}
+        <footer style={{ textAlign: "center", padding: "2rem 1rem", fontSize: "0.8rem", color: "var(--on-paper-muted)" }}>
+          <Link href="/privacy">Privacy Policy</Link>
+          {" · "}
+          <Link href="/terms">Terms of Service</Link>
+          {" · "}
+          <span>Venue data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors (ODbL)</span>
+        </footer>
+        <ServiceWorkerRegistration />
+      </body>
     </html>
   );
 }

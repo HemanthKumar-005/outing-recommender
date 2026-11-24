@@ -32,6 +32,19 @@ models/
 # --- Logs ---
 *.log
 
+# --- Production deployment & TLS certificates ---
+deploy/.env.production
+.env.production
+*.pem
+*.key
+certbot/
+
+# --- Worklogs / Scratch ---
+scratch/
+2026-*.md
+*.worklog.md
+docs/worklogs/
+
 # --- OS / editor ---
 .DS_Store
 Thumbs.db

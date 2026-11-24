@@ -41,3 +41,10 @@ def list_all(tenant_id: str, limit: int = 5000) -> list:
     with tenant_cursor(tenant_id) as cur:
         cur.execute("SELECT * FROM interactions.interactions ORDER BY ts DESC LIMIT %s", (limit,))
         return cur.fetchall()
+
+
+def count_interactions(tenant_id: str) -> int:
+    with tenant_cursor(tenant_id) as cur:
+        cur.execute("SELECT COUNT(*) AS count FROM interactions.interactions")
+        row = cur.fetchone()
+        return row["count"] if row else 0
