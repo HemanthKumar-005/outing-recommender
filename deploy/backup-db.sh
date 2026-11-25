@@ -32,7 +32,7 @@ mkdir -p "$OUTPUT_DIR"
 echo "[backup] Using container: $CONTAINER"
 echo "[backup] Starting backup to $BACKUP_FILE"
 docker exec "$CONTAINER" \
-  pg_dump -U postgres -d outing --no-owner --no-acl \
+  sh -c 'PGPASSWORD="$POSTGRES_PASSWORD" pg_dump -h 127.0.0.1 -U "${POSTGRES_USER:-postgres}" -d "${POSTGRES_DB:-outing}" --no-owner --no-acl' \
   | gzip > "$BACKUP_FILE"
 
 echo "[backup] Done. Size: $(du -sh "$BACKUP_FILE" | cut -f1)"

@@ -16,14 +16,16 @@ jobs:
       - name: Start Postgres only
         run: |
           docker compose up -d postgres
-          echo "Waiting for Postgres to be healthy..."
+          echo "Waiting for Postgres to accept TCP connections..."
           for i in {1..30}; do
-            if docker compose exec -T postgres pg_isready -U postgres -d outing 2>/dev/null; then
+            if docker compose exec -T postgres sh -c 'pg_isready -h 127.0.0.1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" && PGPASSWORD="$POSTGRES_PASSWORD" psql -h 127.0.0.1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 1" >/dev/null' 2>/dev/null; then
               echo "Postgres is ready!"
-              break
+              exit 0
             fi
             sleep 1
           done
+          echo "Postgres failed to become ready in time" >&2
+          exit 1
 
       - name: Run backup
         run: bash deploy/backup-db.sh /tmp/ci-backups
