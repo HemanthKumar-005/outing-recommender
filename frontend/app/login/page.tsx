@@ -142,8 +142,8 @@ export default function LoginPage() {
             ================================================================== */}
         <section className="auth-showcase">
           <div className="auth-showcase-content">
-            {/* Brand Header — Clickable to Home */}
-            <Link href="/" className="auth-brand-row" aria-label="Nearby & Co. Home" title="Return to Nearby & Co. Home">
+            {/* Brand Header */}
+            <div className="auth-brand-row">
               <div className="auth-brand-badge" aria-hidden="true">
                 N
               </div>
@@ -151,7 +151,7 @@ export default function LoginPage() {
                 <span className="auth-brand-name">Nearby &amp; Co.</span>
                 <span className="auth-brand-tagline">Discover More. Experience Better.</span>
               </div>
-            </Link>
+            </div>
 
             {/* Headline */}
             <h1 className="auth-hero-title">

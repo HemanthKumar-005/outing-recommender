@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Navbar from "../components/Navbar";
 
 const DEFAULT_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 const DEFAULT_API_KEY = process.env.NEXT_PUBLIC_API_KEY || "demo-key";
@@ -49,15 +48,13 @@ export default function ModelCard() {
 
   return (
     <main className="page">
-      {/* Unified Brand Navigation Bar */}
-      <Navbar activePage="how-it-works" />
-
-      <div style={{ marginBottom: "28px", paddingBottom: "20px", borderBottom: "1px solid var(--hairline-paper)" }}>
-        <p className="eyebrow">Nearby &amp; Co. · Transparency &amp; Methodology</p>
-        <h1 style={{ fontSize: "clamp(2rem, 3.2vw, 2.6rem)", margin: "0 0 8px 0" }}>How This Ranks</h1>
-        <p className="subtitle" style={{ maxWidth: "68ch" }}>
-          The machine learning scoring model, multi-objective ranking weights, and offline validation metrics — completely transparent, no black box.
-        </p>
+      <div className="top-row">
+        <div>
+          <p className="eyebrow">Nearby &amp; Co. · Transparency</p>
+          <h1>How this ranks</h1>
+          <p className="subtitle">The current model, its weights, and the last offline evaluation run — no black box.</p>
+        </div>
+        <Link href="/" className="btn-secondary" style={{ textDecoration: "none" }}>← Back</Link>
       </div>
 
       {error && <div className="card"><div className="error">{error}</div></div>}

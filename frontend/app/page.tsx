@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Navbar from "./components/Navbar";
 import { getPlaceImageUrl } from "./utils/placeImages";
 
 type PreviewScenario = "friends" | "couple" | "family";
@@ -207,10 +206,40 @@ export default function LandingPage() {
 
   return (
     <div className="landing">
-      {/* Unified Brand Navigation Bar */}
-      <div style={{ padding: "16px clamp(16px, 3vw, 40px) 0", maxWidth: 1480, margin: "0 auto" }}>
-        <Navbar activePage="home" authenticated={authenticated} />
-      </div>
+      {/* Top Navigation */}
+      <header className="landing-nav">
+        <div className="landing-nav-inner">
+          <Link href="/" className="landing-brand">
+            <span className="landing-brand-mark">N</span>
+            <span>Nearby &amp; Co.</span>
+          </Link>
+
+          <nav className="landing-links" aria-label="Primary">
+            <a href="#how-it-works">How It Works</a>
+            <a href="#preview">Discover Places</a>
+            <a href="#budget">Budget Matching</a>
+            <a href="#travel">Travel-Smart</a>
+            <a href="#faq">FAQ</a>
+          </nav>
+
+          <div className="landing-nav-actions">
+            {authenticated ? (
+              <Link href="/planner" className="nav-cta">
+                Open Planner →
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="nav-ghost">
+                  Sign in
+                </Link>
+                <Link href="/login" className="nav-cta">
+                  Plan Your Outing
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      </header>
 
       {/* 1. Vibrant Travel-Discovery Hero Section */}
       <section className="landing-hero" aria-label="Hero Section">

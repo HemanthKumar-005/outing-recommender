@@ -1,17 +1,19 @@
 import Link from "next/link";
-import Navbar from "../components/Navbar";
 
 export default function TermsOfService() {
   return (
     <main className="page">
-      <Navbar activePage="none" />
-
-      <div style={{ marginBottom: "28px", paddingBottom: "20px", borderBottom: "1px solid var(--hairline-paper)" }}>
-        <p className="eyebrow">Nearby &amp; Co. · Legal</p>
-        <h1 style={{ fontSize: "clamp(2rem, 3.2vw, 2.6rem)", margin: "0 0 8px 0" }}>Terms of Service</h1>
-        <p className="subtitle" style={{ maxWidth: "68ch" }}>
-          The rules and legal terms governing your use of the Nearby &amp; Co. outing concierge platform.
-        </p>
+      <div className="top-row">
+        <div>
+          <p className="eyebrow">Nearby &amp; Co. · Legal</p>
+          <h1>Terms of Service</h1>
+          <p className="subtitle">
+            The rules and legal terms governing your use of the Nearby &amp; Co. outing concierge platform.
+          </p>
+        </div>
+        <Link href="/" className="btn-secondary" style={{ textDecoration: "none" }}>
+          ← Back to home
+        </Link>
       </div>
 
       <div className="card fade-in" style={{ lineHeight: "1.7", fontSize: "0.95rem" }}>
