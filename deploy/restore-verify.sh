@@ -51,10 +51,12 @@ gzip -dc "$BACKUP_FILE" | docker exec -i -e PGPASSWORD="$VERIFY_PW" "$VERIFY_CON
 
 echo "[restore-verify] Verifying row counts..."
 docker exec -e PGPASSWORD="$VERIFY_PW" "$VERIFY_CONTAINER" \
-  psql -h 127.0.0.1 -U "$PG_USER" -d "$PG_DB" -c "
-  SELECT schemaname, tablename, n_live_tup
+  psql -h 127.0.0.1 -U "$PG_USER" -d "$PG_DB" \
+  -c "ANALYZE;" \
+  -c "
+  SELECT schemaname, relname, n_live_tup
   FROM pg_stat_user_tables
-  ORDER BY schemaname, tablename;
+  ORDER BY schemaname, relname;
 "
 
 echo "[restore-verify] ✓ Restore verification complete. Check row counts above for sanity."
