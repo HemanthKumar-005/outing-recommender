@@ -688,4 +688,91 @@ table.eval-table th {
   padding-top: 10px;
 }
 
+/* =========================================================================
+   Signature Cursor-Following Gradient — Nearby & Co.
+   ========================================================================= */
+
+.cursor-gradient-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.85;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity;
+}
+
+/* Ambient baseline glow */
+.cursor-gradient-ambient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 900px 500px at 15% 10%, rgba(8, 127, 115, 0.05), transparent 60%),
+    radial-gradient(ellipse 800px 450px at 85% 90%, rgba(248, 220, 203, 0.12), transparent 60%);
+  pointer-events: none;
+}
+
+/* Common orb styling */
+.cursor-gradient-orb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Primary Orb: Botanical Teal (#087F73) & Soft Mint (#DDF3E9) */
+.cursor-gradient-primary {
+  width: 820px;
+  height: 820px;
+  margin-top: -410px;
+  margin-left: -410px;
+  filter: blur(65px);
+  background: radial-gradient(circle at 48% 48%,
+    rgba(19, 168, 158, 0.26) 0%,
+    rgba(8, 127, 115, 0.18) 28%,
+    rgba(221, 243, 233, 0.16) 52%,
+    rgba(248, 220, 203, 0.10) 72%,
+    transparent 84%
+  );
+}
+
+/* Secondary Companion Orb: Warm Peach (#F8DCCB) & Vibrant Teal (#13A89E) */
+.cursor-gradient-secondary {
+  width: 580px;
+  height: 580px;
+  margin-top: -290px;
+  margin-left: -290px;
+  filter: blur(55px);
+  background: radial-gradient(circle at 52% 52%,
+    rgba(248, 220, 203, 0.22) 0%,
+    rgba(221, 243, 233, 0.15) 38%,
+    rgba(19, 168, 158, 0.09) 64%,
+    transparent 80%
+  );
+}
+
+/* Touch & Reduced Motion Fallback */
+.cursor-gradient-static .cursor-gradient-orb {
+  display: none;
+}
+
+.cursor-gradient-static .cursor-gradient-ambient {
+  opacity: 0.9;
+  background:
+    radial-gradient(ellipse 950px 600px at 50% 20%, rgba(8, 127, 115, 0.08), transparent 70%),
+    radial-gradient(ellipse 750px 500px at 80% 80%, rgba(248, 220, 203, 0.15), transparent 65%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-gradient-orb {
+    display: none !important;
+  }
+}
+
 

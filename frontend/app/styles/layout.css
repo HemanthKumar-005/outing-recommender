@@ -1,6 +1,8 @@
 /* Part of the Nearby & Co. design system — imported via globals.css */
 
 .page {
+  position: relative;
+  z-index: 1;
   max-width: 1480px;
   margin: 0 auto;
   padding: 32px clamp(16px, 2.5vw, 36px) 80px;

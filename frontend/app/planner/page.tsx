@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import RecommendationMap, { MapPlace } from "../components/RecommendationMap";
+import CursorGradient from "../components/CursorGradient";
 import { getPlaceImageUrl, formatEstimatedPrice } from "../utils/placeImages";
 
 export type TravelMode = "driving" | "transit" | "cycling" | "walking";
@@ -666,6 +667,9 @@ export default function PlannerPage() {
 
   return (
     <main className="page">
+      {/* Signature Cursor-Following Ambient Gradient */}
+      <CursorGradient />
+
       {/* Top Header */}
       <header className="top-row">
         <div className="top-row-title-area">

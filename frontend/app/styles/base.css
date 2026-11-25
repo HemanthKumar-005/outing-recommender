@@ -33,9 +33,9 @@
   --hairline: rgba(26, 40, 38, 0.10);
   --hairline-paper: rgba(26, 40, 38, 0.13);
 
-  --font-display: var(--font-display), "Iowan Old Style", Georgia, serif;
-  --font-body: var(--font-body), -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: var(--font-mono), "SFMono-Regular", monospace;
+  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
 
   color-scheme: light;
 }
