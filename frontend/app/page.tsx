@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useAuth } from "./context/AuthContext";
 import { getPlaceImageUrl } from "./utils/placeImages";
@@ -198,6 +198,44 @@ export default function LandingPage() {
   const primaryHref = isAuthenticated ? "/planner" : "/login";
   const currentScenario = SCENARIOS[scenario];
 
+  // ── Intersection Observer for scroll-reveal ──────────────────────────────
+  const revealRefs = useRef<(Element | null)[]>([]);
+
+  const registerRef = useCallback((el: Element | null) => {
+    if (el && !revealRefs.current.includes(el)) {
+      revealRefs.current.push(el);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Respect prefers-reduced-motion
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      revealRefs.current.forEach((el) => {
+        if (el) el.classList.add("is-visible");
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target); // trigger once
+          }
+        });
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -48px 0px" }
+    );
+
+    revealRefs.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="landing">
       {/* 1. Vibrant Travel-Discovery Hero Section */}
@@ -210,21 +248,21 @@ export default function LandingPage() {
         <div className="landing-hero-container landing-hero-grid">
           {/* Left Column: Expressive Headline & Discovery CTAs */}
           <div className="hero-content">
-            <div className="hero-eyebrow-pill">
+            <div className="hero-eyebrow-pill hero-animate-eyebrow">
               <span className="hero-eyebrow-dot" />
               <span>SMART OUTING DISCOVERY</span>
             </div>
 
-            <h1 className="landing-hero-title">
+            <h1 className="landing-hero-title hero-animate-title">
               Find Your Next Favourite Place. <br />
               <span className="hero-title-highlight">Make Every Outing Special.</span>
             </h1>
 
-            <p className="landing-hero-sub">
+            <p className="landing-hero-sub hero-animate-sub">
               Discover beautiful places, explore new experiences and plan memorable outings with the people you love.
             </p>
 
-            <div className="landing-hero-actions">
+            <div className="landing-hero-actions hero-animate-actions">
               <Link href={primaryHref} className="btn-hero-primary" id="hero-plan-btn">
                 <span>Plan Your Outing</span>
                 <span className="btn-hero-arrow" aria-hidden="true">→</span>
@@ -236,7 +274,7 @@ export default function LandingPage() {
             </div>
 
             {/* Supporting Feature Labels */}
-            <div className="hero-feature-pills">
+            <div className="hero-feature-pills hero-animate-pills">
               <div className="hero-feature-item">
                 <span className="hero-feature-icon" aria-hidden="true">✨</span>
                 <span>Discover amazing places.</span>
@@ -253,7 +291,7 @@ export default function LandingPage() {
           </div>
 
           {/* Right Column: Visual Composition with Overlapping Photographs & Floating Cards */}
-          <div className="hero-visual-stage" aria-label="Curated Bangalore Destinations Showcase">
+          <div className="hero-visual-stage hero-animate-visual" aria-label="Curated Bangalore Destinations Showcase">
             {/* Animated SVG Route Trail linking destination markers */}
             <svg
               className="hero-route-svg"
@@ -370,7 +408,7 @@ export default function LandingPage() {
       {/* 2. How It Works Section */}
       <section id="how-it-works" className="landing-section landing-section-soft">
         <div className="landing-container">
-          <div className="section-header-split">
+          <div className="section-header-split reveal" ref={registerRef}>
             <div>
               <p className="eyebrow">Guided Workflow</p>
               <h2 className="section-heading">
@@ -382,29 +420,29 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="steps-grid">
-            <div className="step-card">
+          <div className="steps-grid stagger-children" ref={registerRef}>
+            <div className="step-card" style={{ "--i": 0 } as React.CSSProperties}>
               <div className="step-num">Step 01</div>
               <h3 className="step-title">Where to Explore</h3>
               <p className="step-desc">
                 Select your target city or area — like Bengaluru, Mysuru, Indiranagar, or Cubbon Park.
               </p>
             </div>
-            <div className="step-card">
+            <div className="step-card" style={{ "--i": 1 } as React.CSSProperties}>
               <div className="step-num">Step 02</div>
               <h3 className="step-title">Starting Location</h3>
               <p className="step-desc">
                 Enter where you are starting from so we can calculate exact driving, walking, and transit times.
               </p>
             </div>
-            <div className="step-card">
+            <div className="step-card" style={{ "--i": 2 } as React.CSSProperties}>
               <div className="step-num">Step 03</div>
               <h3 className="step-title">Choose Your Vibe</h3>
               <p className="step-desc">
                 Tell us who you&apos;re with — friends, family, date, or solo — and your preferred categories and radius.
               </p>
             </div>
-            <div className="step-card">
+            <div className="step-card" style={{ "--i": 3 } as React.CSSProperties}>
               <div className="step-num">Step 04</div>
               <h3 className="step-title">Discover, Navigate &amp; Book</h3>
               <p className="step-desc">
@@ -418,7 +456,7 @@ export default function LandingPage() {
       {/* 3. Discover Places (Interactive Preview) */}
       <section id="preview" className="landing-section">
         <div className="landing-container">
-          <div className="section-header-split">
+          <div className="section-header-split reveal" ref={registerRef}>
             <div>
               <p className="eyebrow">Discover Places</p>
               <h2 className="section-heading">
@@ -430,7 +468,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="preview-shell">
+          <div className="preview-shell reveal" ref={registerRef}>
             <div className="preview-sidebar">
               <div>
                 <div className="eyebrow" style={{ marginBottom: 10 }}>Select Outing Mode</div>
@@ -467,14 +505,18 @@ export default function LandingPage() {
               <div className="context-line" style={{ marginBottom: 14, fontWeight: 500 }}>
                 {currentScenario.context}
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-                {currentScenario.spots.map((spot) => {
+              <div
+                key={scenario}
+                className="stagger-children is-visible"
+                style={{ display: "flex", flexDirection: "column", gap: "14px" }}
+              >
+                {currentScenario.spots.map((spot, idx) => {
                   const img = getPlaceImageUrl(spot.name, spot.category);
                   return (
                     <div
-                      className="ticket"
+                      className="ticket anim-card"
                       key={spot.name}
-                      style={{ gridTemplateColumns: "110px 1fr" }}
+                      style={{ gridTemplateColumns: "110px 1fr", "--i": idx } as React.CSSProperties}
                     >
                       <div
                         style={{
@@ -542,7 +584,7 @@ export default function LandingPage() {
       {/* 4. Find Places That Match Your Budget */}
       <section id="budget" className="landing-section landing-section-soft">
         <div className="landing-container">
-          <div className="section-header-split">
+          <div className="section-header-split reveal" ref={registerRef}>
             <div>
               <p className="eyebrow">Clear Pricing</p>
               <h2 className="section-heading">
@@ -554,12 +596,12 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px" }}>
-            {BUDGET_TIERS.map((tier) => (
+          <div className="stagger-children" ref={registerRef} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px" }}>
+            {BUDGET_TIERS.map((tier, i) => (
               <div
                 key={tier.title}
-                className="card"
-                style={{ padding: "24px 22px", margin: 0, display: "flex", flexDirection: "column" }}
+                className="card anim-card"
+                style={{ padding: "24px 22px", margin: 0, display: "flex", flexDirection: "column", "--i": i } as React.CSSProperties}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                   <span className="eyebrow" style={{ margin: 0 }}>{tier.badge}</span>
@@ -590,7 +632,7 @@ export default function LandingPage() {
       {/* 5. Travel-Smart Discovery Section */}
       <section id="travel" className="landing-section">
         <div className="landing-container">
-          <div className="section-header-split">
+          <div className="section-header-split reveal" ref={registerRef}>
             <div>
               <p className="eyebrow">Travel-Smart</p>
               <h2 className="section-heading">
@@ -602,8 +644,8 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="bento-grid">
-            <div className="bento-card">
+          <div className="bento-grid stagger-children" ref={registerRef}>
+            <div className="bento-card" style={{ "--i": 0 } as React.CSSProperties}>
               <div className="bento-kicker">Accurate Routing</div>
               <h3 className="bento-title">Real Road Distances</h3>
               <p className="bento-desc">
@@ -611,7 +653,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bento-card">
+            <div className="bento-card" style={{ "--i": 1 } as React.CSSProperties}>
               <div className="bento-kicker">Interactive Maps</div>
               <h3 className="bento-title">Full Map Integration</h3>
               <p className="bento-desc">
@@ -619,7 +661,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bento-card">
+            <div className="bento-card" style={{ "--i": 2 } as React.CSSProperties}>
               <div className="bento-kicker">Weather-Smart</div>
               <h3 className="bento-title">Live Weather Matching</h3>
               <p className="bento-desc">
@@ -627,7 +669,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="bento-card wide">
+            <div className="bento-card wide" style={{ "--i": 3 } as React.CSSProperties}>
               <div className="bento-kicker">Group Harmony</div>
               <h3 className="bento-title">Fair for Every Group Member</h3>
               <p className="bento-desc">
@@ -635,22 +677,22 @@ export default function LandingPage() {
               </p>
               <div className="signal-bar-row">
                 <span>Vibe &amp; Category Match</span>
-                <div className="signal-track"><div className="signal-fill" style={{ width: "95%" }} /></div>
+                <div className="signal-track"><div className="signal-fill signal-fill-animated" style={{ width: "95%" }} /></div>
                 <span>95%</span>
               </div>
               <div className="signal-bar-row">
                 <span>Distance &amp; Travel Convenience</span>
-                <div className="signal-track"><div className="signal-fill" style={{ width: "92%" }} /></div>
+                <div className="signal-track"><div className="signal-fill signal-fill-animated" style={{ width: "92%", animationDelay: "0.5s" }} /></div>
                 <span>92%</span>
               </div>
               <div className="signal-bar-row">
                 <span>Weather &amp; Timing Fit</span>
-                <div className="signal-track"><div className="signal-fill" style={{ width: "88%" }} /></div>
+                <div className="signal-track"><div className="signal-fill signal-fill-animated" style={{ width: "88%", animationDelay: "0.7s" }} /></div>
                 <span>88%</span>
               </div>
             </div>
 
-            <div className="bento-card">
+            <div className="bento-card" style={{ "--i": 4 } as React.CSSProperties}>
               <div className="bento-kicker">No Closed Doors</div>
               <h3 className="bento-title">Verified Operating Hours</h3>
               <p className="bento-desc">
@@ -664,7 +706,7 @@ export default function LandingPage() {
       {/* 6. FAQ Section */}
       <section id="faq" className="landing-section landing-section-soft">
         <div className="landing-container faq-grid">
-          <div>
+          <div className="reveal" ref={registerRef}>
             <p className="eyebrow">Frequently Asked Questions</p>
             <h2 className="section-heading">
               Got <em>questions?</em>
@@ -674,11 +716,11 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div>
+          <div className="stagger-children" ref={registerRef}>
             {FAQS.map((item, idx) => {
               const isOpen = openFaq === idx;
               return (
-                <div className="faq-item" key={item.q}>
+                <div className="faq-item" key={item.q} style={{ "--i": idx } as React.CSSProperties}>
                   <button
                     type="button"
                     className="faq-trigger"
@@ -700,7 +742,7 @@ export default function LandingPage() {
 
       {/* Closing Call to Action Banner */}
       <section className="closing-band">
-        <div className="landing-container">
+        <div className="landing-container reveal" ref={registerRef}>
           <p className="eyebrow">Ready for your next adventure?</p>
           <h2 className="section-heading" style={{ fontSize: "clamp(2rem, 3.8vw, 3rem)" }}>
             Make the plan. <em>Not the debate.</em>

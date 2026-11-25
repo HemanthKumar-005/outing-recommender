@@ -141,6 +141,7 @@
   top: -80px;
   right: -60px;
   background: radial-gradient(circle, rgba(19, 168, 158, 0.22) 0%, rgba(8, 127, 115, 0.05) 70%, transparent 100%);
+  animation: heroGlowDrift1 12s ease-in-out infinite alternate;
 }
 
 .hero-glow-peach {
@@ -149,6 +150,7 @@
   bottom: -60px;
   left: -40px;
   background: radial-gradient(circle, rgba(248, 220, 203, 0.55) 0%, rgba(248, 220, 203, 0.1) 70%, transparent 100%);
+  animation: heroGlowDrift2 14s ease-in-out infinite alternate;
 }
 
 .hero-glow-mint {
@@ -157,6 +159,22 @@
   top: 40%;
   left: 45%;
   background: radial-gradient(circle, rgba(221, 243, 233, 0.4) 0%, transparent 70%);
+  animation: heroGlowDrift3 10s ease-in-out infinite alternate;
+}
+
+@keyframes heroGlowDrift1 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-32px, 28px) scale(1.08); }
+}
+
+@keyframes heroGlowDrift2 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(28px, -24px) scale(1.06); }
+}
+
+@keyframes heroGlowDrift3 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-20px, -18px) scale(1.1); }
 }
 
 .landing-hero-container {
@@ -613,7 +631,10 @@
   .hero-float-card-3,
   .hero-svg-path,
   .hero-pin-radar,
-  .hero-eyebrow-dot {
+  .hero-eyebrow-dot,
+  .hero-glow-teal,
+  .hero-glow-peach,
+  .hero-glow-mint {
     animation: none !important;
   }
 }
@@ -974,6 +995,86 @@
   border-top: 1px solid rgba(15, 118, 110, 0.16);
   padding: 72px 24px;
   text-align: center;
+}
+
+/* ---------- Premium Card Hover Elevation ---------- */
+
+.step-card {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.step-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px -14px rgba(18, 63, 53, 0.2);
+}
+
+.bento-card {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.bento-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 38px -16px rgba(18, 63, 53, 0.22);
+}
+
+.faq-item {
+  transition: background-color 0.2s ease;
+  border-radius: 8px;
+  padding: 0 4px;
+  margin: 0 -4px;
+}
+
+.faq-item:hover {
+  background: rgba(8, 127, 115, 0.04);
+}
+
+.preview-pill-btn {
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+              transform 0.18s ease, color 0.2s ease;
+}
+
+.preview-pill-btn:hover:not(.active) {
+  background: var(--surface-soft);
+  border-color: rgba(8, 127, 115, 0.3);
+  transform: translateX(2px);
+}
+
+/* ---------- Sticky Header Scroll Enhancements ---------- */
+
+/* These match the .scrolled class added by Header.tsx */
+.site-header {
+  transition: background-color 0.35s ease,
+              box-shadow 0.35s ease,
+              backdrop-filter 0.35s ease;
+}
+
+/* ---------- Closing Band Animated Gradient ---------- */
+
+.closing-band {
+  background-size: 200% 200%;
+  animation: closingGradientShift 10s ease infinite;
+}
+
+@keyframes closingGradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ---------- Ticket Cards Hover ---------- */
+
+.ticket {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s ease;
+}
+
+.ticket:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px -14px rgba(18, 63, 53, 0.18);
 }
 
 /* ---------- Responsive ---------- */
