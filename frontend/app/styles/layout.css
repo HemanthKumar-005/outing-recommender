@@ -1,9 +1,9 @@
 /* Part of the Nearby & Co. design system — imported via globals.css */
 
 .page {
-  max-width: 1240px;
+  max-width: 1480px;
   margin: 0 auto;
-  padding: 36px 24px 80px;
+  padding: 32px clamp(16px, 2.5vw, 36px) 80px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -19,7 +19,7 @@
 }
 
 .top-row-title-area {
-  max-width: 700px;
+  max-width: 820px;
 }
 
 .top-row-actions {
@@ -29,10 +29,10 @@
   flex-wrap: wrap;
 }
 
-/* Two-column dashboard layout for modern SaaS experience */
+/* Two-column dashboard layout for modern SaaS experience (32% controls, 68% map & results) */
 .planner-dashboard {
   display: grid;
-  grid-template-columns: 460px 1fr;
+  grid-template-columns: minmax(380px, 32%) 1fr;
   gap: 32px;
   align-items: start;
 }
@@ -155,7 +155,7 @@
   text-align: center;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 1024px) {
   .planner-dashboard {
     grid-template-columns: 1fr;
     gap: 28px;
@@ -167,7 +167,7 @@
 
 @media (max-width: 640px) {
   .page {
-    padding: 24px 16px 64px;
+    padding: 20px 14px 64px;
   }
   .grid {
     grid-template-columns: 1fr;
