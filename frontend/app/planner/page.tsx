@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import RecommendationMap, { MapPlace } from "../components/RecommendationMap";
-import CursorGradient from "../components/CursorGradient";
+import TravelBackground from "../components/TravelBackground";
 import { getPlaceImageUrl, formatEstimatedPrice } from "../utils/placeImages";
 
 export type TravelMode = "driving" | "transit" | "cycling" | "walking";
@@ -667,34 +667,99 @@ export default function PlannerPage() {
 
   return (
     <main className="page">
-      {/* Signature Cursor-Following Ambient Gradient */}
-      <CursorGradient />
+      {/* Travel-Inspired Multi-Layered Ambient Background */}
+      <TravelBackground />
 
-      {/* Top Header */}
-      <header className="top-row">
-        <div className="top-row-title-area">
-          <p className="eyebrow">Nearby &amp; Co. · Travel Discovery Platform</p>
-          <h1 style={{ margin: "0 0 6px 0", fontSize: "clamp(1.9rem, 3.4vw, 2.5rem)" }}>
-            Plan Your Next Outing
-          </h1>
-          <p className="subtitle" style={{ maxWidth: "62ch" }}>
-            Select your starting location and destination. We calculate real mode-specific road routes, travel times, and recommend the best spots.
-          </p>
-        </div>
-        <div className="top-row-actions">
-          <Link href="/" className="btn-secondary" style={{ textDecoration: "none" }}>
-            ← Home
+      {/* 3.1 Brand Navigation Bar */}
+      <nav className="planner-navbar" aria-label="Main Navigation">
+        <Link href="/" className="planner-nav-brand">
+          <div className="planner-nav-logo">N</div>
+          <div className="planner-nav-titles">
+            <span className="planner-nav-title">Nearby &amp; Co.</span>
+            <span className="planner-nav-tagline">Discover · Explore · Experience</span>
+          </div>
+        </Link>
+
+        <div className="planner-nav-links">
+          <Link href="/" className="planner-nav-link">
+            Home
           </Link>
-          <Link href="/model-card" className="btn-secondary" style={{ textDecoration: "none" }}>
+          <Link href="/model-card" className="planner-nav-link">
             How it works
           </Link>
-          <button type="button" className="btn-secondary" onClick={logout}>
+          <span className="planner-nav-link active" aria-current="page">
+            Planner
+          </span>
+          <button
+            type="button"
+            className="planner-nav-logout-btn"
+            onClick={logout}
+            title="End session and log out"
+          >
             Log out
           </button>
         </div>
-      </header>
+      </nav>
 
-      {/* Main 2-Column Responsive Dashboard (32% Controls, 68% Map & Results) */}
+      {/* 3.2 Planner Hero Header & 3.3 Visual Collage */}
+      <section className="planner-hero">
+        <div className="planner-hero-content">
+          <p className="planner-hero-eyebrow">
+            <span>✦</span> YOUR NEXT ADVENTURE STARTS HERE
+          </p>
+          <div className="planner-hero-heading-group">
+            <h1 className="planner-hero-title-main">Plan Your Next Outing.</h1>
+            <span className="planner-hero-title-highlight">
+              Discover places worth exploring.
+            </span>
+          </div>
+          <p className="planner-hero-desc">
+            Choose where you&apos;re going, tell us where you&apos;re starting from, and we&apos;ll help you discover the best experiences along the way.
+          </p>
+
+          <div className="planner-hero-highlights">
+            <div className="planner-hero-pill">
+              <span>✦</span> Smart recommendations
+            </div>
+            <div className="planner-hero-pill">
+              <span>📍</span> Real travel distances
+            </div>
+            <div className="planner-hero-pill">
+              <span>🏷️</span> Experiences for every budget
+            </div>
+          </div>
+        </div>
+
+        {/* 3.3 Hero Visual: Compact Editorial Collage */}
+        <div className="planner-collage" aria-hidden="true">
+          <div className="planner-collage-item planner-collage-item-large">
+            <img
+              src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=600&q=80"
+              alt="Lalbagh Botanical Gardens"
+              className="planner-collage-img"
+            />
+            <span className="planner-collage-badge">🌿 Botanical Gardens</span>
+          </div>
+          <div className="planner-collage-item">
+            <img
+              src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=600&q=80"
+              alt="Craft Brewery"
+              className="planner-collage-img"
+            />
+            <span className="planner-collage-badge">☕ Craft Breweries</span>
+          </div>
+          <div className="planner-collage-item">
+            <img
+              src="https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=600&q=80"
+              alt="Scenic Outdoor Park"
+              className="planner-collage-img"
+            />
+            <span className="planner-collage-badge">🌳 Scenic Parks</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Main 2-Column Responsive Dashboard (34% Controls, 66% Map & Results) */}
       <div className="planner-dashboard">
         {/* Left Column: Guided Planning Form */}
         <section className="planner-sidebar">

@@ -3,9 +3,9 @@
 .page {
   position: relative;
   z-index: 1;
-  max-width: 1480px;
+  max-width: 1680px;
   margin: 0 auto;
-  padding: 32px clamp(16px, 2.5vw, 36px) 80px;
+  padding: 24px clamp(16px, 2.5vw, 44px) 80px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -31,10 +31,10 @@
   flex-wrap: wrap;
 }
 
-/* Two-column dashboard layout for modern SaaS experience (32% controls, 68% map & results) */
+/* Two-column dashboard layout for modern SaaS experience (34% controls, 66% map & results) */
 .planner-dashboard {
   display: grid;
-  grid-template-columns: minmax(380px, 32%) 1fr;
+  grid-template-columns: minmax(380px, 34%) 1fr;
   gap: 32px;
   align-items: start;
 }

@@ -689,90 +689,486 @@ table.eval-table th {
 }
 
 /* =========================================================================
-   Signature Cursor-Following Gradient — Nearby & Co.
+   Travel-Inspired Background & Ambient Design System — Nearby & Co.
    ========================================================================= */
 
-.cursor-gradient-container {
+.travel-bg-wrapper {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  opacity: 0.85;
-  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity;
+  user-select: none;
 }
 
-/* Ambient baseline glow */
-.cursor-gradient-ambient {
+/* Base multi-tonal botanical gradient mesh */
+.travel-bg-gradient-mesh {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 900px 500px at 15% 10%, rgba(8, 127, 115, 0.05), transparent 60%),
-    radial-gradient(ellipse 800px 450px at 85% 90%, rgba(248, 220, 203, 0.12), transparent 60%);
-  pointer-events: none;
+    radial-gradient(ellipse 1100px 700px at 0% -10%, rgba(8, 127, 115, 0.09), transparent 65%),
+    radial-gradient(ellipse 950px 600px at 100% 5%, rgba(248, 220, 203, 0.18), transparent 60%),
+    radial-gradient(ellipse 1200px 750px at 50% 110%, rgba(19, 168, 158, 0.08), transparent 70%),
+    radial-gradient(ellipse 800px 500px at 100% 90%, rgba(221, 243, 233, 0.22), transparent 60%),
+    #fff8ef;
 }
 
-/* Common orb styling */
-.cursor-gradient-orb {
+/* Ambient Floating Organic Orbs */
+.travel-orb {
   position: absolute;
-  top: 0;
-  left: 0;
   border-radius: 50%;
   pointer-events: none;
   will-change: transform;
 }
 
-/* Primary Orb: Botanical Teal (#087F73) & Soft Mint (#DDF3E9) */
-.cursor-gradient-primary {
-  width: 820px;
-  height: 820px;
-  margin-top: -410px;
-  margin-left: -410px;
-  filter: blur(65px);
-  background: radial-gradient(circle at 48% 48%,
-    rgba(19, 168, 158, 0.26) 0%,
-    rgba(8, 127, 115, 0.18) 28%,
-    rgba(221, 243, 233, 0.16) 52%,
-    rgba(248, 220, 203, 0.10) 72%,
-    transparent 84%
-  );
+.travel-orb-teal {
+  width: 650px;
+  height: 650px;
+  top: -120px;
+  left: -120px;
+  background: radial-gradient(circle, rgba(8, 127, 115, 0.14) 0%, rgba(19, 168, 158, 0.08) 45%, transparent 75%);
+  filter: blur(60px);
+  animation: travelFloat1 28s ease-in-out infinite alternate;
 }
 
-/* Secondary Companion Orb: Warm Peach (#F8DCCB) & Vibrant Teal (#13A89E) */
-.cursor-gradient-secondary {
+.travel-orb-peach {
   width: 580px;
   height: 580px;
-  margin-top: -290px;
-  margin-left: -290px;
+  top: 15%;
+  right: -100px;
+  background: radial-gradient(circle, rgba(248, 220, 203, 0.28) 0%, rgba(221, 243, 233, 0.14) 50%, transparent 75%);
   filter: blur(55px);
-  background: radial-gradient(circle at 52% 52%,
-    rgba(248, 220, 203, 0.22) 0%,
-    rgba(221, 243, 233, 0.15) 38%,
-    rgba(19, 168, 158, 0.09) 64%,
-    transparent 80%
-  );
+  animation: travelFloat2 32s ease-in-out infinite alternate;
 }
 
-/* Touch & Reduced Motion Fallback */
-.cursor-gradient-static .cursor-gradient-orb {
-  display: none;
+.travel-orb-mint {
+  width: 700px;
+  height: 700px;
+  bottom: -150px;
+  left: 15%;
+  background: radial-gradient(circle, rgba(221, 243, 233, 0.26) 0%, rgba(8, 127, 115, 0.07) 50%, transparent 75%);
+  filter: blur(65px);
+  animation: travelFloat3 36s ease-in-out infinite alternate;
 }
 
-.cursor-gradient-static .cursor-gradient-ambient {
+.travel-orb-sky {
+  width: 520px;
+  height: 520px;
+  bottom: 10%;
+  right: 5%;
+  background: radial-gradient(circle, rgba(226, 240, 242, 0.35) 0%, rgba(19, 168, 158, 0.08) 50%, transparent 75%);
+  filter: blur(50px);
+  animation: travelFloat1 26s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes travelFloat1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(35px, 45px) scale(1.06); }
+  100% { transform: translate(-25px, 20px) scale(0.97); }
+}
+
+@keyframes travelFloat2 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-40px, -30px) scale(1.08); }
+  100% { transform: translate(20px, -45px) scale(0.95); }
+}
+
+@keyframes travelFloat3 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -35px) scale(1.05); }
+  100% { transform: translate(-30px, 25px) scale(0.98); }
+}
+
+/* Subtle SVG Contour Elevation Lines */
+.travel-bg-contours {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
   opacity: 0.9;
-  background:
-    radial-gradient(ellipse 950px 600px at 50% 20%, rgba(8, 127, 115, 0.08), transparent 70%),
-    radial-gradient(ellipse 750px 500px at 80% 80%, rgba(248, 220, 203, 0.15), transparent 65%);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .cursor-gradient-orb {
-    display: none !important;
+/* Travel Routes & Waypoints */
+.travel-bg-routes {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.travel-animated-path {
+  animation: travelDash 28s linear infinite;
+}
+
+.travel-animated-path-reverse {
+  animation: travelDashRev 32s linear infinite;
+}
+
+@keyframes travelDash {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -280; }
+}
+
+@keyframes travelDashRev {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 280; }
+}
+
+@keyframes travelPing {
+  0% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+.travel-ping {
+  transform-origin: 60px 180px;
+  animation: travelPing 4s ease-out infinite;
+}
+
+/* Cartographic Annotations & Compass Rose */
+.travel-bg-annotations {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.travel-compass-rose {
+  position: absolute;
+  top: 32px;
+  right: clamp(16px, 3.5vw, 64px);
+  opacity: 0.85;
+}
+
+.travel-coord-mark {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  opacity: 0.45;
+  text-transform: uppercase;
+}
+
+.travel-coord-left {
+  top: 38%;
+  left: clamp(16px, 2.5vw, 42px);
+  transform: rotate(-90deg);
+  transform-origin: left top;
+}
+
+.travel-coord-right {
+  bottom: 12%;
+  right: clamp(16px, 2.5vw, 42px);
+  text-align: right;
+}
+
+.travel-coord-sub {
+  font-size: 0.60rem;
+  opacity: 0.75;
+  letter-spacing: 0.18em;
+}
+
+/* =========================================================================
+   Redesigned Brand Navigation Bar
+   ========================================================================= */
+
+.planner-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px 24px;
+  margin-bottom: 28px;
+  background: rgba(255, 248, 239, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(8, 127, 115, 0.14);
+  border-radius: 14px;
+  box-shadow: 0 4px 20px -8px rgba(18, 63, 53, 0.08);
+}
+
+.planner-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.planner-nav-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #087F73 0%, #13A89E 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  box-shadow: 0 4px 12px -3px rgba(8, 127, 115, 0.4);
+}
+
+.planner-nav-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.planner-nav-title {
+  font-family: var(--font-display);
+  font-size: 1.28rem;
+  font-weight: 600;
+  color: var(--on-paper-ink);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.planner-nav-tagline {
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 500;
+  font-family: var(--font-mono);
+}
+
+.planner-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.planner-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  text-decoration: none;
+  color: var(--on-paper-ink);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+  height: 38px;
+  box-sizing: border-box;
+}
+
+.planner-nav-link:hover {
+  background: rgba(8, 127, 115, 0.08);
+  color: var(--accent);
+  border-color: rgba(8, 127, 115, 0.2);
+}
+
+.planner-nav-link.active {
+  background: var(--surface);
+  color: var(--accent);
+  border-color: rgba(8, 127, 115, 0.25);
+  box-shadow: 0 2px 8px -2px rgba(8, 127, 115, 0.15);
+}
+
+.planner-nav-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: #991b1b;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  transition: all 0.15s ease;
+  height: 38px;
+  box-sizing: border-box;
+}
+
+.planner-nav-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+/* =========================================================================
+   Redesigned Planner Hero Header & Editorial Visual Collage
+   ========================================================================= */
+
+.planner-hero {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 36px;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(221, 243, 233, 0.35) 100%);
+  border: 1px solid rgba(8, 127, 115, 0.14);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px -15px rgba(18, 63, 53, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.planner-hero-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.planner-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+
+.planner-hero-heading-group {
+  margin: 0 0 12px;
+}
+
+.planner-hero-title-main {
+  font-family: var(--font-display);
+  font-size: clamp(2.0rem, 3.2vw, 2.75rem);
+  font-weight: 500;
+  color: var(--on-paper-ink);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  display: block;
+}
+
+.planner-hero-title-highlight {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  background: linear-gradient(135deg, #087F73 0%, #13A89E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: block;
+  margin-top: 4px;
+}
+
+.planner-hero-desc {
+  font-size: 0.98rem;
+  color: var(--on-paper-muted);
+  line-height: 1.6;
+  max-width: 58ch;
+  margin: 0 0 18px;
+}
+
+.planner-hero-highlights {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.planner-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.80rem;
+  font-weight: 600;
+  background: rgba(8, 127, 115, 0.08);
+  color: var(--accent);
+  border: 1px solid rgba(8, 127, 115, 0.18);
+}
+
+/* Compact Editorial Collage */
+.planner-collage {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  grid-template-rows: 110px 110px;
+  gap: 12px;
+  position: relative;
+  width: 100%;
+}
+
+.planner-collage-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(8, 127, 115, 0.18);
+  box-shadow: 0 8px 24px -10px rgba(18, 63, 53, 0.18);
+  background: var(--surface-soft);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.planner-collage-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -8px rgba(18, 63, 53, 0.24);
+}
+
+.planner-collage-item-large {
+  grid-row: span 2;
+}
+
+.planner-collage-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.planner-collage-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.70rem;
+  font-weight: 600;
+  background: rgba(18, 63, 53, 0.82);
+  color: #ffffff;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  letter-spacing: 0.02em;
+}
+
+/* Mobile & Tablet breakpoints */
+@media (max-width: 1024px) {
+  .planner-hero {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 22px 20px;
+  }
+  .planner-collage {
+    max-width: 520px;
+    grid-template-rows: 95px 95px;
   }
 }
+
+@media (max-width: 640px) {
+  .planner-navbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 14px 16px;
+    gap: 14px;
+  }
+  .planner-nav-links {
+    justify-content: space-between;
+  }
+  .planner-collage {
+    display: none;
+  }
+}
+
 
 
