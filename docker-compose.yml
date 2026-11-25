@@ -1,5 +1,3 @@
-version: "3.9"
-
 x-python-env: &python-env
   PYTHONUNBUFFERED: "1"
   SENTRY_DSN: "${SENTRY_DSN:-}"
@@ -220,22 +218,22 @@ services:
       notification-service:
         condition: service_started
     ports:
-      - "8000:8000"
+      - "8008:8000"          # ← changed from 8000 to avoid conflict
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:8000/api
+        NEXT_PUBLIC_API_URL: http://localhost:8008/api   # ← matches new gateway port
         NEXT_PUBLIC_API_KEY: demo-key
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000/api
+      NEXT_PUBLIC_API_URL: http://localhost:8008/api     # ← matches new gateway port
       NEXT_PUBLIC_API_KEY: demo-key
     depends_on:
       - api-gateway
     ports:
-      - "3001:3000"
+      - "3001:3000"          # ← keep original (Next.js listens on 3000 inside container)
 
   model-training-worker:
     build:
