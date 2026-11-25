@@ -47,6 +47,7 @@ services:
       # app_role: CRUD on tenant-owned schemas only, enforced by RLS (see postgres/init.sql)
       DATABASE_URL: postgresql://app_role:app_role_pw@postgres:5432/outing
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/%2F
+      JWT_SECRET: "${JWT_SECRET}"
     depends_on:
       postgres:
         condition: service_healthy
@@ -191,6 +192,7 @@ services:
       # tenants via POST /tenants. No access to any tenant-owned schema.
       PLATFORM_DATABASE_URL: postgresql://gateway_role:gateway_role_pw@postgres:5432/outing
       REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: "${JWT_SECRET}"
       USER_SERVICE_URL: http://user-service:8000
       PLACE_SERVICE_URL: http://place-service:8000
       CONTEXT_SERVICE_URL: http://context-service:8000
@@ -228,6 +230,7 @@ services:
         NEXT_PUBLIC_API_URL: http://localhost:8008/api   # ← matches new gateway port
         NEXT_PUBLIC_API_KEY: demo-key
     environment:
+      INTERNAL_API_URL: http://api-gateway:8000/api
       NEXT_PUBLIC_API_URL: http://localhost:8008/api     # ← matches new gateway port
       NEXT_PUBLIC_API_KEY: demo-key
     depends_on:

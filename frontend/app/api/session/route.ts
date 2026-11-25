@@ -12,14 +12,32 @@ function getGatewayUrl(): string {
 
 /**
  * GET /api/session
- * Returns { authenticated: boolean } by reading the nearby_token cookie server-side.
+ * Returns { authenticated: boolean, user_id?: number, email?: string } by reading the nearby_token cookie server-side.
  * Never exposes the raw token or API key to the client.
  */
 export async function GET() {
   const cookieStore = cookies();
   const token = cookieStore.get("nearby_token");
   const authenticated = Boolean(token && token.value && token.value.trim().length > 0);
-  return NextResponse.json({ authenticated });
+
+  let user_id: number | null = null;
+  let email: string | null = null;
+
+  if (authenticated && token?.value) {
+    try {
+      const parts = token.value.split(".");
+      if (parts.length >= 2) {
+        const payloadJson = Buffer.from(parts[1], "base64url").toString("utf-8");
+        const payload = JSON.parse(payloadJson);
+        if (payload.user_id) user_id = Number(payload.user_id);
+        if (payload.email) email = payload.email;
+      }
+    } catch {
+      // safe fallback if token cannot be parsed
+    }
+  }
+
+  return NextResponse.json({ authenticated, user_id, email });
 }
 
 /**

@@ -5,7 +5,7 @@
 //   - Images: Cache-first with a 50-item LRU cap
 //   - Everything else: Network-only
 
-const SHELL_CACHE = 'nearby-shell-v1';
+const SHELL_CACHE = 'nearby-shell-v2';
 const API_CACHE   = 'nearby-api-v1';
 const IMG_CACHE   = 'nearby-img-v1';
 const IMG_CACHE_LIMIT = 50;

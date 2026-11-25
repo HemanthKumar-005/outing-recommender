@@ -42,7 +42,7 @@ export default function Login() {
         return;
       }
 
-      router.push("/");
+      router.push("/planner");
     } catch {
       setError("Authentication failed. Please check your network connection and try again.");
     } finally {
@@ -62,7 +62,10 @@ export default function Login() {
               : "Enter your email and password to access your personalized recommendations and itineraries."}
           </p>
         </div>
-        <Link href="/signup" className="btn-secondary" style={{ textDecoration: "none" }}>← Workspace setup</Link>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <Link href="/" className="btn-secondary" style={{ textDecoration: "none" }}>← Home</Link>
+          <Link href="/signup" className="btn-secondary" style={{ textDecoration: "none" }}>Workspace setup</Link>
+        </div>
       </div>
 
       <form className="card fade-in" onSubmit={submit}>

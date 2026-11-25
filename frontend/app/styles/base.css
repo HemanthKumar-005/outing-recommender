@@ -1,28 +1,43 @@
-/* Part of the Nearby & Co. design system — imported via globals.css */
+/* Nearby & Co. design tokens — Warm Linen, Botanical Sage Teal & Soft Terracotta */
 
 :root {
-  --ink: #14171f;
-  --ink-2: #1b1f29;
-  --ink-3: #232838;
-  --paper: #fbf8f2;
-  --paper-dim: #f1ecdf;
-  --brass: #c9a15a;
-  --brass-bright: #ddb96f;
-  --brass-dim: #8a7343;
-  --burgundy: #b0505c;
-  --sage: #8ea27e;
-  --slate: #9aa0ad;
-  --slate-strong: #c6cad3;
-  --on-paper-ink: #201c14;
-  --on-paper-muted: #6f6858;
-  --hairline: rgba(255, 255, 255, 0.09);
-  --hairline-paper: rgba(32, 28, 20, 0.14);
+  --canvas: #f8f7f3;
+  --surface: #ffffff;
+  --surface-soft: #eaf2ef;
+  --surface-warm: #f2ece3;
+  --forest: #1b433c;
+  --forest-deep: #14332e;
 
-  --font-display: var(--font-display), "Iowan Old Style", serif;
+  --accent: #0f766e;
+  --accent-hover: #0d625b;
+  --accent-bright: #14b8a6;
+  --accent-soft: rgba(15, 118, 110, 0.10);
+  --coral: #d96b43;
+  --coral-soft: rgba(217, 107, 67, 0.11);
+
+  /* Semantic aliases for existing routes (no black-gold anywhere) */
+  --ink: var(--forest);
+  --ink-2: #22524a;
+  --ink-3: #2a6359;
+  --paper: var(--surface);
+  --paper-dim: var(--surface-soft);
+  --brass: var(--accent);
+  --brass-bright: #ffffff;
+  --brass-dim: var(--accent);
+  --burgundy: #c0394b;
+  --sage: #3b8273;
+  --slate: #5b6c69;
+  --slate-strong: #1e2d2a;
+  --on-paper-ink: #1a2826;
+  --on-paper-muted: #5b6c69;
+  --hairline: rgba(26, 40, 38, 0.10);
+  --hairline-paper: rgba(26, 40, 38, 0.13);
+
+  --font-display: var(--font-display), "Iowan Old Style", Georgia, serif;
   --font-body: var(--font-body), -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: var(--font-mono), "SFMono-Regular", monospace;
 
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 * {
@@ -37,9 +52,10 @@ body {
 
 body {
   background:
-    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(201, 161, 90, 0.10), transparent 60%),
-    var(--ink);
-  color: var(--slate-strong);
+    radial-gradient(ellipse 1000px 550px at 10% -5%, rgba(15, 118, 110, 0.08), transparent 60%),
+    radial-gradient(ellipse 900px 500px at 90% 5%, rgba(217, 107, 67, 0.06), transparent 55%),
+    var(--canvas);
+  color: var(--on-paper-ink);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
 }
@@ -50,15 +66,15 @@ h1 {
   font-style: italic;
   font-size: 2.1rem;
   letter-spacing: -0.01em;
-  color: #fff;
+  color: var(--on-paper-ink);
   margin: 0 0 6px;
 }
 
 a {
-  color: var(--brass);
+  color: var(--accent);
 }
 
 a:focus-visible {
-  outline: 2px solid var(--brass);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }

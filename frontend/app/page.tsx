@@ -2,624 +2,683 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { getPlaceImageUrl } from "./utils/placeImages";
 
-// Decommissioned: NEXT_PUBLIC_API_KEY demo-key fallback has been removed.
-// API keys are stored exclusively in HttpOnly cookies and never pre-filled or exposed to client-side JS.
-const DEFAULT_API_KEY = "";
+type PreviewScenario = "friends" | "couple" | "family";
 
-const CATEGORIES = ["", "cafe", "restaurant", "bar", "museum", "park", "cinema", "shopping", "attraction"];
-const OUTING_TYPES = ["friends", "couple", "family", "solo"];
-const AGGREGATION_METHODS = [
-  { value: "least_misery", label: "Least misery — nobody hates it" },
-  { value: "average", label: "Average" },
-  { value: "borda", label: "Borda — rank-based" },
-];
-const WEIGHT_KEYS = ["ml", "content", "collaborative", "context", "distance", "sentiment", "popularity"] as const;
-const WEIGHT_LABELS: Record<string, string> = {
-  ml: "ML score", content: "Content match", collaborative: "Similar guests",
-  context: "Weather / time / budget fit", distance: "Distance", sentiment: "Reviews", popularity: "Popularity",
-};
-
-type ScoreBreakdown = Record<string, unknown>;
-
-type Recommendation = {
-  place: {
-    id: number;
-    name: string;
-    category: string;
-    price_range: number;
-    distance_km: number;
-    rating?: number;
-    booking_url?: string | null;
-  };
+type PreviewSpot = {
+  name: string;
+  category: string;
   score: number;
-  score_breakdown: ScoreBreakdown;
+  meta: string;
+  travel: string;
+  price: string;
   reasons: string[];
+  bookingUrl?: string;
+  verified: boolean;
 };
 
-type RecommendResponse = {
-  session_id: string;
-  group_user_ids: number[] | null;
-  group_aggregation: string | null;
-  context: {
-    time_of_day: string;
-    day_of_week: string;
-    weather: { condition: string; temp_c: number };
-  };
-  weight_profile: Record<string, string>;
-  diversity: number;
-  recommendations: Recommendation[];
+const SCENARIOS: Record<
+  PreviewScenario,
+  { label: string; context: string; spots: PreviewSpot[] }
+> = {
+  friends: {
+    label: "Friends Night Out",
+    context: "Starting from Koramangala → Exploring Indiranagar · Friday Evening · 22°C Clear",
+    spots: [
+      {
+        name: "Toit Brewpub",
+        category: "Craft Brewery",
+        score: 95,
+        meta: "Indiranagar · ★ 4.7 / 5 (620 reviews)",
+        travel: "📍 5.2 km · ~16 mins by car",
+        price: "₹800 – ₹1,400 per person · $$$",
+        reasons: ["Top consensus for groups", "Open until 1 AM", "Lively craft taproom"],
+        bookingUrl: "https://toit.in/indiranagar-reservations",
+        verified: true,
+      },
+      {
+        name: "Truffles",
+        category: "Burger Bistro",
+        score: 91,
+        meta: "St. Mark's Road · ★ 4.6 / 5 (850 reviews)",
+        travel: "📍 4.8 km · ~14 mins by car",
+        price: "₹350 – ₹600 per person · $$",
+        reasons: ["Budget-friendly favorites", "Short walk from metro", "Great burgers & desserts"],
+        bookingUrl: "https://www.zomato.com/bangalore/truffles-st-marks-road/book",
+        verified: true,
+      },
+      {
+        name: "Third Wave Coffee",
+        category: "Specialty Cafe",
+        score: 87,
+        meta: "Koramangala 4th Block · ★ 4.6 / 5",
+        travel: "📍 1.1 km · ~4 mins driving",
+        price: "₹250 – ₹450 per person · $$",
+        reasons: ["Outdoor seating", "Late-night coffee & dessert", "Cozy group seating"],
+        verified: true,
+      },
+    ],
+  },
+  couple: {
+    label: "Romantic Date Night",
+    context: "Starting from Jayanagar → Exploring Whitefield · Saturday Evening · 21°C Mild Breeze",
+    spots: [
+      {
+        name: "Windmills Craftworks",
+        category: "Jazz Lounge & Dining",
+        score: 96,
+        meta: "Whitefield · ★ 4.8 / 5",
+        travel: "📍 18.2 km · ~42 mins by car",
+        price: "₹1,800+ per person · $$$$",
+        reasons: ["Intimate acoustic setting", "Craft microbrewery", "Fine dining menu"],
+        bookingUrl: "https://craftworks.windmills.in/reserve",
+        verified: true,
+      },
+      {
+        name: "National Gallery of Modern Art",
+        category: "Heritage Museum & Garden",
+        score: 90,
+        meta: "Palace Road · ★ 4.6 / 5",
+        travel: "📍 6.8 km · ~20 mins by car",
+        price: "₹50 entry fee · $",
+        reasons: ["Serene courtyard cafe", "Beautiful sculpture gardens", "Calm afternoon pace"],
+        verified: true,
+      },
+      {
+        name: "Blue Tokai Coffee Roasters",
+        category: "Artisan Cafe",
+        score: 86,
+        meta: "Indiranagar · ★ 4.5 / 5",
+        travel: "📍 8.4 km · ~24 mins by car",
+        price: "₹300 – ₹550 per person · $$",
+        reasons: ["Artisan sourdough & pastries", "Warm ambient lighting", "Open now"],
+        verified: true,
+      },
+    ],
+  },
+  family: {
+    label: "Weekend Family Outing",
+    context: "Starting from Electronic City → Exploring Central BLR · Sunday Morning · Sunny 24°C",
+    spots: [
+      {
+        name: "Cubbon Park",
+        category: "Botanical Park",
+        score: 97,
+        meta: "Central Bengaluru · ★ 4.7 / 5",
+        travel: "📍 16.5 km · ~35 mins by car",
+        price: "Free Entry",
+        reasons: ["Sunny morning lawns", "Traffic-free walking trails", "Kid-friendly play areas"],
+        verified: true,
+      },
+      {
+        name: "Visvesvaraya Industrial & Tech Museum",
+        category: "Science Museum",
+        score: 93,
+        meta: "Kasturba Road · ★ 4.6 / 5",
+        travel: "📍 16.8 km · ~36 mins by car",
+        price: "₹85 per person · $",
+        reasons: ["Hands-on interactive exhibits", "Fun for kids & adults", "Air-conditioned indoor spot"],
+        verified: true,
+      },
+      {
+        name: "Mavalli Tiffin Room (MTR)",
+        category: "Heritage Restaurant",
+        score: 91,
+        meta: "Lalbagh Road · ★ 4.5 / 5",
+        travel: "📍 15.1 km · ~32 mins by car",
+        price: "₹200 – ₹400 per person · $$",
+        reasons: ["Iconic South Indian breakfast", "Pure vegetarian", "Decades of trusted quality"],
+        verified: true,
+      },
+    ],
+  },
 };
 
-export default function Home() {
-  const router = useRouter();
-  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
+const BUDGET_TIERS = [
+  {
+    title: "Pocket-Friendly Outings",
+    range: "₹150 – ₹350 per person",
+    badge: "$ · Budget",
+    desc: "Scenic parks, heritage street cafes, iconic breakfast joints, and free botanical gardens.",
+    examples: ["Cubbon Park", "Lalbagh Botanical Garden", "MTR Heritage Breakfast"],
+  },
+  {
+    title: "Casual Dining & Bistros",
+    range: "₹400 – ₹750 per person",
+    badge: "$$ · Popular",
+    desc: "Artisan coffee roasteries, top burger bistros, outdoor garden dining, and cultural museums.",
+    examples: ["Truffles Bistro", "Third Wave Coffee", "Visvesvaraya Tech Museum"],
+  },
+  {
+    title: "Craft Breweries & Lounges",
+    range: "₹800 – ₹1,500 per person",
+    badge: "$$$ · Nightlife",
+    desc: "Famous microbreweries, rooftop cocktail lounges, and lively live-music taprooms.",
+    examples: ["Toit Brewpub", "Arbor Brewing Company", "The Biere Club"],
+  },
+  {
+    title: "Special Occasions & Fine Dining",
+    range: "₹1,800+ per person",
+    badge: "$$$$ · Premium",
+    desc: "Acoustic jazz clubs, luxury heritage dining, and unforgettable date night spots.",
+    examples: ["Windmills Craftworks", "Olive Beach", "Grasshopper"],
+  },
+];
 
-  const [userId, setUserId] = useState("1");
-  const [groupMode, setGroupMode] = useState(false);
-  const [extraUserIds, setExtraUserIds] = useState("2, 3");
-  const [showLocationConsent, setShowLocationConsent] = useState(false);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deletingAccount, setDeletingAccount] = useState(false);
-  const [aggregation, setAggregation] = useState("least_misery");
-  const [lat, setLat] = useState("12.9716");
-  const [lng, setLng] = useState("77.5946");
-  const [radiusKm, setRadiusKm] = useState("8");
-  const [category, setCategory] = useState("");
-  const [outingType, setOutingType] = useState("friends");
-  const [diversity, setDiversity] = useState(0.15);
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [weightOverrides, setWeightOverrides] = useState<Record<string, number> | null>(null);
+const FAQS = [
+  {
+    q: "How does Nearby calculate travel time and distance?",
+    a: "When you enter your starting point and destination, Nearby uses actual road routing to calculate real driving, walking, or cycling times to each venue, so you know exactly how long the trip will take.",
+  },
+  {
+    q: "Can I plan an outing with friends who have different tastes?",
+    a: "Yes! Nearby includes a smart group mode that balances everyone's preferences, budget, and favorite categories so no one gets stuck at a place they dislike.",
+  },
+  {
+    q: "Do I have to share my GPS or coordinates?",
+    a: "No. You never need to share device location or understand geographic coordinates. Simply search any city, neighborhood, landmark, or street address.",
+  },
+  {
+    q: "Can I book a table or get turn-by-turn directions?",
+    a: "Yes! Every place card features an interactive map button, a one-click Google Maps turn-by-turn directions link from your starting point, and direct table booking where supported.",
+  },
+  {
+    q: "Is Nearby free to use?",
+    a: "Yes, Nearby is completely free for exploring places and planning trips. You only pay for what you purchase or book directly at the venue.",
+  },
+];
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<RecommendResponse | null>(null);
-  const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [dismissed, setDismissed] = useState<Set<number>>(new Set());
-
-  // Venue reporting state
-  const [reportingPlaceId, setReportingPlaceId] = useState<number | null>(null);
-  const [reportIssueType, setReportIssueType] = useState<string>("wrong_hours");
-  const [reportDescription, setReportDescription] = useState<string>("");
-  const [reportSubmitting, setReportSubmitting] = useState<boolean>(false);
-  const [reportStatus, setReportStatus] = useState<Record<number, "success" | "error" | null>>({});
-
-  // Offline detection state
-  const [isOffline, setIsOffline] = useState(false);
+export default function LandingPage() {
+  const [authenticated, setAuthenticated] = useState(false);
+  const [scenario, setScenario] = useState<PreviewScenario>("friends");
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useEffect(() => {
-    const handleOffline = () => setIsOffline(true);
-    const handleOnline = () => setIsOffline(false);
-    window.addEventListener("offline", handleOffline);
-    window.addEventListener("online", handleOnline);
-    return () => {
-      window.removeEventListener("offline", handleOffline);
-      window.removeEventListener("online", handleOnline);
-    };
+    fetch("/api/session")
+      .then((r) => r.json())
+      .then((d) => setAuthenticated(Boolean(d?.authenticated)))
+      .catch(() => setAuthenticated(false));
   }, []);
 
-  // Verified session check: if not authenticated, redirect to /login
-  useEffect(() => {
-    async function checkSession() {
-      try {
-        const resp = await fetch("/api/session");
-        const data = await resp.json();
-        if (!data.authenticated) {
-          router.push("/login");
-        } else {
-          setAuthenticated(true);
-        }
-      } catch {
-        router.push("/login");
-      }
-    }
-    checkSession();
-  }, [router]);
-
-  function confirmLocation() {
-    setShowLocationConsent(false);
-    if (!navigator.geolocation) {
-      setError("Geolocation is not supported by your browser");
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setLat(pos.coords.latitude.toFixed(4));
-        setLng(pos.coords.longitude.toFixed(4));
-      },
-      () => setError("Could not get your location"),
-    );
-  }
-
-  async function deleteAccount() {
-    setDeletingAccount(true);
-    try {
-      await fetch("/api/users/me", { method: "DELETE" });
-      await fetch("/api/session", { method: "DELETE" });
-      router.push("/signup");
-    } catch {
-      setError("Failed to delete account. Please try again.");
-      setDeletingAccount(false);
-    }
-  }
-
-  async function submitVenueReport(placeId: number) {
-    setReportSubmitting(true);
-    try {
-      const resp = await fetch(`/api/places/${placeId}/report`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          issue_type: reportIssueType,
-          description: reportDescription.trim() || undefined,
-        }),
-      });
-      if (resp.ok) {
-        setReportStatus((prev) => ({ ...prev, [placeId]: "success" }));
-        setReportingPlaceId(null);
-        setReportDescription("");
-      } else {
-        setReportStatus((prev) => ({ ...prev, [placeId]: "error" }));
-      }
-    } catch {
-      setReportStatus((prev) => ({ ...prev, [placeId]: "error" }));
-    } finally {
-      setReportSubmitting(false);
-    }
-  }
-
-  function updateWeight(key: string, value: number) {
-    setWeightOverrides((prev) => ({ ...(prev || {}), [key]: value }));
-  }
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setResult(null);
-    setDismissed(new Set());
-    try {
-      const user_ids = groupMode
-        ? [Number(userId), ...extraUserIds.split(",").map((s) => s.trim()).filter(Boolean).map(Number)]
-        : undefined;
-
-      // Proxied through Next.js API route; server attaches API key from HttpOnly cookie
-      const resp = await fetch("/api/recommendations/recommendations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: Number(userId),
-          user_ids,
-          group_aggregation: groupMode ? aggregation : undefined,
-          lat: Number(lat),
-          lng: Number(lng),
-          radius_km: Number(radiusKm),
-          category: category || undefined,
-          outing_type: outingType,
-          diversity,
-          weight_overrides: weightOverrides || undefined,
-          top_k: 10,
-        }),
-      });
-      if (resp.status === 401) {
-        router.push("/login");
-        return;
-      }
-      if (!resp.ok) {
-        const body = await resp.json().catch(() => ({}));
-        throw new Error(body.detail || `Request failed (${resp.status})`);
-      }
-      const data: RecommendResponse = await resp.json();
-      setResult(data);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function sendFeedback(placeId: number, action: "skip" | "like") {
-    if (!result) return;
-    if (action === "skip") {
-      setDismissed((prev) => new Set(prev).add(placeId));
-    }
-    try {
-      // Proxied through Next.js API route; server attaches API key from HttpOnly cookie
-      const resp = await fetch(
-        `/api/recommendations/recommendations/${result.session_id}/feedback`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ place_id: placeId, action }),
-        },
-      );
-      if (resp.status === 401) {
-        router.push("/login");
-        return;
-      }
-      if (!resp.ok) return;
-      const data = await resp.json();
-      setResult({ ...result, recommendations: data.recommendations });
-    } catch {
-      // live re-rank is best-effort; the dismissal already hid the card
-    }
-  }
-
-  async function logout() {
-    try {
-      await fetch("/api/session", { method: "DELETE" });
-    } finally {
-      router.push("/login");
-    }
-  }
-
-  // Prevent flash of unauthenticated content
-  if (authenticated !== true) {
-    return null;
-  }
-
-  const visibleRecs = result?.recommendations.filter((r) => !dismissed.has(r.place.id)) || [];
+  const primaryHref = authenticated ? "/planner" : "/login";
+  const currentScenario = SCENARIOS[scenario];
 
   return (
-    <main className="page">
-      <div className="top-row">
-        <div>
-          <p className="eyebrow">Nearby &amp; Co. · Outing Concierge</p>
-          <h1>Where should we go tonight?</h1>
-          <p className="subtitle">
-            Ranked by fit, weather, budget and reviews — not just distance.
-          </p>
-        </div>
-        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <Link href="/model-card" className="btn-secondary" style={{ textDecoration: "none" }}>
-            How does this rank?
+    <div className="landing">
+      {/* Top Navigation */}
+      <header className="landing-nav">
+        <div className="landing-nav-inner">
+          <Link href="/" className="landing-brand">
+            <span className="landing-brand-mark">N</span>
+            <span>Nearby &amp; Co.</span>
           </Link>
-          <button type="button" className="btn-secondary" onClick={logout}>
-            Log out
-          </button>
-        </div>
-      </div>
 
-      <form className="card fade-in" onSubmit={submit}>
-        <div className="grid">
-          <div>
-            <label>Guest ID</label>
-            <input value={userId} onChange={(e) => setUserId(e.target.value)} required />
-          </div>
-          <div>
-            <label>Outing type</label>
-            <select value={outingType} onChange={(e) => setOutingType(e.target.value)}>
-              {OUTING_TYPES.map((t) => (
-                <option key={t} value={t}>{t}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label>Latitude</label>
-            <input value={lat} onChange={(e) => setLat(e.target.value)} required />
-          </div>
-          <div>
-            <label>Longitude</label>
-            <input value={lng} onChange={(e) => setLng(e.target.value)} required />
-          </div>
-          <div>
-            <label>Radius (km)</label>
-            <input value={radiusKm} onChange={(e) => setRadiusKm(e.target.value)} required />
-          </div>
-          <div>
-            <label>Category (optional)</label>
-            <select value={category} onChange={(e) => setCategory(e.target.value)}>
-              {CATEGORIES.map((c) => (
-                <option key={c} value={c}>{c || "Any"}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <button type="button" className="btn-secondary" onClick={() => setShowLocationConsent(true)}>
-          Use my location
-        </button>
+          <nav className="landing-links" aria-label="Primary">
+            <a href="#how-it-works">How It Works</a>
+            <a href="#preview">Discover Places</a>
+            <a href="#budget">Budget Matching</a>
+            <a href="#travel">Travel-Smart</a>
+            <a href="#faq">FAQ</a>
+          </nav>
 
-        {showLocationConsent && (
-          <div className="card fade-in" style={{ padding: "1rem", marginTop: "0.5rem" }}>
-            <p style={{ margin: 0, fontSize: "0.9rem" }}>
-              <strong>Location access</strong><br />
-              We&apos;ll use your coordinates to find venues nearby. Your location is sent to our server only for this request and is not stored. This processing is covered by our <Link href="/privacy">Privacy Policy</Link>.
-            </p>
-            <div style={{ marginTop: "0.75rem", display: "flex", gap: "0.5rem" }}>
-              <button type="button" className="btn-primary" onClick={confirmLocation}>Allow</button>
-              <button type="button" className="btn-secondary" onClick={() => setShowLocationConsent(false)}>Cancel</button>
-            </div>
-          </div>
-        )}
-
-        <div className="toggle-row">
-          <label className="checkbox-label">
-            <input type="checkbox" checked={groupMode} onChange={(e) => setGroupMode(e.target.checked)} />
-            Planning for a group
-          </label>
-        </div>
-        {groupMode && (
-          <div className="grid">
-            <div>
-              <label>Other guest IDs</label>
-              <input value={extraUserIds} onChange={(e) => setExtraUserIds(e.target.value)} placeholder="2, 3" />
-            </div>
-            <div>
-              <label>Combine everyone's taste by</label>
-              <select value={aggregation} onChange={(e) => setAggregation(e.target.value)}>
-                {AGGREGATION_METHODS.map((m) => (
-                  <option key={m.value} value={m.value}>{m.label}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-        )}
-
-        <div className="toggle-row">
-          <button type="button" className="btn-secondary" onClick={() => setShowAdvanced((s) => !s)}>
-            {showAdvanced ? "Hide" : "Show"} advanced controls
-          </button>
-        </div>
-        
-        {showAdvanced && (
-          <div className="advanced-panel">
-            <label>Explore vs. exploit ({Math.round(diversity * 100)}% variety)</label>
-            <input
-              type="range" min={0} max={1} step={0.05} value={diversity}
-              onChange={(e) => setDiversity(Number(e.target.value))}
-            />
-            <p className="hint">0% = safest top picks, 100% = maximize variety across categories and vibes.</p>
-
-            <p className="hint" style={{ marginTop: 14 }}>Nudge how much each factor matters (optional):</p>
-            {WEIGHT_KEYS.map((key) => (
-              <div key={key} className="slider-row">
-                <label>{WEIGHT_LABELS[key]}</label>
-                <input
-                  type="range" min={0} max={1} step={0.05}
-                  value={weightOverrides?.[key] ?? ""}
-                  onChange={(e) => updateWeight(key, Number(e.target.value))}
-                />
-              </div>
-            ))}
-            {weightOverrides && (
-              <button type="button" className="btn-secondary" onClick={() => setWeightOverrides(null)}>
-                Reset to defaults
-              </button>
+          <div className="landing-nav-actions">
+            {authenticated ? (
+              <Link href="/planner" className="nav-cta">
+                Open Planner →
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="nav-ghost">
+                  Sign in
+                </Link>
+                <Link href="/login" className="nav-cta">
+                  Plan Your Outing
+                </Link>
+              </>
             )}
           </div>
-        )}
-
-        <br />
-        <button type="submit" className="btn-primary" disabled={loading}>
-          {loading ? "Setting the table..." : "Get recommendations"}
-        </button>
-        {error && <div className="error">{error}</div>}
-      </form>
-
-      {isOffline && result && (
-        <div className="card fade-in" style={{ background: "#fef3c7", border: "1px solid #fcd34d", padding: "0.75rem 1rem", marginBottom: "1rem" }}>
-          <p style={{ margin: 0, fontSize: "0.85rem", color: "#92400e" }}>
-            ⚠️ You&apos;re offline — showing cached results. Reconnect for fresh recommendations.
-          </p>
         </div>
-      )}
+      </header>
 
-      {result && (
-        <div className="results-card fade-in">
-          <div className="context-line">
-            {result.context.time_of_day} · {result.context.day_of_week} ·{" "}
-            {result.context.weather?.condition}, {result.context.weather?.temp_c}°C
-            {result.group_user_ids && ` · party of ${result.group_user_ids.length} (${result.group_aggregation})`}
+      {/* 1. Hero Section */}
+      <section className="landing-hero">
+        <div className="landing-container landing-hero-grid">
+          <div>
+            <p className="eyebrow">Smart Outing Discovery</p>
+            <h1 className="landing-hero-title">
+              Find the Perfect Place <br />
+              <em>for Your Next Outing.</em>
+            </h1>
+            <p className="landing-hero-sub">
+              Planning an outing with friends, family, or your partner? Tell us where you&apos;re starting from, where you&apos;d like to explore, and what you enjoy. We&apos;ll help you discover places that match your preferences.
+            </p>
+            <div className="landing-hero-actions">
+              <Link href={primaryHref} className="btn-hero-primary" style={{ fontSize: "1.05rem", padding: "13px 26px" }}>
+                Plan Your Outing →
+              </Link>
+              <a href="#how-it-works" className="btn-hero-secondary">
+                See How It Works
+              </a>
+            </div>
+            <div className="hero-meta-note">
+              <span>✓ Real road distance &amp; travel times</span>
+              <span>✓ Interactive maps &amp; turn-by-turn routes</span>
+              <span>✓ Direct table booking</span>
+            </div>
           </div>
-          {visibleRecs.length === 0 && <p className="empty">No places left to show. Try a larger radius or fewer skips.</p>}
-          {visibleRecs.map((rec) => (
-            <div className="ticket" key={rec.place.id}>
-              <div className="ticket-stub">
-                <span className="ticket-score">{Math.round(rec.score * 100)}</span>
-                <span className="ticket-score-label">match</span>
-                <span className="ticket-category">{rec.place.category}</span>
+
+          {/* Hero Visual Card */}
+          <div className="hero-visual" aria-hidden="true">
+            <div className="hero-card-back">
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "var(--on-paper-muted)" }}>
+                <span>Cubbon Park · Outdoors</span>
+                <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 600 }}>97% Match</span>
               </div>
-              <div className="ticket-main">
-                <div className="ticket-header">
-                  <span className="ticket-name">{rec.place.name}</span>
-                </div>
-                <div className="ticket-meta">
-                  {"$".repeat(rec.place.price_range)} · {rec.place.distance_km} km away
-                  {rec.place.rating ? ` · ${rec.place.rating}/5` : ""}
-                </div>
-                <div className="reasons">
-                  {rec.reasons.map((r, i) => (
-                    <span className="reason-chip" key={i}>{r}</span>
+              <div style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "1.1rem", marginTop: 4 }}>
+                Morning Nature Walk
+              </div>
+            </div>
+
+            <div className="hero-card-main">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                <span className="eyebrow" style={{ margin: 0 }}>Top Evening Pick</span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.82rem",
+                    fontWeight: 600,
+                    background: "var(--surface-soft)",
+                    color: "var(--accent)",
+                    padding: "4px 10px",
+                    borderRadius: 999,
+                  }}
+                >
+                  95% Match
+                </span>
+              </div>
+              <div style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "1.7rem", fontWeight: 500, color: "var(--on-paper-ink)" }}>
+                Toit Brewpub
+              </div>
+              <p style={{ margin: "4px 0 10px", fontSize: "0.86rem", color: "var(--on-paper-muted)" }}>
+                Indiranagar · Craft Brewery · ★ 4.7 / 5
+              </p>
+              <div style={{ fontSize: "0.8rem", color: "var(--on-paper-ink)", background: "var(--surface-soft)", padding: "6px 10px", borderRadius: "6px", marginBottom: "12px", display: "inline-block" }}>
+                📍 5.2 km from Koramangala · ~16 mins driving
+              </div>
+              <div className="reasons" style={{ marginBottom: 14 }}>
+                <span className="reason-chip">Loved by groups</span>
+                <span className="reason-chip">Open until 1 AM</span>
+                <span className="reason-chip">Clear 22°C evening</span>
+              </div>
+              <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                <span className="btn-secondary" style={{ marginTop: 0 }}>
+                  Reserve table →
+                </span>
+                <span className="btn-tiny">🧭 View route</span>
+              </div>
+            </div>
+
+            <div className="hero-card-badge-float">
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", opacity: 0.85, textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                Travel-Smart
+              </div>
+              <div style={{ fontSize: "0.9rem", fontWeight: 600, marginTop: 4 }}>
+                🗺️ Live road routes &amp; travel times
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2. How It Works Section */}
+      <section id="how-it-works" className="landing-section landing-section-soft">
+        <div className="landing-container">
+          <div className="section-header-split">
+            <div>
+              <p className="eyebrow">Guided Workflow</p>
+              <h2 className="section-heading">
+                How It <em>Works.</em>
+              </h2>
+            </div>
+            <p className="section-lead">
+              From deciding where to go to reaching your table — planned in four effortless steps.
+            </p>
+          </div>
+
+          <div className="steps-grid">
+            <div className="step-card">
+              <div className="step-num">Step 01</div>
+              <h3 className="step-title">Where to Explore</h3>
+              <p className="step-desc">
+                Select your target city or area — like Bengaluru, Mysuru, Indiranagar, or Cubbon Park.
+              </p>
+            </div>
+            <div className="step-card">
+              <div className="step-num">Step 02</div>
+              <h3 className="step-title">Starting Location</h3>
+              <p className="step-desc">
+                Enter where you are starting from so we can calculate exact driving, walking, and transit times.
+              </p>
+            </div>
+            <div className="step-card">
+              <div className="step-num">Step 03</div>
+              <h3 className="step-title">Choose Your Vibe</h3>
+              <p className="step-desc">
+                Tell us who you&apos;re with — friends, family, date, or solo — and your preferred categories and radius.
+              </p>
+            </div>
+            <div className="step-card">
+              <div className="step-num">Step 04</div>
+              <h3 className="step-title">Discover, Navigate &amp; Book</h3>
+              <p className="step-desc">
+                Explore cards with photographs, interactive maps, live operating hours, and instant reservations.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Discover Places (Interactive Preview) */}
+      <section id="preview" className="landing-section">
+        <div className="landing-container">
+          <div className="section-header-split">
+            <div>
+              <p className="eyebrow">Discover Places</p>
+              <h2 className="section-heading">
+                Tailored for <em>whoever you&apos;re with.</em>
+              </h2>
+            </div>
+            <p className="section-lead">
+              Click the modes below to see how recommendations adapt with real photos, ratings, travel times, and directions.
+            </p>
+          </div>
+
+          <div className="preview-shell">
+            <div className="preview-sidebar">
+              <div>
+                <div className="eyebrow" style={{ marginBottom: 10 }}>Select Outing Mode</div>
+                <div className="preview-pill-group">
+                  {(Object.keys(SCENARIOS) as PreviewScenario[]).map((key) => (
+                    <button
+                      key={key}
+                      type="button"
+                      className={`preview-pill-btn ${scenario === key ? "active" : ""}`}
+                      onClick={() => setScenario(key)}
+                    >
+                      <span>{SCENARIOS[key].label}</span>
+                      <span>→</span>
+                    </button>
                   ))}
                 </div>
-                {rec.place.booking_url && (
-                  <a
-                    href={rec.place.booking_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-secondary"
-                    style={{ display: "inline-block", fontSize: "0.82rem", marginTop: "0.5rem", textDecoration: "none" }}
-                  >
-                    Reserve a spot →
-                  </a>
-                )}
-                <div className="action-row">
-                  <button type="button" className="btn-tiny" onClick={() => sendFeedback(rec.place.id, "like")}>
-                    More like this
-                  </button>
-                  <button type="button" className="btn-tiny" onClick={() => sendFeedback(rec.place.id, "skip")}>
-                    Skip
-                  </button>
-                  <button
-                    type="button" className="btn-tiny"
-                    onClick={() => setExpandedId(expandedId === rec.place.id ? null : rec.place.id)}
-                  >
-                    {expandedId === rec.place.id ? "Hide details" : "Why this?"}
-                  </button>
-                </div>
-                {expandedId === rec.place.id && (
-                  <pre className="breakdown">{JSON.stringify(rec.score_breakdown, null, 2)}</pre>
-                )}
+              </div>
 
-                {/* Inline venue issue reporting */}
-                <div style={{ marginTop: "10px", display: "flex", alignItems: "center", gap: "10px" }}>
-                  {reportStatus[rec.place.id] === "success" ? (
-                    <span style={{ fontSize: "0.75rem", color: "#2e7d32" }}>
-                      ✓ Thanks — we&apos;ll review this venue.
-                    </span>
-                  ) : (
-                    <button
-                      type="button"
-                      style={{
-                        background: "none",
-                        border: "none",
-                        padding: 0,
-                        color: "var(--on-paper-muted)",
-                        fontSize: "0.75rem",
-                        cursor: "pointer",
-                        textDecoration: "underline",
-                      }}
-                      onClick={() => {
-                        if (reportingPlaceId === rec.place.id) {
-                          setReportingPlaceId(null);
-                        } else {
-                          setReportingPlaceId(rec.place.id);
-                          setReportIssueType("wrong_hours");
-                          setReportDescription("");
-                        }
-                      }}
-                    >
-                      {reportingPlaceId === rec.place.id ? "Cancel report" : "Report an issue"}
-                    </button>
-                  )}
-                  {reportStatus[rec.place.id] === "error" && (
-                    <span style={{ fontSize: "0.75rem", color: "var(--burgundy, #b0505c)" }}>
-                      Couldn&apos;t submit report. Please try again.
-                    </span>
-                  )}
+              <div style={{ borderTop: "1px dashed var(--hairline-paper)", paddingTop: 14 }}>
+                <div style={{ fontSize: "0.82rem", color: "var(--on-paper-muted)", lineHeight: 1.55 }}>
+                  Every place card includes high-resolution photos, verified hours, travel times, and table booking.
                 </div>
-
-                {reportingPlaceId === rec.place.id && (
-                  <div
-                    style={{
-                      marginTop: "10px",
-                      padding: "10px 12px",
-                      background: "var(--paper-dim, rgba(0,0,0,0.03))",
-                      borderRadius: "4px",
-                      border: "1px solid var(--hairline-paper, rgba(0,0,0,0.1))",
-                    }}
-                  >
-                    <div style={{ marginBottom: "8px" }}>
-                      <label style={{ fontSize: "0.7rem", marginTop: 0, marginBottom: "4px" }}>
-                        Issue type
-                      </label>
-                      <select
-                        value={reportIssueType}
-                        onChange={(e) => setReportIssueType(e.target.value)}
-                        style={{ fontSize: "0.82rem", padding: "6px 8px" }}
-                      >
-                        <option value="wrong_hours">Wrong operating hours</option>
-                        <option value="wrong_price">Wrong price range</option>
-                        <option value="closed_permanently">Permanently closed</option>
-                        <option value="wrong_location">Wrong location / address</option>
-                        <option value="other">Other issue</option>
-                      </select>
-                    </div>
-                    <div style={{ marginBottom: "8px" }}>
-                      <label style={{ fontSize: "0.7rem", marginTop: 0, marginBottom: "4px" }}>
-                        Details (optional, max 280 chars)
-                      </label>
-                      <textarea
-                        value={reportDescription}
-                        onChange={(e) => setReportDescription(e.target.value)}
-                        maxLength={280}
-                        rows={2}
-                        placeholder="e.g. Closed on Tuesdays, moved across the street, etc."
-                        style={{
-                          width: "100%",
-                          padding: "6px 8px",
-                          border: "1px solid var(--hairline-paper)",
-                          borderRadius: "3px",
-                          fontSize: "0.82rem",
-                          fontFamily: "var(--font-body)",
-                          boxSizing: "border-box",
-                        }}
-                      />
-                    </div>
-                    <div style={{ display: "flex", gap: "8px" }}>
-                      <button
-                        type="button"
-                        className="btn-tiny"
-                        style={{ background: "var(--brass-dim)", color: "#fff" }}
-                        disabled={reportSubmitting}
-                        onClick={() => submitVenueReport(rec.place.id)}
-                      >
-                        {reportSubmitting ? "Submitting..." : "Submit report"}
-                      </button>
-                      <button
-                        type="button"
-                        className="btn-tiny"
-                        disabled={reportSubmitting}
-                        onClick={() => setReportingPlaceId(null)}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
+                <Link
+                  href={primaryHref}
+                  className="btn-hero-primary"
+                  style={{ marginTop: 14, width: "100%", justifyContent: "center", padding: "11px 16px", fontSize: "0.9rem" }}
+                >
+                  Plan Your Outing Now →
+                </Link>
               </div>
             </div>
-          ))}
 
-          <p style={{ fontSize: "0.72rem", color: "var(--on-paper-muted)", marginTop: "1rem" }}>
-            Venue data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors, available under the <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" rel="noopener noreferrer">Open Database Licence</a>.
-          </p>
-        </div>
-      )}
-
-      <div className="card fade-in" style={{ marginTop: "2rem", border: "1px solid var(--danger, #e53935)" }}>
-        <p className="eyebrow" style={{ color: "var(--danger, #e53935)" }}>Danger Zone · Privacy &amp; Data</p>
-        <h3 style={{ margin: "0.5rem 0" }}>Delete Account</h3>
-        <p className="hint" style={{ margin: "0 0 1rem 0" }}>
-          Permanently delete your user profile, preferences, interaction history, and saved itineraries. Under India DPDP Act 2023 and GDPR Art. 17, your data is erased immediately.
-        </p>
-        {!showDeleteConfirm ? (
-          <button
-            type="button"
-            className="btn-secondary"
-            style={{ color: "var(--danger, #e53935)", borderColor: "var(--danger, #e53935)" }}
-            onClick={() => setShowDeleteConfirm(true)}
-          >
-            Delete my account
-          </button>
-        ) : (
-          <div style={{ padding: "0.75rem", background: "var(--paper-subtle, rgba(0,0,0,0.03))", borderRadius: 6 }}>
-            <p style={{ margin: "0 0 0.75rem 0", fontSize: "0.85rem", color: "var(--danger, #e53935)" }}>
-              <strong>This will permanently delete your account and all your data. This cannot be undone.</strong>
-            </p>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <button
-                type="button"
-                className="btn-primary"
-                style={{ background: "var(--danger, #e53935)", borderColor: "var(--danger, #e53935)" }}
-                disabled={deletingAccount}
-                onClick={deleteAccount}
-              >
-                {deletingAccount ? "Deleting..." : "Yes, permanently delete"}
-              </button>
-              <button
-                type="button"
-                className="btn-secondary"
-                disabled={deletingAccount}
-                onClick={() => setShowDeleteConfirm(false)}
-              >
-                Cancel
-              </button>
+            <div>
+              <div className="context-line" style={{ marginBottom: 14, fontWeight: 500 }}>
+                {currentScenario.context}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                {currentScenario.spots.map((spot) => {
+                  const img = getPlaceImageUrl(spot.name, spot.category);
+                  return (
+                    <div
+                      className="ticket"
+                      key={spot.name}
+                      style={{ gridTemplateColumns: "110px 1fr" }}
+                    >
+                      <div
+                        style={{
+                          backgroundImage: `url('${img}')`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          position: "relative",
+                        }}
+                      >
+                        <span
+                          style={{
+                            position: "absolute",
+                            bottom: 8,
+                            left: 8,
+                            background: "rgba(15, 118, 110, 0.92)",
+                            color: "#fff",
+                            fontSize: "0.72rem",
+                            fontWeight: 700,
+                            padding: "2px 6px",
+                            borderRadius: "4px",
+                          }}
+                        >
+                          {spot.score}%
+                        </span>
+                      </div>
+                      <div className="ticket-main">
+                        <div className="ticket-header">
+                          <span className="ticket-name">{spot.name}</span>
+                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--accent)", fontWeight: 600 }}>
+                            ✓ Hours verified
+                          </span>
+                        </div>
+                        <div className="ticket-meta" style={{ margin: "2px 0 6px 0" }}>
+                          {spot.category} · {spot.meta}
+                        </div>
+                        <div style={{ fontSize: "0.78rem", color: "var(--on-paper-ink)", fontWeight: 600, marginBottom: "8px" }}>
+                          {spot.travel} · <span style={{ color: "var(--on-paper-muted)", fontWeight: "normal" }}>{spot.price}</span>
+                        </div>
+                        <div className="reasons" style={{ marginBottom: spot.bookingUrl ? 10 : 0 }}>
+                          {spot.reasons.map((r) => (
+                            <span className="reason-chip" key={r}>
+                              {r}
+                            </span>
+                          ))}
+                        </div>
+                        {spot.bookingUrl && (
+                          <Link
+                            href={primaryHref}
+                            className="btn-secondary"
+                            style={{ display: "inline-block", fontSize: "0.82rem", textDecoration: "none" }}
+                          >
+                            Reserve a spot →
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        )}
-      </div>
-    </main>
+        </div>
+      </section>
+
+      {/* 4. Find Places That Match Your Budget */}
+      <section id="budget" className="landing-section landing-section-soft">
+        <div className="landing-container">
+          <div className="section-header-split">
+            <div>
+              <p className="eyebrow">Clear Pricing</p>
+              <h2 className="section-heading">
+                Find Places That Match <em>Your Budget.</em>
+              </h2>
+            </div>
+            <p className="section-lead">
+              Clear price indicators for every recommendation — from free nature walks to luxury weekend dining.
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px" }}>
+            {BUDGET_TIERS.map((tier) => (
+              <div
+                key={tier.title}
+                className="card"
+                style={{ padding: "24px 22px", margin: 0, display: "flex", flexDirection: "column" }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                  <span className="eyebrow" style={{ margin: 0 }}>{tier.badge}</span>
+                </div>
+                <h3 style={{ margin: "4px 0", fontSize: "1.2rem", color: "var(--on-paper-ink)" }}>
+                  {tier.title}
+                </h3>
+                <div style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--accent)", marginBottom: 10 }}>
+                  {tier.range}
+                </div>
+                <p style={{ fontSize: "0.85rem", color: "var(--on-paper-muted)", lineHeight: 1.5, margin: "0 0 14px 0" }}>
+                  {tier.desc}
+                </p>
+                <div style={{ marginTop: "auto", borderTop: "1px dashed var(--hairline-paper)", paddingTop: "10px" }}>
+                  <span style={{ fontSize: "0.72rem", color: "var(--on-paper-muted)", textTransform: "uppercase" }}>
+                    Popular examples:
+                  </span>
+                  <div style={{ fontSize: "0.82rem", fontWeight: 500, color: "var(--on-paper-ink)", marginTop: "4px" }}>
+                    {tier.examples.join(" · ")}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Travel-Smart Discovery Section */}
+      <section id="travel" className="landing-section">
+        <div className="landing-container">
+          <div className="section-header-split">
+            <div>
+              <p className="eyebrow">Travel-Smart</p>
+              <h2 className="section-heading">
+                Explore Nearby <em>with Confidence.</em>
+              </h2>
+            </div>
+            <p className="section-lead">
+              Calculations based on actual road routing, real operating hours, and live weather conditions.
+            </p>
+          </div>
+
+          <div className="bento-grid">
+            <div className="bento-card">
+              <div className="bento-kicker">Accurate Routing</div>
+              <h3 className="bento-title">Real Road Distances</h3>
+              <p className="bento-desc">
+                We calculate genuine driving, walking, and cycling times from your exact starting neighborhood, not just straight-line distance.
+              </p>
+            </div>
+
+            <div className="bento-card">
+              <div className="bento-kicker">Interactive Maps</div>
+              <h3 className="bento-title">Full Map Integration</h3>
+              <p className="bento-desc">
+                Explore recommended venues on an interactive map, view pin popups, and launch Google Maps turn-by-turn navigation in one tap.
+              </p>
+            </div>
+
+            <div className="bento-card">
+              <div className="bento-kicker">Weather-Smart</div>
+              <h3 className="bento-title">Live Weather Matching</h3>
+              <p className="bento-desc">
+                Sunny afternoon? We suggest open-air gardens and rooftop bistros. Rainy evening? Cozy indoor lounges and museums.
+              </p>
+            </div>
+
+            <div className="bento-card wide">
+              <div className="bento-kicker">Group Harmony</div>
+              <h3 className="bento-title">Fair for Every Group Member</h3>
+              <p className="bento-desc">
+                Planning with four friends? Our group balancer finds places that satisfy everyone&apos;s tastes and budgets, so no one feels left out.
+              </p>
+              <div className="signal-bar-row">
+                <span>Vibe &amp; Category Match</span>
+                <div className="signal-track"><div className="signal-fill" style={{ width: "95%" }} /></div>
+                <span>95%</span>
+              </div>
+              <div className="signal-bar-row">
+                <span>Distance &amp; Travel Convenience</span>
+                <div className="signal-track"><div className="signal-fill" style={{ width: "92%" }} /></div>
+                <span>92%</span>
+              </div>
+              <div className="signal-bar-row">
+                <span>Weather &amp; Timing Fit</span>
+                <div className="signal-track"><div className="signal-fill" style={{ width: "88%" }} /></div>
+                <span>88%</span>
+              </div>
+            </div>
+
+            <div className="bento-card">
+              <div className="bento-kicker">No Closed Doors</div>
+              <h3 className="bento-title">Verified Operating Hours</h3>
+              <p className="bento-desc">
+                Every venue is cross-checked against current day-of-week hours so you never encounter locked doors.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. FAQ Section */}
+      <section id="faq" className="landing-section landing-section-soft">
+        <div className="landing-container faq-grid">
+          <div>
+            <p className="eyebrow">Frequently Asked Questions</p>
+            <h2 className="section-heading">
+              Got <em>questions?</em>
+            </h2>
+            <p className="section-lead" style={{ marginTop: 12 }}>
+              Everything you need to know about planning your next outing with Nearby &amp; Co.
+            </p>
+          </div>
+
+          <div>
+            {FAQS.map((item, idx) => {
+              const isOpen = openFaq === idx;
+              return (
+                <div className="faq-item" key={item.q}>
+                  <button
+                    type="button"
+                    className="faq-trigger"
+                    aria-expanded={isOpen}
+                    onClick={() => setOpenFaq(isOpen ? null : idx)}
+                  >
+                    <span>{item.q}</span>
+                    <span style={{ color: "var(--accent)", fontFamily: "var(--font-mono)" }}>
+                      {isOpen ? "−" : "+"}
+                    </span>
+                  </button>
+                  {isOpen && <p className="faq-answer">{item.a}</p>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Closing Call to Action Banner */}
+      <section className="closing-band">
+        <div className="landing-container">
+          <p className="eyebrow">Ready for your next adventure?</p>
+          <h2 className="section-heading" style={{ fontSize: "clamp(2rem, 3.8vw, 3rem)" }}>
+            Make the plan. <em>Not the debate.</em>
+          </h2>
+          <p className="section-lead" style={{ margin: "14px auto 28px", maxWidth: "48ch" }}>
+            Enter your starting point, choose your destination, and discover great places with real travel times in seconds.
+          </p>
+          <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
+            <Link href={primaryHref} className="btn-hero-primary" style={{ fontSize: "1.05rem", padding: "13px 26px" }}>
+              Plan Your Outing →
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

@@ -68,6 +68,7 @@ CREATE TABLE users.users (
     tenant_id               UUID NOT NULL REFERENCES platform.tenants(id),
     name                    TEXT NOT NULL,
     email                   TEXT NOT NULL,
+    password_hash           TEXT,
     age_group               TEXT,
     budget_min              INT NOT NULL DEFAULT 0,
     budget_max              INT NOT NULL DEFAULT 4,
@@ -80,6 +81,8 @@ CREATE TABLE users.users (
     created_at              TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE (tenant_id, email)
 );
+
+ALTER TABLE users.users ADD COLUMN IF NOT EXISTS password_hash TEXT;
 
 ALTER TABLE users.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE users.users FORCE ROW LEVEL SECURITY;

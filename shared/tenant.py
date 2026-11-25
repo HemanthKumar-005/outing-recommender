@@ -15,6 +15,7 @@ import uuid
 from fastapi import Header, HTTPException
 
 TENANT_HEADER = "X-Tenant-Id"
+USER_HEADER = "X-User-Id"
 
 
 def require_tenant(x_tenant_id: str = Header(..., alias=TENANT_HEADER)) -> str:

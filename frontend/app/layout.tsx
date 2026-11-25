@@ -34,16 +34,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${fraunces.variable} ${inter.variable} ${mono.variable}`}>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#1a1a2e" />
+        <meta name="theme-color" content="#0f766e" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Nearby" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body>
         {children}
-        <footer style={{ textAlign: "center", padding: "2rem 1rem", fontSize: "0.8rem", color: "var(--on-paper-muted)" }}>
+        <footer style={{ textAlign: "center", padding: "2.25rem 1rem", fontSize: "0.82rem", color: "var(--on-paper-muted)", borderTop: "1px solid var(--hairline-paper)", background: "var(--surface-soft)" }}>
+          <Link href="/">Home</Link>
+          {" · "}
+          <Link href="/planner">Planner</Link>
+          {" · "}
+          <Link href="/model-card">Model Card</Link>
+          {" · "}
           <Link href="/privacy">Privacy Policy</Link>
           {" · "}
           <Link href="/terms">Terms of Service</Link>

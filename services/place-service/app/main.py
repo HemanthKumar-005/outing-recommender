@@ -133,29 +133,6 @@ def report_place(
     return {"reported": True, "report_id": report["id"]}
 
 
-@app.get("/places/{place_id}")
-def get_place(place_id: int, tenant_id: str = Depends(require_tenant)):
-    place = db.get_place(tenant_id, place_id)
-    if not place:
-        raise HTTPException(status_code=404, detail="place not found")
-    return place
-
-
-@app.patch("/places/{place_id}/sentiment")
-def patch_sentiment(place_id: int, payload: SentimentUpdate, tenant_id: str = Depends(require_tenant)):
-    place = db.update_sentiment(tenant_id, place_id, payload.sentiment_score)
-    if not place:
-        raise HTTPException(status_code=404, detail="place not found")
-    publish("place.updated", {"tenant_id": tenant_id, "place_id": place_id, "reason": "sentiment_updated"})
-    return place
-
-
-@app.get("/places")
-def list_places(category: str | None = None, min_price: int | None = None, max_price: int | None = None,
-                 tenant_id: str = Depends(require_tenant)):
-    return db.list_places(tenant_id, category=category, min_price=min_price, max_price=max_price)
-
-
 @app.get("/places/nearby")
 def nearby(
     lat: float,
@@ -178,9 +155,32 @@ def nearby(
         dist = geo.haversine_km(lat, lng, place["lat"], place["lng"])
         if dist > radius_km:
             continue
-        if open_now and not _is_open_now(place["opening_hours"]):
+        if open_now and not _is_open_now(place.get("opening_hours") or {}):
             continue
         place = {**place, "distance_km": round(dist, 3)}
         results.append(place)
     results.sort(key=lambda p: p["distance_km"])
     return results[:limit]
+
+
+@app.get("/places/{place_id}")
+def get_place(place_id: int, tenant_id: str = Depends(require_tenant)):
+    place = db.get_place(tenant_id, place_id)
+    if not place:
+        raise HTTPException(status_code=404, detail="place not found")
+    return place
+
+
+@app.patch("/places/{place_id}/sentiment")
+def patch_sentiment(place_id: int, payload: SentimentUpdate, tenant_id: str = Depends(require_tenant)):
+    place = db.update_sentiment(tenant_id, place_id, payload.sentiment_score)
+    if not place:
+        raise HTTPException(status_code=404, detail="place not found")
+    publish("place.updated", {"tenant_id": tenant_id, "place_id": place_id, "reason": "sentiment_updated"})
+    return place
+
+
+@app.get("/places")
+def list_places(category: str | None = None, min_price: int | None = None, max_price: int | None = None,
+                 tenant_id: str = Depends(require_tenant)):
+    return db.list_places(tenant_id, category=category, min_price=min_price, max_price=max_price)

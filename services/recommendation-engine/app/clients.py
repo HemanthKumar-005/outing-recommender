@@ -15,7 +15,9 @@ _client = httpx.Client(timeout=5.0)
 
 
 def get_user(tenant_id: str, user_id: int) -> dict | None:
-    resp = _client.get(f"{USER_SERVICE_URL}/users/{user_id}", headers=tenant_headers(tenant_id))
+    headers = tenant_headers(tenant_id)
+    headers["X-User-Id"] = str(user_id)
+    resp = _client.get(f"{USER_SERVICE_URL}/users/{user_id}", headers=headers)
     if resp.status_code == 404:
         return None
     resp.raise_for_status()

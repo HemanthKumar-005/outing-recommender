@@ -1,11 +1,14 @@
 import hashlib
 import os
+import sys
 import time
 from datetime import datetime
 
 import httpx
 import redis
 from fastapi import FastAPI, Query
+
+sys.path.insert(0, "/shared")
 
 try:
     from shared.logging_config import configure_logging
