@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {" · "}
           <Link href="/planner">Planner</Link>
           {" · "}
-          <Link href="/model-card">Model Card</Link>
+          <Link href="/model-card">How it Works</Link>
           {" · "}
           <Link href="/privacy">Privacy Policy</Link>
           {" · "}

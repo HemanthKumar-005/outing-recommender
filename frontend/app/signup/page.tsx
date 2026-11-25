@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Navbar from "../components/Navbar";
 
 const DEFAULT_API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 const GATEWAY_ROOT = DEFAULT_API_URL.replace(/\/api\/?$/, "");
@@ -39,13 +40,12 @@ export default function Signup() {
 
   return (
     <main className="page">
-      <div className="top-row">
-        <div>
-          <p className="eyebrow">Nearby &amp; Co. · New workspace</p>
-          <h1>Open a table</h1>
-          <p className="subtitle">Every workspace&apos;s guests, venues, and history are isolated at the database level — enforced by Postgres row-level security, not application code.</p>
-        </div>
-        <Link href="/" className="btn-secondary" style={{ textDecoration: "none" }}>← Back</Link>
+      <Navbar activePage="none" />
+
+      <div style={{ marginBottom: "28px", paddingBottom: "20px", borderBottom: "1px solid var(--hairline-paper)" }}>
+        <p className="eyebrow">Nearby &amp; Co. · New workspace</p>
+        <h1 style={{ fontSize: "clamp(2rem, 3.2vw, 2.6rem)", margin: "0 0 8px 0" }}>Open a Table</h1>
+        <p className="subtitle" style={{ maxWidth: "68ch" }}>Every workspace&apos;s guests, venues, and history are isolated at the database level — enforced by Postgres row-level security, not application code.</p>
       </div>
 
       {!result ? (

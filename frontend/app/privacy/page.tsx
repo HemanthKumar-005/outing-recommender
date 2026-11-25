@@ -1,19 +1,17 @@
 import Link from "next/link";
+import Navbar from "../components/Navbar";
 
 export default function PrivacyPolicy() {
   return (
     <main className="page">
-      <div className="top-row">
-        <div>
-          <p className="eyebrow">Nearby &amp; Co. · Legal</p>
-          <h1>Privacy Policy</h1>
-          <p className="subtitle">
-            How we collect, use, and protect your information under the Digital Personal Data Protection (DPDP) Act 2023 and the General Data Protection Regulation (GDPR).
-          </p>
-        </div>
-        <Link href="/" className="btn-secondary" style={{ textDecoration: "none" }}>
-          ← Back to home
-        </Link>
+      <Navbar activePage="none" />
+
+      <div style={{ marginBottom: "28px", paddingBottom: "20px", borderBottom: "1px solid var(--hairline-paper)" }}>
+        <p className="eyebrow">Nearby &amp; Co. · Legal</p>
+        <h1 style={{ fontSize: "clamp(2rem, 3.2vw, 2.6rem)", margin: "0 0 8px 0" }}>Privacy Policy</h1>
+        <p className="subtitle" style={{ maxWidth: "68ch" }}>
+          How we collect, use, and protect your information under the Digital Personal Data Protection (DPDP) Act 2023 and the General Data Protection Regulation (GDPR).
+        </p>
       </div>
 
       <div className="card fade-in" style={{ lineHeight: "1.7", fontSize: "0.95rem" }}>
