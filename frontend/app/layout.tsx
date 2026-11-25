@@ -2,6 +2,8 @@ import Link from "next/link";
 import "./globals.css";
 import type { Metadata } from "next";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
+import { AuthProvider } from "./context/AuthContext";
+import Header from "./components/layout/Header";
 
 export const metadata: Metadata = {
   title: "Nearby & Co. — Outing Concierge",
@@ -27,7 +29,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        {children}
+        <AuthProvider>
+          <Header />
+          {children}
+        </AuthProvider>
         <footer style={{ textAlign: "center", padding: "2.25rem 1rem", fontSize: "0.82rem", color: "var(--on-paper-muted)", borderTop: "1px solid var(--hairline-paper)", background: "var(--surface-soft)" }}>
           <Link href="/">Home</Link>
           {" · "}

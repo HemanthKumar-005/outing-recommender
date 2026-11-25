@@ -670,37 +670,6 @@ export default function PlannerPage() {
       {/* Travel-Inspired Multi-Layered Ambient Background */}
       <TravelBackground />
 
-      {/* 3.1 Brand Navigation Bar */}
-      <nav className="planner-navbar" aria-label="Main Navigation">
-        <Link href="/" className="planner-nav-brand">
-          <div className="planner-nav-logo">N</div>
-          <div className="planner-nav-titles">
-            <span className="planner-nav-title">Nearby &amp; Co.</span>
-            <span className="planner-nav-tagline">Discover · Explore · Experience</span>
-          </div>
-        </Link>
-
-        <div className="planner-nav-links">
-          <Link href="/" className="planner-nav-link">
-            Home
-          </Link>
-          <Link href="/model-card" className="planner-nav-link">
-            How it works
-          </Link>
-          <span className="planner-nav-link active" aria-current="page">
-            Planner
-          </span>
-          <button
-            type="button"
-            className="planner-nav-logout-btn"
-            onClick={logout}
-            title="End session and log out"
-          >
-            Log out
-          </button>
-        </div>
-      </nav>
-
       {/* 3.2 Planner Hero Header & 3.3 Visual Collage */}
       <section className="planner-hero">
         <div className="planner-hero-content">

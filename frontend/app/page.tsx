@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
+import { useAuth } from "./context/AuthContext";
 import { getPlaceImageUrl } from "./utils/placeImages";
 
 type PreviewScenario = "friends" | "couple" | "family";
@@ -190,57 +191,15 @@ const FAQS = [
 ];
 
 export default function LandingPage() {
-  const [authenticated, setAuthenticated] = useState(false);
+  const { isAuthenticated } = useAuth();
   const [scenario, setScenario] = useState<PreviewScenario>("friends");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  useEffect(() => {
-    fetch("/api/session")
-      .then((r) => r.json())
-      .then((d) => setAuthenticated(Boolean(d?.authenticated)))
-      .catch(() => setAuthenticated(false));
-  }, []);
-
-  const primaryHref = authenticated ? "/planner" : "/login";
+  const primaryHref = isAuthenticated ? "/planner" : "/login";
   const currentScenario = SCENARIOS[scenario];
 
   return (
     <div className="landing">
-      {/* Top Navigation */}
-      <header className="landing-nav">
-        <div className="landing-nav-inner">
-          <Link href="/" className="landing-brand">
-            <span className="landing-brand-mark">N</span>
-            <span>Nearby &amp; Co.</span>
-          </Link>
-
-          <nav className="landing-links" aria-label="Primary">
-            <a href="#how-it-works">How It Works</a>
-            <a href="#preview">Discover Places</a>
-            <a href="#budget">Budget Matching</a>
-            <a href="#travel">Travel-Smart</a>
-            <a href="#faq">FAQ</a>
-          </nav>
-
-          <div className="landing-nav-actions">
-            {authenticated ? (
-              <Link href="/planner" className="nav-cta">
-                Open Planner →
-              </Link>
-            ) : (
-              <>
-                <Link href="/login" className="nav-ghost">
-                  Sign in
-                </Link>
-                <Link href="/login" className="nav-cta">
-                  Plan Your Outing
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
-
       {/* 1. Vibrant Travel-Discovery Hero Section */}
       <section className="landing-hero" aria-label="Hero Section">
         {/* Subtle Ambient Background Decorative Glow Orbs */}

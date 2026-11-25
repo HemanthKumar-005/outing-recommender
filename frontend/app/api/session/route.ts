@@ -12,32 +12,84 @@ function getGatewayUrl(): string {
 
 /**
  * GET /api/session
- * Returns { authenticated: boolean, user_id?: number, email?: string } by reading the nearby_token cookie server-side.
- * Never exposes the raw token or API key to the client.
+ * Returns { authenticated: boolean, user_id?: number | null, email?: string | null, user?: { id, name, email, avatar } | null }
+ * Validates HttpOnly nearby_token cookie server-side, checks expiration, and returns safe user data.
+ * Never exposes the raw token or sensitive secrets to the client.
  */
 export async function GET() {
   const cookieStore = cookies();
   const token = cookieStore.get("nearby_token");
-  const authenticated = Boolean(token && token.value && token.value.trim().length > 0);
+
+  if (!token?.value || !token.value.trim()) {
+    return NextResponse.json({
+      authenticated: false,
+      user_id: null,
+      email: null,
+      user: null,
+    });
+  }
 
   let user_id: number | null = null;
   let email: string | null = null;
+  let name: string | null = null;
 
-  if (authenticated && token?.value) {
-    try {
-      const parts = token.value.split(".");
-      if (parts.length >= 2) {
-        const payloadJson = Buffer.from(parts[1], "base64url").toString("utf-8");
-        const payload = JSON.parse(payloadJson);
-        if (payload.user_id) user_id = Number(payload.user_id);
-        if (payload.email) email = payload.email;
+  try {
+    const parts = token.value.split(".");
+    if (parts.length >= 2) {
+      const payloadJson = Buffer.from(parts[1], "base64url").toString("utf-8");
+      const payload = JSON.parse(payloadJson);
+
+      // Check token expiration
+      if (payload.exp && typeof payload.exp === "number") {
+        const nowSec = Math.floor(Date.now() / 1000);
+        if (nowSec >= payload.exp) {
+          // Token has expired
+          return NextResponse.json({
+            authenticated: false,
+            user_id: null,
+            email: null,
+            user: null,
+            error: "Session expired",
+          });
+        }
       }
-    } catch {
-      // safe fallback if token cannot be parsed
+
+      if (payload.user_id) user_id = Number(payload.user_id);
+      if (payload.email) email = String(payload.email);
+      if (payload.name) name = String(payload.name);
     }
+  } catch {
+    return NextResponse.json({
+      authenticated: false,
+      user_id: null,
+      email: null,
+      user: null,
+    });
   }
 
-  return NextResponse.json({ authenticated, user_id, email });
+  // Derive human-readable display name if not explicitly stored in token
+  let displayName = name;
+  if (!displayName && email) {
+    const localPart = email.split("@")[0] || "User";
+    displayName = localPart
+      .replace(/[._-]+/g, " ")
+      .trim()
+      .split(" ")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(" ");
+  }
+
+  return NextResponse.json({
+    authenticated: true,
+    user_id,
+    email,
+    user: {
+      id: user_id ?? "user",
+      name: displayName || "User",
+      email: email || "",
+      avatar: null,
+    },
+  });
 }
 
 /**
@@ -155,10 +207,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: "Authentication failed: no token issued" }, { status: 500 });
     }
 
-    // Store JWT in HttpOnly; Secure; SameSite=Lax cookie named nearby_token
+    const isHttps = request.nextUrl.protocol === "https:";
+
+    // Store JWT in HttpOnly; Secure (on HTTPS); SameSite=Lax cookie named nearby_token
     cookieStore.set("nearby_token", token, {
       httpOnly: true,
-      secure: true,
+      secure: isHttps,
       sameSite: "lax",
       path: "/",
     });
@@ -167,7 +221,7 @@ export async function POST(request: NextRequest) {
     if (apiKey) {
       cookieStore.set("nearby_session", apiKey, {
         httpOnly: true,
-        secure: true,
+        secure: isHttps,
         sameSite: "lax",
         path: "/",
       });
@@ -184,18 +238,19 @@ export async function POST(request: NextRequest) {
  * Clears the nearby_token and nearby_session cookies.
  * Returns { ok: true }.
  */
-export async function DELETE() {
+export async function DELETE(request: NextRequest) {
   const cookieStore = cookies();
+  const isHttps = request?.nextUrl?.protocol === "https:";
   cookieStore.set("nearby_token", "", {
     httpOnly: true,
-    secure: true,
+    secure: isHttps,
     sameSite: "lax",
     path: "/",
     maxAge: 0,
   });
   cookieStore.set("nearby_session", "", {
     httpOnly: true,
-    secure: true,
+    secure: isHttps,
     sameSite: "lax",
     path: "/",
     maxAge: 0,

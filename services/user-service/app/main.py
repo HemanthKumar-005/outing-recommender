@@ -134,6 +134,7 @@ def _login_user(payload: UserLogin, tenant_id: str):
         "user_id": user["id"],
         "tenant_id": str(tenant_id),
         "email": user["email"],
+        "name": user.get("name"),
         "exp": now + timedelta(hours=24),
         "iat": now,
     }

@@ -3,10 +3,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "../context/AuthContext";
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { refreshSession } = useAuth();
 
   // Mode: "signin" | "register"
   const initialMode = searchParams.get("mode") === "register" ? "register" : "signin";
@@ -126,7 +128,9 @@ export default function LoginPage() {
       }
 
       setSuccessMsg(mode === "register" ? "Account created! Redirecting to planner..." : "Welcome back! Redirecting...");
+      await refreshSession();
       router.push("/planner");
+      router.refresh();
     } catch {
       setError("Unable to connect to the authentication service. Please check your network connection.");
     } finally {

@@ -5,3 +5,4 @@
 @import './styles/animations.css';
 @import './styles/landing.css';
 @import './styles/auth.css';
+@import './components/layout/Header.css';
