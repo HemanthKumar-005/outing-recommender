@@ -241,90 +241,167 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* 1. Hero Section */}
-      <section className="landing-hero">
-        <div className="landing-container landing-hero-grid">
-          <div>
-            <p className="eyebrow">Smart Outing Discovery</p>
+      {/* 1. Vibrant Travel-Discovery Hero Section */}
+      <section className="landing-hero" aria-label="Hero Section">
+        {/* Subtle Ambient Background Decorative Glow Orbs */}
+        <div className="hero-glow hero-glow-teal" aria-hidden="true" />
+        <div className="hero-glow hero-glow-peach" aria-hidden="true" />
+        <div className="hero-glow hero-glow-mint" aria-hidden="true" />
+
+        <div className="landing-hero-container landing-hero-grid">
+          {/* Left Column: Expressive Headline & Discovery CTAs */}
+          <div className="hero-content">
+            <div className="hero-eyebrow-pill">
+              <span className="hero-eyebrow-dot" />
+              <span>SMART OUTING DISCOVERY</span>
+            </div>
+
             <h1 className="landing-hero-title">
-              Find the Perfect Place <br />
-              <em>for Your Next Outing.</em>
+              Find Your Next Favourite Place. <br />
+              <span className="hero-title-highlight">Make Every Outing Special.</span>
             </h1>
+
             <p className="landing-hero-sub">
-              Planning an outing with friends, family, or your partner? Tell us where you&apos;re starting from, where you&apos;d like to explore, and what you enjoy. We&apos;ll help you discover places that match your preferences.
+              Discover beautiful places, explore new experiences and plan memorable outings with the people you love.
             </p>
+
             <div className="landing-hero-actions">
-              <Link href={primaryHref} className="btn-hero-primary" style={{ fontSize: "1.05rem", padding: "13px 26px" }}>
-                Plan Your Outing →
+              <Link href={primaryHref} className="btn-hero-primary" id="hero-plan-btn">
+                <span>Plan Your Outing</span>
+                <span className="btn-hero-arrow" aria-hidden="true">→</span>
               </Link>
-              <a href="#how-it-works" className="btn-hero-secondary">
-                See How It Works
+              <a href="#preview" className="btn-hero-secondary" id="hero-explore-btn">
+                <span className="btn-hero-compass" aria-hidden="true">🧭</span>
+                <span>Explore Destinations</span>
               </a>
             </div>
-            <div className="hero-meta-note">
-              <span>✓ Real road distance &amp; travel times</span>
-              <span>✓ Interactive maps &amp; turn-by-turn routes</span>
-              <span>✓ Direct table booking</span>
+
+            {/* Supporting Feature Labels */}
+            <div className="hero-feature-pills">
+              <div className="hero-feature-item">
+                <span className="hero-feature-icon" aria-hidden="true">✨</span>
+                <span>Discover amazing places.</span>
+              </div>
+              <div className="hero-feature-item">
+                <span className="hero-feature-icon" aria-hidden="true">🏷️</span>
+                <span>Find experiences for every budget.</span>
+              </div>
+              <div className="hero-feature-item">
+                <span className="hero-feature-icon" aria-hidden="true">👥</span>
+                <span>Plan outings with friends and family.</span>
+              </div>
             </div>
           </div>
 
-          {/* Hero Visual Card */}
-          <div className="hero-visual" aria-hidden="true">
-            <div className="hero-card-back">
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", color: "var(--on-paper-muted)" }}>
-                <span>Cubbon Park · Outdoors</span>
-                <span style={{ fontFamily: "var(--font-mono)", color: "var(--accent)", fontWeight: 600 }}>97% Match</span>
-              </div>
-              <div style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "1.1rem", marginTop: 4 }}>
-                Morning Nature Walk
+          {/* Right Column: Visual Composition with Overlapping Photographs & Floating Cards */}
+          <div className="hero-visual-stage" aria-label="Curated Bangalore Destinations Showcase">
+            {/* Animated SVG Route Trail linking destination markers */}
+            <svg
+              className="hero-route-svg"
+              viewBox="0 0 540 480"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <path
+                d="M 175 145 C 240 100, 320 120, 390 155 C 430 180, 420 280, 360 340 C 310 390, 240 370, 205 400"
+                stroke="#087F73"
+                strokeWidth="2.5"
+                strokeDasharray="6 8"
+                className="hero-svg-path"
+              />
+            </svg>
+
+            {/* Image 1: Main Anchor - Lalbagh Botanical Garden (Botanical & Scenic) */}
+            <div className="hero-photo-card hero-photo-main">
+              <img
+                src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=900&q=85"
+                alt="Lalbagh Botanical Garden Glass House and lush landscaped gardens"
+                className="hero-photo-img"
+                loading="eager"
+              />
+              <div className="hero-pin-marker hero-pin-lalbagh">
+                <span className="hero-pin-radar" aria-hidden="true" />
+                <span className="hero-pin-dot">🌿</span>
+                <span className="hero-pin-label">Lalbagh Botanical Garden</span>
               </div>
             </div>
 
-            <div className="hero-card-main">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <span className="eyebrow" style={{ margin: 0 }}>Top Evening Pick</span>
-                <span
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "0.82rem",
-                    fontWeight: 600,
-                    background: "var(--surface-soft)",
-                    color: "var(--accent)",
-                    padding: "4px 10px",
-                    borderRadius: 999,
-                  }}
-                >
-                  95% Match
-                </span>
-              </div>
-              <div style={{ fontFamily: "var(--font-display)", fontStyle: "italic", fontSize: "1.7rem", fontWeight: 500, color: "var(--on-paper-ink)" }}>
-                Toit Brewpub
-              </div>
-              <p style={{ margin: "4px 0 10px", fontSize: "0.86rem", color: "var(--on-paper-muted)" }}>
-                Indiranagar · Craft Brewery · ★ 4.7 / 5
-              </p>
-              <div style={{ fontSize: "0.8rem", color: "var(--on-paper-ink)", background: "var(--surface-soft)", padding: "6px 10px", borderRadius: "6px", marginBottom: "12px", display: "inline-block" }}>
-                📍 5.2 km from Koramangala · ~16 mins driving
-              </div>
-              <div className="reasons" style={{ marginBottom: 14 }}>
-                <span className="reason-chip">Loved by groups</span>
-                <span className="reason-chip">Open until 1 AM</span>
-                <span className="reason-chip">Clear 22°C evening</span>
-              </div>
-              <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-                <span className="btn-secondary" style={{ marginTop: 0 }}>
-                  Reserve table →
-                </span>
-                <span className="btn-tiny">🧭 View route</span>
+            {/* Image 2: Top-Right Overlapping - Toit Brewpub (Evening Dining & Friends) */}
+            <div className="hero-photo-card hero-photo-social">
+              <img
+                src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=85"
+                alt="Toit Brewpub vibrant taproom and dining"
+                className="hero-photo-img"
+                loading="eager"
+              />
+              <div className="hero-pin-marker hero-pin-toit">
+                <span className="hero-pin-radar" aria-hidden="true" />
+                <span className="hero-pin-dot">🍺</span>
+                <span className="hero-pin-label">Toit · Indiranagar</span>
               </div>
             </div>
 
-            <div className="hero-card-badge-float">
-              <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem", opacity: 0.85, textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                Travel-Smart
+            {/* Image 3: Bottom-Right Overlapping - Cubbon Park (Outdoor Nature Walk) */}
+            <div className="hero-photo-card hero-photo-park">
+              <img
+                src="https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=800&q=85"
+                alt="Cubbon Park sunlit tree-lined walking avenue"
+                className="hero-photo-img"
+                loading="eager"
+              />
+              <div className="hero-pin-marker hero-pin-cubbon">
+                <span className="hero-pin-radar" aria-hidden="true" />
+                <span className="hero-pin-dot">🌳</span>
+                <span className="hero-pin-label">Cubbon Park</span>
               </div>
-              <div style={{ fontSize: "0.9rem", fontWeight: 600, marginTop: 4 }}>
-                🗺️ Live road routes &amp; travel times
+            </div>
+
+            {/* Floating Recommendation Card 1: TOP PICK */}
+            <div className="hero-float-card hero-float-card-1">
+              <div className="float-card-badge float-badge-coral">
+                <span>🔥 TOP PICK</span>
+              </div>
+              <div className="float-card-content">
+                <div className="float-card-title">Toit Brewpub</div>
+                <div className="float-card-sub">Great for friends · Food &amp; Entertainment</div>
+                <div className="float-card-footer">
+                  <span className="float-rating">★ 4.7</span>
+                  <span className="float-dot">·</span>
+                  <span className="float-travel">📍 16 mins driving</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Floating Recommendation Card 2: POPULAR DESTINATION */}
+            <div className="hero-float-card hero-float-card-2">
+              <div className="float-card-badge float-badge-teal">
+                <span>🌸 POPULAR DESTINATION</span>
+              </div>
+              <div className="float-card-content">
+                <div className="float-card-title">Lalbagh Botanical Garden</div>
+                <div className="float-card-sub">Nature · Relaxation · Outdoor Experience</div>
+                <div className="float-card-footer">
+                  <span className="float-rating">★ 4.8</span>
+                  <span className="float-dot">·</span>
+                  <span className="float-tag">Scenic Glasshouse &amp; Lake</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Floating Recommendation Card 3: DISCOVER MORE */}
+            <div className="hero-float-card hero-float-card-3">
+              <div className="float-card-badge float-badge-mint">
+                <span>✨ DISCOVER MORE</span>
+              </div>
+              <div className="float-card-content">
+                <div className="float-card-title">Cubbon Park</div>
+                <div className="float-card-sub">Perfect for a peaceful outing.</div>
+                <div className="float-card-footer">
+                  <span className="float-tag">🌳 300+ Acres</span>
+                  <span className="float-dot">·</span>
+                  <span className="float-rating">Free Entry</span>
+                </div>
               </div>
             </div>
           </div>
