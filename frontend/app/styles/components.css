@@ -1170,5 +1170,432 @@ table.eval-table th {
   }
 }
 
+/* =========================================================================
+   Planner Multi-Step Wizard Redesign
+   ========================================================================= */
+
+.wizard-card {
+  position: relative;
+  background: var(--surface);
+  color: var(--on-paper-ink);
+  border-radius: 16px;
+  padding: 26px 24px;
+  border: 1px solid var(--hairline-paper);
+  border-top: 3px solid var(--accent);
+  box-shadow: 0 16px 40px -20px rgba(18, 63, 53, 0.14);
+}
+
+/* Step Progress Indicator */
+.wizard-progress-header {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--hairline-paper);
+}
+
+.wizard-progress-track {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.wizard-progress-line-bg {
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  right: 24px;
+  height: 3px;
+  background: var(--surface-soft);
+  z-index: 1;
+}
+
+.wizard-progress-line-fill {
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent) 0%, #13a89e 100%);
+  z-index: 2;
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.wizard-step-node {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.wizard-step-node:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.wizard-step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: var(--surface);
+  border: 2px solid var(--hairline-paper);
+  color: var(--on-paper-muted);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.25s ease;
+}
+
+.wizard-step-node.active .wizard-step-circle {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+  box-shadow: 0 4px 14px -2px rgba(8, 127, 115, 0.45);
+  transform: scale(1.08);
+}
+
+.wizard-step-node.completed .wizard-step-circle {
+  background: #ddf3e9;
+  color: #087f73;
+  border-color: #087f73;
+}
+
+.wizard-step-label {
+  margin-top: 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--on-paper-muted);
+  letter-spacing: -0.01em;
+  transition: color 0.2s ease;
+}
+
+.wizard-step-node.active .wizard-step-label {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.wizard-step-node.completed .wizard-step-label {
+  color: var(--on-paper-ink);
+}
+
+/* Step Header & Content Body */
+.wizard-step-header {
+  margin-bottom: 18px;
+}
+
+.wizard-step-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.70rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: rgba(8, 127, 115, 0.10);
+  padding: 3px 9px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.wizard-step-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--on-paper-ink);
+  margin: 0 0 4px;
+}
+
+.wizard-step-subtitle {
+  font-size: 0.86rem;
+  color: var(--on-paper-muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Form pane with entrance animation */
+.wizard-step-pane {
+  animation: wizardPaneIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes wizardPaneIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Step Summary Pill (Shows what was chosen in previous steps) */
+.wizard-summary-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(8, 127, 115, 0.05);
+  border: 1px dashed rgba(8, 127, 115, 0.22);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+  font-size: 0.82rem;
+}
+
+.wizard-summary-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--on-paper-ink);
+}
+
+.wizard-summary-edit-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.wizard-summary-edit-btn:hover {
+  color: #06675d;
+}
+
+/* Wizard Navigation Action Buttons */
+.wizard-nav-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid var(--hairline-paper);
+}
+
+.wizard-btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  color: var(--on-paper-ink);
+  border: 1px solid rgba(18, 63, 53, 0.2);
+  padding: 11px 20px;
+  border-radius: 9px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.wizard-btn-back:hover {
+  background: var(--surface-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.wizard-btn-next {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #087F73 0%, #0d9488 100%);
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 9px;
+  font-size: 0.96rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 18px -4px rgba(8, 127, 115, 0.45);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-left: auto;
+}
+
+.wizard-btn-next:hover:not(:disabled) {
+  background: #06675d;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px -4px rgba(8, 127, 115, 0.55);
+}
+
+.wizard-btn-next:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.wizard-btn-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #087F73 0%, #13A89E 100%);
+  color: #ffffff;
+  border: none;
+  padding: 13px 26px;
+  border-radius: 9px;
+  font-size: 1.02rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px -4px rgba(8, 127, 115, 0.5);
+  transition: all 0.2s ease;
+  margin-left: auto;
+}
+
+.wizard-btn-submit:hover:not(:disabled) {
+  background: #06675d;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px -6px rgba(8, 127, 115, 0.65);
+}
+
+.wizard-btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Right Panel Contextual Cards (When in Step 1 or Step 2) */
+.step-context-banner {
+  background: var(--surface);
+  border: 1px solid var(--hairline-paper);
+  border-radius: 14px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px -4px rgba(18, 63, 53, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.step-context-header-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.step-context-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(8, 127, 115, 0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.step-context-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--on-paper-ink);
+  margin: 0;
+}
+
+.step-context-subtitle {
+  font-size: 0.80rem;
+  color: var(--on-paper-muted);
+  margin: 2px 0 0;
+}
+
+.step-context-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.step-context-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--surface-soft);
+  color: var(--on-paper-ink);
+  border: 1px solid var(--hairline-paper);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.step-context-pill.highlight {
+  background: #ddf3e9;
+  color: #087f73;
+  border-color: rgba(8, 127, 115, 0.25);
+}
+
+/* Step 1 Area Suggestions Grid (shown below map in Step 1) */
+.step-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.step-preview-card {
+  background: var(--surface);
+  border: 1px solid var(--hairline-paper);
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.step-preview-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: 0 12px 28px -10px rgba(18, 63, 53, 0.16);
+}
+
+.step-preview-thumb {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.step-preview-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.step-preview-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--on-paper-ink);
+  margin: 0 0 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.step-preview-desc {
+  font-size: 0.74rem;
+  color: var(--on-paper-muted);
+  line-height: 1.35;
+  margin: 0 0 6px;
+}
+
+.step-preview-action {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+
 
 

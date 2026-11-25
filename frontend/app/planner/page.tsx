@@ -151,6 +151,9 @@ export default function PlannerPage() {
   const [calculatingRoute, setCalculatingRoute] = useState<boolean>(false);
   const reqSeqRef = useRef<number>(0);
 
+  // Multi-step Wizard Navigation State
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+
   // Outing preferences
   const [radiusKm, setRadiusKm] = useState<string>("8");
   const [category, setCategory] = useState<string>("");
@@ -349,6 +352,89 @@ export default function PlannerPage() {
     setStartLng(loc.lng);
     setShowStartSuggestions(false);
     setLocationError(null);
+  }
+
+  async function handleGoToStep(targetStep: 1 | 2 | 3) {
+    if (targetStep === currentStep) return;
+    setLocationError(null);
+
+    if (targetStep === 1) {
+      setCurrentStep(1);
+      return;
+    }
+
+    if (targetStep === 2) {
+      if (!destInput.trim()) {
+        setLocationError("Please enter where you want to explore first.");
+        return;
+      }
+      if (!destPlaceName || destPlaceName.toLowerCase() !== destInput.toLowerCase()) {
+        const resolved = await resolveLocation(destInput);
+        if (resolved) {
+          setDestLat(resolved.lat);
+          setDestLng(resolved.lng);
+          setDestPlaceName(resolved.label);
+        }
+      }
+      setCurrentStep(2);
+      return;
+    }
+
+    if (targetStep === 3) {
+      if (!destInput.trim()) {
+        setLocationError("Please enter where you want to explore first.");
+        setCurrentStep(1);
+        return;
+      }
+      if (!startInput.trim()) {
+        setLocationError("Please enter your starting location first.");
+        setCurrentStep(2);
+        return;
+      }
+      if (!startPlaceName || startPlaceName.toLowerCase() !== startInput.toLowerCase()) {
+        const resolved = await resolveLocation(startInput);
+        if (resolved) {
+          setStartLat(resolved.lat);
+          setStartLng(resolved.lng);
+          setStartPlaceName(resolved.label);
+        }
+      }
+      setCurrentStep(3);
+    }
+  }
+
+  async function handleContinueStep1() {
+    setLocationError(null);
+    if (!destInput.trim()) {
+      setLocationError("Please enter where you want to explore.");
+      return;
+    }
+    if (!destPlaceName || destPlaceName.toLowerCase() !== destInput.toLowerCase()) {
+      const resolved = await resolveLocation(destInput);
+      if (resolved) {
+        setDestLat(resolved.lat);
+        setDestLng(resolved.lng);
+        setDestPlaceName(resolved.label);
+      }
+    }
+    setCurrentStep(2);
+  }
+
+  async function handleContinueStep2() {
+    setLocationError(null);
+    if (!startInput.trim()) {
+      setLocationError("Please enter your starting location.");
+      return;
+    }
+    if (!startPlaceName || startPlaceName.toLowerCase() !== startInput.toLowerCase()) {
+      const resolved = await resolveLocation(startInput);
+      if (resolved) {
+        setStartLat(resolved.lat);
+        setStartLng(resolved.lng);
+        setStartPlaceName(resolved.label);
+      }
+    }
+    setCurrentStep(3);
   }
 
   async function resolveLocation(name: string): Promise<{ lat: number; lng: number; label: string } | null> {
@@ -656,6 +742,25 @@ export default function PlannerPage() {
     mode: travelMode,
   }));
 
+  // Popular destination previews for Step 1 discovery state on map
+  const step1PreviewPlaces: MapPlace[] = QUICK_DESTINATIONS.filter(
+    (q) => q.name.toLowerCase() !== destInput.toLowerCase(),
+  ).map((q, idx) => ({
+    id: -(idx + 1),
+    name: q.name,
+    category: "Popular District",
+    lat: q.lat,
+    lng: q.lng,
+    score: 0.95 - idx * 0.03,
+    rating: 4.8,
+    price_range: 2,
+    road_distance_km: null,
+    straight_line_km: undefined,
+    travel_time: "District Hub",
+    image_url: getPlaceImageUrl(q.name, "attraction"),
+    mode: travelMode,
+  }));
+
   const googleTravelMode =
     travelMode === "cycling"
       ? "bicycling"
@@ -730,442 +835,598 @@ export default function PlannerPage() {
 
       {/* Main 2-Column Responsive Dashboard (34% Controls, 66% Map & Results) */}
       <div className="planner-dashboard">
-        {/* Left Column: Guided Planning Form */}
+        {/* Left Column: Multi-Step Guided Planning Wizard */}
         <section className="planner-sidebar">
-          <form className="card fade-in" onSubmit={submit} style={{ margin: 0 }}>
-            {/* Step 1: Destination Location */}
-            <div className="location-search-box" ref={destRef}>
-              <div className="step-indicator-row">
-                <span className="step-badge">Step 1</span>
-                <label htmlFor="dest-input" style={{ margin: 0 }}>
-                  Where do you want to explore?
-                </label>
-              </div>
-              <div className="location-input-row" style={{ marginTop: "6px" }}>
-                <span className="location-input-icon">🎯</span>
-                <input
-                  id="dest-input"
-                  className="location-input-field"
-                  type="text"
-                  value={destInput}
-                  onChange={(e) => {
-                    setDestInput(e.target.value);
-                    setShowDestSuggestions(true);
-                    setLocationError(null);
+          <div className="wizard-card fade-in">
+            {/* Step Progress Indicator Header */}
+            <div className="wizard-progress-header">
+              <div className="wizard-progress-track">
+                <div className="wizard-progress-line-bg" />
+                <div
+                  className="wizard-progress-line-fill"
+                  style={{
+                    width: currentStep === 1 ? "0%" : currentStep === 2 ? "50%" : "100%",
                   }}
-                  onFocus={() => setShowDestSuggestions(true)}
-                  placeholder="Search for a city, area, landmark, or destination..."
-                  autoComplete="off"
-                  required
                 />
-                {destInput && (
-                  <button
-                    type="button"
-                    className="location-clear-btn"
-                    onClick={() => {
-                      setDestInput("");
-                      setDestPlaceName("");
-                    }}
-                    title="Clear destination"
-                  >
-                    ✕
-                  </button>
-                )}
-              </div>
 
-              {showDestSuggestions && destSuggestions.length > 0 && (
-                <div className="location-suggestions-dropdown">
-                  {destSuggestions.map((loc, idx) => (
-                    <div
-                      key={`dest-${loc.name}-${idx}`}
-                      className="location-suggestion-item"
-                      onClick={() => handleSelectDestination(loc)}
-                    >
-                      <span className="location-suggestion-icon">📍</span>
-                      <div className="location-suggestion-text">
-                        <div className="location-suggestion-name">{loc.name}</div>
-                        <div className="location-suggestion-sub">{loc.label}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+                {/* Step 1 Node */}
+                <button
+                  type="button"
+                  className={`wizard-step-node ${currentStep === 1 ? "active" : currentStep > 1 ? "completed" : ""}`}
+                  onClick={() => handleGoToStep(1)}
+                  title="Step 1: Destination"
+                >
+                  <div className="wizard-step-circle">
+                    {currentStep > 1 ? "✓" : "1"}
+                  </div>
+                  <span className="wizard-step-label">Destination</span>
+                </button>
 
-              <div className="location-quick-chips">
-                <span className="location-chips-label">Popular:</span>
-                {QUICK_DESTINATIONS.map((q) => (
-                  <button
-                    key={`qdest-${q.name}`}
-                    type="button"
-                    className={`location-chip-btn ${destInput.toLowerCase() === q.name.toLowerCase() ? "active" : ""}`}
-                    onClick={() => handleSelectDestination(q)}
-                  >
-                    {q.name}
-                  </button>
-                ))}
+                {/* Step 2 Node */}
+                <button
+                  type="button"
+                  className={`wizard-step-node ${currentStep === 2 ? "active" : currentStep > 2 ? "completed" : ""}`}
+                  onClick={() => handleGoToStep(2)}
+                  disabled={!destInput.trim()}
+                  title="Step 2: Starting Point"
+                >
+                  <div className="wizard-step-circle">
+                    {currentStep > 2 ? "✓" : "2"}
+                  </div>
+                  <span className="wizard-step-label">Start Point</span>
+                </button>
+
+                {/* Step 3 Node */}
+                <button
+                  type="button"
+                  className={`wizard-step-node ${currentStep === 3 ? "active" : result ? "completed" : ""}`}
+                  onClick={() => handleGoToStep(3)}
+                  disabled={!destInput.trim() || !startInput.trim()}
+                  title="Step 3: Preferences"
+                >
+                  <div className="wizard-step-circle">
+                    {result ? "✓" : "3"}
+                  </div>
+                  <span className="wizard-step-label">Preferences</span>
+                </button>
               </div>
             </div>
 
-            {/* Step 2: Starting Location */}
-            <div className="location-search-box" ref={startRef} style={{ marginTop: "20px" }}>
-              <div className="step-indicator-row">
-                <span className="step-badge" style={{ background: "rgba(21, 128, 61, 0.1)", color: "#15803d", borderColor: "rgba(21, 128, 61, 0.3)" }}>
-                  Step 2
-                </span>
-                <label htmlFor="start-input" style={{ margin: 0 }}>
-                  Where are you starting from?
-                </label>
+            {/* Error notifications */}
+            {locationError && (
+              <div className="error" style={{ marginBottom: "16px" }}>
+                {locationError}
               </div>
-              <p className="hint" style={{ margin: "2px 0 8px 0" }}>
-                Enter your starting location to calculate distance, travel time, and convenient venues.
-              </p>
-              <div className="location-input-row">
-                <span className="location-input-icon">🏠</span>
-                <input
-                  id="start-input"
-                  className="location-input-field"
-                  type="text"
-                  value={startInput}
-                  onChange={(e) => {
-                    setStartInput(e.target.value);
-                    setShowStartSuggestions(true);
-                    setLocationError(null);
-                  }}
-                  onFocus={() => setShowStartSuggestions(true)}
-                  placeholder="Enter your starting address, area, landmark, or city..."
-                  autoComplete="off"
-                  required
-                />
-                {startInput && (
-                  <button
-                    type="button"
-                    className="location-clear-btn"
-                    onClick={() => {
-                      setStartInput("");
-                      setStartPlaceName("");
-                    }}
-                    title="Clear starting location"
-                  >
-                    ✕
-                  </button>
-                )}
+            )}
+            {error && (
+              <div className="error" style={{ marginBottom: "16px" }}>
+                {error}
               </div>
+            )}
 
-              {showStartSuggestions && startSuggestions.length > 0 && (
-                <div className="location-suggestions-dropdown">
-                  {startSuggestions.map((loc, idx) => (
-                    <div
-                      key={`start-${loc.name}-${idx}`}
-                      className="location-suggestion-item"
-                      onClick={() => handleSelectStart(loc)}
-                    >
-                      <span className="location-suggestion-icon">🏠</span>
-                      <div className="location-suggestion-text">
-                        <div className="location-suggestion-name">{loc.name}</div>
-                        <div className="location-suggestion-sub">{loc.label}</div>
-                      </div>
-                    </div>
-                  ))}
+            {/* STEP 1: WHERE DO YOU WANT TO EXPLORE? */}
+            {currentStep === 1 && (
+              <div className="wizard-step-pane">
+                <div className="wizard-step-header">
+                  <div className="wizard-step-tag">STEP 1 OF 3</div>
+                  <h2 className="wizard-step-title">Where do you want to explore?</h2>
+                  <p className="wizard-step-subtitle">
+                    Search for any city, neighborhood, landmark, or destination area.
+                  </p>
                 </div>
-              )}
 
-              <div className="location-quick-chips">
-                <span className="location-chips-label">Quick start:</span>
-                {QUICK_START_POINTS.map((q) => (
-                  <button
-                    key={`qstart-${q.name}`}
-                    type="button"
-                    className={`location-chip-btn ${startInput.toLowerCase() === q.name.toLowerCase() ? "active" : ""}`}
-                    onClick={() => handleSelectStart(q)}
-                  >
-                    {q.name}
-                  </button>
-                ))}
-              </div>
+                <div className="location-search-box" ref={destRef}>
+                  <div className="location-input-row" style={{ marginTop: "8px" }}>
+                    <span className="location-input-icon">🎯</span>
+                    <input
+                      id="dest-input"
+                      className="location-input-field"
+                      type="text"
+                      value={destInput}
+                      onChange={(e) => {
+                        setDestInput(e.target.value);
+                        setShowDestSuggestions(true);
+                        setLocationError(null);
+                      }}
+                      onFocus={() => setShowDestSuggestions(true)}
+                      placeholder="e.g. Bengaluru, Indiranagar, Cubbon Park..."
+                      autoComplete="off"
+                      required
+                    />
+                    {destInput && (
+                      <button
+                        type="button"
+                        className="location-clear-btn"
+                        onClick={() => {
+                          setDestInput("");
+                          setDestPlaceName("");
+                        }}
+                        title="Clear destination"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
 
-              {/* Redesigned 4-Mode Travel Mode Selector */}
-              <div style={{ marginTop: "16px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <span style={{ fontSize: "0.74rem", fontWeight: 700, color: "var(--on-paper-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                    Travel Mode:
-                  </span>
-                  {calculatingRoute && (
-                    <span className="recalculating-pill">
-                      ⟳ Recalculating...
-                    </span>
+                  {showDestSuggestions && destSuggestions.length > 0 && (
+                    <div className="location-suggestions-dropdown">
+                      {destSuggestions.map((loc, idx) => (
+                        <div
+                          key={`dest-${loc.name}-${idx}`}
+                          className="location-suggestion-item"
+                          onClick={() => handleSelectDestination(loc)}
+                        >
+                          <span className="location-suggestion-icon">📍</span>
+                          <div className="location-suggestion-text">
+                            <div className="location-suggestion-name">{loc.name}</div>
+                            <div className="location-suggestion-sub">{loc.label}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="location-quick-chips" style={{ marginTop: "14px" }}>
+                    <span className="location-chips-label">Popular Destinations:</span>
+                    {QUICK_DESTINATIONS.map((q) => (
+                      <button
+                        key={`qdest-${q.name}`}
+                        type="button"
+                        className={`location-chip-btn ${destInput.toLowerCase() === q.name.toLowerCase() ? "active" : ""}`}
+                        onClick={() => handleSelectDestination(q)}
+                      >
+                        {q.name}
+                      </button>
+                    ))}
+                  </div>
+
+                  {destPlaceName && (
+                    <div className="location-resolved-badge" style={{ marginTop: "14px" }}>
+                      <span>Selected:</span>
+                      <strong>{destPlaceName}</strong>
+                    </div>
                   )}
                 </div>
 
-                <div className="travel-mode-grid" role="radiogroup" aria-label="Travel mode selection">
+                <div className="wizard-nav-actions">
+                  <div />
                   <button
                     type="button"
-                    role="radio"
-                    aria-checked={travelMode === "driving"}
-                    className={`travel-mode-card-btn ${travelMode === "driving" ? "active" : ""}`}
-                    onClick={() => handleTravelModeChange("driving")}
+                    className="wizard-btn-next"
+                    onClick={handleContinueStep1}
+                    disabled={!destInput.trim()}
                   >
-                    <div className="travel-mode-icon">🚗</div>
-                    <div className="travel-mode-label-group">
-                      <span className="travel-mode-name">Car</span>
-                      <span className="travel-mode-desc">Driving road route</span>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    role="radio"
-                    aria-checked={travelMode === "transit"}
-                    className={`travel-mode-card-btn ${travelMode === "transit" ? "active" : ""}`}
-                    onClick={() => handleTravelModeChange("transit")}
-                  >
-                    <div className="travel-mode-icon">🚌</div>
-                    <div className="travel-mode-label-group">
-                      <span className="travel-mode-name">Bus</span>
-                      <span className="travel-mode-desc">Public transport</span>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    role="radio"
-                    aria-checked={travelMode === "cycling"}
-                    className={`travel-mode-card-btn ${travelMode === "cycling" ? "active" : ""}`}
-                    onClick={() => handleTravelModeChange("cycling")}
-                  >
-                    <div className="travel-mode-icon">🚲</div>
-                    <div className="travel-mode-label-group">
-                      <span className="travel-mode-name">Bicycle</span>
-                      <span className="travel-mode-desc">Cycling paths</span>
-                    </div>
-                  </button>
-
-                  <button
-                    type="button"
-                    role="radio"
-                    aria-checked={travelMode === "walking"}
-                    className={`travel-mode-card-btn ${travelMode === "walking" ? "active" : ""}`}
-                    onClick={() => handleTravelModeChange("walking")}
-                  >
-                    <div className="travel-mode-icon">🚶</div>
-                    <div className="travel-mode-label-group">
-                      <span className="travel-mode-name">Walking</span>
-                      <span className="travel-mode-desc">On foot walkways</span>
-                    </div>
+                    <span>Continue to Starting Point</span>
+                    <span aria-hidden="true">→</span>
                   </button>
                 </div>
+              </div>
+            )}
 
-                {travelMode === "transit" && (
-                  <div className="transit-unavailable-banner fade-in">
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: 700 }}>
-                      <span>⚠️</span>
-                      <span>Live GTFS schedule feeds not configured</span>
-                    </div>
-                    <div>
-                      Public transport timetable routing is currently unavailable for this corridor.
-                    </div>
-                    <a
-                      href={`https://www.google.com/maps/dir/?api=1&origin=${startLat},${startLng}&destination=${destLat},${destLng}&travelmode=transit`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Open live bus &amp; metro routes in Google Maps Transit →
-                    </a>
+            {/* STEP 2: WHERE ARE YOU STARTING FROM? */}
+            {currentStep === 2 && (
+              <div className="wizard-step-pane">
+                <div className="wizard-step-header">
+                  <div className="wizard-step-tag">STEP 2 OF 3</div>
+                  <h2 className="wizard-step-title">Where are you starting from?</h2>
+                  <p className="wizard-step-subtitle">
+                    Enter where you&apos;re departing from to calculate distance, travel times, and convenient venues.
+                  </p>
+                </div>
+
+                {/* Summary of Destination selected in Step 1 */}
+                <div className="wizard-summary-bar">
+                  <div className="wizard-summary-content">
+                    <span>🎯 Exploring:</span>
+                    <strong>{destPlaceName.split(",")[0]}</strong>
                   </div>
-                )}
-              </div>
-
-              {/* Journey Preview Summary */}
-              {routeSummary && (
-                <div className="location-resolved-badge" style={{ marginTop: "14px", background: "rgba(15, 118, 110, 0.08)" }}>
-                  <span>📍 Journey:</span>
-                  <strong>{routeSummary}</strong>
-                  {calculatingRoute && <span style={{ opacity: 0.6 }}>(updating...)</span>}
-                </div>
-              )}
-
-              {locationError && <div className="error">{locationError}</div>}
-            </div>
-
-            {/* Step 3: Outing Preferences */}
-            <div style={{ marginTop: "20px" }}>
-              <div className="step-indicator-row">
-                <span className="step-badge">Step 3</span>
-                <span style={{ fontSize: "0.74rem", fontWeight: 700, textTransform: "uppercase", color: "var(--on-paper-muted)" }}>
-                  Outing Preferences
-                </span>
-              </div>
-
-              <div className="grid" style={{ marginTop: "10px" }}>
-                <div>
-                  <label htmlFor="outing-type">Outing Type</label>
-                  <select
-                    id="outing-type"
-                    value={outingType}
-                    onChange={(e) => setOutingType(e.target.value)}
+                  <button
+                    type="button"
+                    className="wizard-summary-edit-btn"
+                    onClick={() => setCurrentStep(1)}
                   >
-                    {OUTING_TYPES.map((t) => (
-                      <option key={t.value} value={t.value}>
-                        {t.label}
+                    Change
+                  </button>
+                </div>
+
+                <div className="location-search-box" ref={startRef}>
+                  <div className="location-input-row" style={{ marginTop: "4px" }}>
+                    <span className="location-input-icon">🏠</span>
+                    <input
+                      id="start-input"
+                      className="location-input-field"
+                      type="text"
+                      value={startInput}
+                      onChange={(e) => {
+                        setStartInput(e.target.value);
+                        setShowStartSuggestions(true);
+                        setLocationError(null);
+                      }}
+                      onFocus={() => setShowStartSuggestions(true)}
+                      placeholder="e.g. Electronic City, Koramangala..."
+                      autoComplete="off"
+                      required
+                    />
+                    {startInput && (
+                      <button
+                        type="button"
+                        className="location-clear-btn"
+                        onClick={() => {
+                          setStartInput("");
+                          setStartPlaceName("");
+                        }}
+                        title="Clear starting location"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+
+                  {showStartSuggestions && startSuggestions.length > 0 && (
+                    <div className="location-suggestions-dropdown">
+                      {startSuggestions.map((loc, idx) => (
+                        <div
+                          key={`start-${loc.name}-${idx}`}
+                          className="location-suggestion-item"
+                          onClick={() => handleSelectStart(loc)}
+                        >
+                          <span className="location-suggestion-icon">🏠</span>
+                          <div className="location-suggestion-text">
+                            <div className="location-suggestion-name">{loc.name}</div>
+                            <div className="location-suggestion-sub">{loc.label}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="location-quick-chips" style={{ marginTop: "12px" }}>
+                    <span className="location-chips-label">Quick start:</span>
+                    {QUICK_START_POINTS.map((q) => (
+                      <button
+                        key={`qstart-${q.name}`}
+                        type="button"
+                        className={`location-chip-btn ${startInput.toLowerCase() === q.name.toLowerCase() ? "active" : ""}`}
+                        onClick={() => handleSelectStart(q)}
+                      >
+                        {q.name}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Travel Mode Selector */}
+                  <div style={{ marginTop: "16px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "0.74rem", fontWeight: 700, color: "var(--on-paper-muted)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                        Travel Mode:
+                      </span>
+                      {calculatingRoute && (
+                        <span className="recalculating-pill">
+                          ⟳ Recalculating...
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="travel-mode-grid" role="radiogroup" aria-label="Travel mode selection">
+                      <button
+                        type="button"
+                        role="radio"
+                        aria-checked={travelMode === "driving"}
+                        className={`travel-mode-card-btn ${travelMode === "driving" ? "active" : ""}`}
+                        onClick={() => handleTravelModeChange("driving")}
+                      >
+                        <div className="travel-mode-icon">🚗</div>
+                        <div className="travel-mode-label-group">
+                          <span className="travel-mode-name">Car</span>
+                          <span className="travel-mode-desc">Driving road route</span>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        role="radio"
+                        aria-checked={travelMode === "transit"}
+                        className={`travel-mode-card-btn ${travelMode === "transit" ? "active" : ""}`}
+                        onClick={() => handleTravelModeChange("transit")}
+                      >
+                        <div className="travel-mode-icon">🚌</div>
+                        <div className="travel-mode-label-group">
+                          <span className="travel-mode-name">Bus</span>
+                          <span className="travel-mode-desc">Public transport</span>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        role="radio"
+                        aria-checked={travelMode === "cycling"}
+                        className={`travel-mode-card-btn ${travelMode === "cycling" ? "active" : ""}`}
+                        onClick={() => handleTravelModeChange("cycling")}
+                      >
+                        <div className="travel-mode-icon">🚲</div>
+                        <div className="travel-mode-label-group">
+                          <span className="travel-mode-name">Bicycle</span>
+                          <span className="travel-mode-desc">Cycling paths</span>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        role="radio"
+                        aria-checked={travelMode === "walking"}
+                        className={`travel-mode-card-btn ${travelMode === "walking" ? "active" : ""}`}
+                        onClick={() => handleTravelModeChange("walking")}
+                      >
+                        <div className="travel-mode-icon">🚶</div>
+                        <div className="travel-mode-label-group">
+                          <span className="travel-mode-name">Walking</span>
+                          <span className="travel-mode-desc">On foot walkways</span>
+                        </div>
+                      </button>
+                    </div>
+
+                    {travelMode === "transit" && (
+                      <div className="transit-unavailable-banner fade-in">
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px", fontWeight: 700 }}>
+                          <span>⚠️</span>
+                          <span>Live GTFS schedule feeds not configured</span>
+                        </div>
+                        <div>
+                          Public transport timetable routing is currently unavailable for this corridor.
+                        </div>
+                        <a
+                          href={`https://www.google.com/maps/dir/?api=1&origin=${startLat},${startLng}&destination=${destLat},${destLng}&travelmode=transit`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Open live bus &amp; metro routes in Google Maps Transit →
+                        </a>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Route Journey preview summary */}
+                  {routeSummary && (
+                    <div className="location-resolved-badge" style={{ marginTop: "14px", background: "rgba(15, 118, 110, 0.08)" }}>
+                      <span>📍 Journey:</span>
+                      <strong>{routeSummary}</strong>
+                      {calculatingRoute && <span style={{ opacity: 0.6 }}>(updating...)</span>}
+                    </div>
+                  )}
+                </div>
+
+                <div className="wizard-nav-actions">
+                  <button
+                    type="button"
+                    className="wizard-btn-back"
+                    onClick={() => setCurrentStep(1)}
+                  >
+                    <span>← Back</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="wizard-btn-next"
+                    onClick={handleContinueStep2}
+                    disabled={!startInput.trim()}
+                  >
+                    <span>Continue to Preferences</span>
+                    <span aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 3: OUTING PREFERENCES & DISCOVER */}
+            {currentStep === 3 && (
+              <form onSubmit={submit} className="wizard-step-pane">
+                <div className="wizard-step-header">
+                  <div className="wizard-step-tag">STEP 3 OF 3</div>
+                  <h2 className="wizard-step-title">Outing Preferences</h2>
+                  <p className="wizard-step-subtitle">
+                    Customize your vibe, search radius, and categories to find top venues.
+                  </p>
+                </div>
+
+                {/* Summaries of Step 1 and 2 */}
+                <div className="wizard-summary-bar">
+                  <div className="wizard-summary-content">
+                    <span>🏠 {startPlaceName.split(",")[0]}</span>
+                    <span>→</span>
+                    <span>🎯 {destPlaceName.split(",")[0]}</span>
+                    {routeSummary && <span style={{ color: "var(--accent)", fontWeight: 700 }}>({routeSummary.split("·")[0].trim()})</span>}
+                  </div>
+                  <button
+                    type="button"
+                    className="wizard-summary-edit-btn"
+                    onClick={() => setCurrentStep(2)}
+                  >
+                    Edit Route
+                  </button>
+                </div>
+
+                <div className="grid" style={{ marginTop: "10px" }}>
+                  <div>
+                    <label htmlFor="outing-type">Outing Type</label>
+                    <select
+                      id="outing-type"
+                      value={outingType}
+                      onChange={(e) => setOutingType(e.target.value)}
+                    >
+                      {OUTING_TYPES.map((t) => (
+                        <option key={t.value} value={t.value}>
+                          {t.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="radius">
+                      Search Radius
+                      <span className="label-hint">({radiusKm} km)</span>
+                    </label>
+                    <select
+                      id="radius"
+                      value={radiusKm}
+                      onChange={(e) => setRadiusKm(e.target.value)}
+                    >
+                      <option value="3">Within 3 km (Walking)</option>
+                      <option value="5">Within 5 km (Short Drive)</option>
+                      <option value="8">Within 8 km (City District)</option>
+                      <option value="15">Within 15 km (Across Town)</option>
+                      <option value="25">Within 25 km (Greater Area)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: "12px" }}>
+                  <label htmlFor="category">Category (Optional)</label>
+                  <select
+                    id="category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                  >
+                    {CATEGORIES.map((c) => (
+                      <option key={c.value} value={c.value}>
+                        {c.label}
                       </option>
                     ))}
                   </select>
                 </div>
 
-                <div>
-                  <label htmlFor="radius">
-                    Search Radius
-                    <span className="label-hint">({radiusKm} km)</span>
-                  </label>
-                  <select
-                    id="radius"
-                    value={radiusKm}
-                    onChange={(e) => setRadiusKm(e.target.value)}
-                  >
-                    <option value="3">Within 3 km (Walking)</option>
-                    <option value="5">Within 5 km (Short Drive)</option>
-                    <option value="8">Within 8 km (City District)</option>
-                    <option value="15">Within 15 km (Across Town)</option>
-                    <option value="25">Within 25 km (Greater Area)</option>
-                  </select>
-                </div>
-              </div>
-
-              <div style={{ marginTop: "12px" }}>
-                <label htmlFor="category">Category (Optional)</label>
-                <select
-                  id="category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  {CATEGORIES.map((c) => (
-                    <option key={c.value} value={c.value}>
-                      {c.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Group Planning Feature */}
-              <div className="toggle-row">
-                <label className="checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={groupMode}
-                    onChange={(e) => setGroupMode(e.target.checked)}
-                  />
-                  Planning for a group of friends or family?
-                </label>
-              </div>
-
-              {groupMode && (
-                <div className="group-planning-panel">
-                  <div>
-                    <label htmlFor="group-members">
-                      Group Member IDs
-                      <span className="label-hint">(Separate with commas)</span>
-                    </label>
+                {/* Group Planning Feature */}
+                <div className="toggle-row">
+                  <label className="checkbox-label">
                     <input
-                      id="group-members"
-                      value={extraUserIds}
-                      onChange={(e) => setExtraUserIds(e.target.value)}
-                      placeholder="e.g. 2, 3"
+                      type="checkbox"
+                      checked={groupMode}
+                      onChange={(e) => setGroupMode(e.target.checked)}
                     />
-                    <p className="hint" style={{ marginTop: "4px" }}>
-                      We&apos;ll combine everyone&apos;s taste to prevent vetoes.
-                    </p>
-                  </div>
-
-                  <div style={{ marginTop: "12px" }}>
-                    <label htmlFor="aggregation-method">How should we balance everyone&apos;s preferences?</label>
-                    <select
-                      id="aggregation-method"
-                      value={aggregation}
-                      onChange={(e) => setAggregation(e.target.value)}
-                    >
-                      {AGGREGATION_METHODS.map((m) => (
-                        <option key={m.value} value={m.value}>
-                          {m.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                    Planning for a group of friends or family?
+                  </label>
                 </div>
-              )}
-            </div>
 
-            {/* Step 4: Collapsible Advanced Preferences */}
-            <div className="toggle-row">
-              <button
-                type="button"
-                className="btn-secondary"
-                style={{ width: "100%", justifyContent: "center", display: "flex", alignItems: "center", gap: 6 }}
-                onClick={() => setShowAdvanced((s) => !s)}
-              >
-                <span>{showAdvanced ? "▲ Hide" : "▼ Show"} fine-tuning &amp; variety controls</span>
-              </button>
-            </div>
+                {groupMode && (
+                  <div className="group-planning-panel">
+                    <div>
+                      <label htmlFor="group-members">
+                        Group Member IDs
+                        <span className="label-hint">(Separate with commas)</span>
+                      </label>
+                      <input
+                        id="group-members"
+                        value={extraUserIds}
+                        onChange={(e) => setExtraUserIds(e.target.value)}
+                        placeholder="e.g. 2, 3"
+                      />
+                      <p className="hint" style={{ marginTop: "4px" }}>
+                        We&apos;ll combine everyone&apos;s taste to prevent vetoes.
+                      </p>
+                    </div>
 
-            {showAdvanced && (
-              <div className="advanced-panel">
-                <label>
-                  Variety &amp; Surprise ({Math.round(diversity * 100)}% exploration)
-                </label>
-                <input
-                  type="range"
-                  min={0}
-                  max={1}
-                  step={0.05}
-                  value={diversity}
-                  onChange={(e) => setDiversity(Number(e.target.value))}
-                />
-                <p className="hint">
-                  0% = Safest top picks; 100% = Maximum variety across categories and hidden gems.
-                </p>
+                    <div style={{ marginTop: "12px" }}>
+                      <label htmlFor="aggregation-method">How should we balance everyone&apos;s preferences?</label>
+                      <select
+                        id="aggregation-method"
+                        value={aggregation}
+                        onChange={(e) => setAggregation(e.target.value)}
+                      >
+                        {AGGREGATION_METHODS.map((m) => (
+                          <option key={m.value} value={m.value}>
+                            {m.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
 
-                <p className="hint" style={{ marginTop: 14, fontWeight: 600 }}>
-                  Adjust factor importance (optional):
-                </p>
-                {WEIGHT_KEYS.map((key) => (
-                  <div key={key} className="slider-row">
-                    <label>{WEIGHT_LABELS[key]}</label>
+                {/* Fine-Tuning & Variety Controls */}
+                <div className="toggle-row">
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    style={{ width: "100%", justifyContent: "center", display: "flex", alignItems: "center", gap: 6 }}
+                    onClick={() => setShowAdvanced((s) => !s)}
+                  >
+                    <span>{showAdvanced ? "▲ Hide" : "▼ Show"} fine-tuning &amp; variety controls</span>
+                  </button>
+                </div>
+
+                {showAdvanced && (
+                  <div className="advanced-panel">
+                    <label>
+                      Variety &amp; Surprise ({Math.round(diversity * 100)}% exploration)
+                    </label>
                     <input
                       type="range"
                       min={0}
                       max={1}
                       step={0.05}
-                      value={weightOverrides?.[key] ?? ""}
-                      onChange={(e) => updateWeight(key, Number(e.target.value))}
+                      value={diversity}
+                      onChange={(e) => setDiversity(Number(e.target.value))}
                     />
+                    <p className="hint">
+                      0% = Safest top picks; 100% = Maximum variety across categories and hidden gems.
+                    </p>
+
+                    <p className="hint" style={{ marginTop: 14, fontWeight: 600 }}>
+                      Adjust factor importance (optional):
+                    </p>
+                    {WEIGHT_KEYS.map((key) => (
+                      <div key={key} className="slider-row">
+                        <label>{WEIGHT_LABELS[key]}</label>
+                        <input
+                          type="range"
+                          min={0}
+                          max={1}
+                          step={0.05}
+                          value={weightOverrides?.[key] ?? ""}
+                          onChange={(e) => updateWeight(key, Number(e.target.value))}
+                        />
+                      </div>
+                    ))}
+                    {weightOverrides && (
+                      <button
+                        type="button"
+                        className="btn-secondary"
+                        style={{ marginTop: 10 }}
+                        onClick={() => setWeightOverrides(null)}
+                      >
+                        Reset weights to defaults
+                      </button>
+                    )}
                   </div>
-                ))}
-                {weightOverrides && (
+                )}
+
+                <div className="wizard-nav-actions">
                   <button
                     type="button"
-                    className="btn-secondary"
-                    style={{ marginTop: 10 }}
-                    onClick={() => setWeightOverrides(null)}
+                    className="wizard-btn-back"
+                    onClick={() => setCurrentStep(2)}
                   >
-                    Reset weights to defaults
+                    <span>← Back</span>
                   </button>
-                )}
-              </div>
+                  <button
+                    type="submit"
+                    className="wizard-btn-submit"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <span>Calculating routes &amp; places...</span>
+                    ) : (
+                      <>
+                        <span>{result ? "Update Places →" : "Find Places for Me →"}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
             )}
-
-            {/* Step 5: Submit Action */}
-            <button
-              type="submit"
-              className="btn-primary"
-              style={{ width: "100%", fontSize: "1.05rem", padding: "14px 20px", marginTop: "22px" }}
-              disabled={loading}
-            >
-              {loading ? "Calculating routes & finding places..." : "Find Places for Me →"}
-            </button>
-
-            {error && <div className="error">{error}</div>}
-          </form>
+          </div>
         </section>
 
-        {/* Right Column: Prominent Map & Recommendation Cards */}
+        {/* Right Column: Prominent Interactive Map & Adaptable Results Area */}
         <section className="planner-results-area">
           {isOffline && result && (
             <div
@@ -1205,109 +1466,263 @@ export default function PlannerPage() {
             </div>
           )}
 
-          {/* Initial Empty State (before search) */}
-          {!loading && !result && (
-            <div className="empty-state-card fade-in">
-              <div className="empty-state-icon">🧭</div>
-              <h2 className="empty-state-title">Where are we going today?</h2>
-              <p className="empty-state-desc">
-                Enter your starting location and target destination on the left, choose your preferred travel mode, and click{" "}
-                <strong>&ldquo;Find Places for Me&rdquo;</strong> to see personalized places with live mode-specific routes, maps, photos, and instant reservations.
-              </p>
-              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center" }}>
-                <button
-                  type="button"
-                  className="location-chip-btn"
-                  onClick={() => {
-                    handleSelectStart(QUICK_START_POINTS[0]);
-                    handleSelectDestination(QUICK_DESTINATIONS[0]);
-                  }}
-                >
-                  Try Electronic City → Bengaluru Center
-                </button>
-                <button
-                  type="button"
-                  className="location-chip-btn"
-                  onClick={() => {
-                    handleSelectStart(QUICK_START_POINTS[2]);
-                    handleSelectDestination(QUICK_DESTINATIONS[1]);
-                  }}
-                >
-                  Try Koramangala → Indiranagar
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Results State */}
-          {!loading && result && (
+          {/* Non-Loading Adaptive Right-Side View */}
+          {!loading && (
             <div className="results-card fade-in">
-              {/* Route Summary Banner */}
-              <div className="route-summary-box">
-                <div>
-                  <div className="route-summary-title">Travel Plan · {travelMode === "cycling" ? "Bicycle" : travelMode === "walking" ? "Walking" : travelMode === "transit" ? "Public Transit" : "Driving"}</div>
-                  <div className="route-summary-detail">
-                    <span>🏠 {startPlaceName.split(",")[0]}</span>
-                    <span>→</span>
-                    <span>🎯 {destPlaceName.split(",")[0]}</span>
-                    {routeSummary && <span className="route-summary-pill">{routeSummary}</span>}
+              {/* STEP 1: Contextual Header Banner */}
+              {currentStep === 1 && (
+                <div className="step-context-banner fade-in">
+                  <div className="step-context-header-group">
+                    <div className="step-context-icon">🎯</div>
+                    <div>
+                      <h3 className="step-context-title">Target Area: {destPlaceName.split(",")[0]}</h3>
+                      <p className="step-context-subtitle">Centering map on your destination to explore nearby attractions &amp; districts</p>
+                    </div>
                   </div>
-                </div>
-
-                <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                  <button
-                    type="button"
-                    className="btn-secondary"
-                    style={{ margin: 0, padding: "7px 14px", fontSize: "0.8rem" }}
-                    onClick={() => setShowMap((prev) => !prev)}
-                  >
-                    {showMap ? "✕ Hide Map" : "🗺️ Show Map"}
-                  </button>
-                  <span style={{ fontSize: "0.82rem", color: "var(--on-paper-muted)" }}>
-                    {activeRecs.length} top places
-                  </span>
-                </div>
-              </div>
-
-              {/* Prominent Interactive Map */}
-              {showMap && mapPlaces.length > 0 && (
-                <div style={{ marginBottom: "26px" }}>
-                  <RecommendationMap
-                    startLocation={{ name: startPlaceName, lat: startLat, lng: startLng }}
-                    destinationLocation={{ name: destPlaceName, lat: destLat, lng: destLng }}
-                    places={mapPlaces}
-                    selectedPlaceId={selectedPlaceId}
-                    travelMode={travelMode}
-                    activeRouteGeometry={activeRouteGeometry}
-                    routeStats={routeStats}
-                    onSelectPlace={selectPlaceAndRoute}
-                  />
+                  <div className="step-context-badges">
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      style={{ margin: 0, padding: "6px 12px", fontSize: "0.8rem" }}
+                      onClick={() => setShowMap((prev) => !prev)}
+                    >
+                      {showMap ? "✕ Hide Map" : "🗺️ Show Map"}
+                    </button>
+                    <span className="step-context-pill highlight">📍 Step 1: Destination</span>
+                  </div>
                 </div>
               )}
 
-              {/* Context Banner */}
-              <div className="context-banner" style={{ marginBottom: "18px" }}>
-                <div className="context-line">
-                  <span className="context-badge">
-                    🌤️ {result.context.weather?.temp_c}°C · {result.context.weather?.condition}
-                  </span>
-                  <span>
-                    {result.context.time_of_day} · {result.context.day_of_week}
-                  </span>
-                  {result.group_user_ids && (
+              {/* STEP 2: Contextual Route Preview Banner */}
+              {currentStep === 2 && (
+                <div className="route-summary-box fade-in">
+                  <div>
+                    <div className="route-summary-title">
+                      Travel Corridor · {travelMode === "cycling" ? "Bicycle" : travelMode === "walking" ? "Walking" : travelMode === "transit" ? "Public Transit" : "Driving"}
+                    </div>
+                    <div className="route-summary-detail">
+                      <span>🏠 {startPlaceName.split(",")[0]}</span>
+                      <span>→</span>
+                      <span>🎯 {destPlaceName.split(",")[0]}</span>
+                      {routeSummary && <span className="route-summary-pill">{routeSummary}</span>}
+                      {calculatingRoute && <span className="recalculating-pill">⟳ Calculating route...</span>}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      style={{ margin: 0, padding: "6px 12px", fontSize: "0.8rem" }}
+                      onClick={() => setShowMap((prev) => !prev)}
+                    >
+                      {showMap ? "✕ Hide Map" : "🗺️ Show Map"}
+                    </button>
+                    <span className="step-context-pill highlight">📍 Step 2: Route Preview</span>
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3: Route & Preferences Banner */}
+              {currentStep === 3 && (
+                <div className="route-summary-box fade-in">
+                  <div>
+                    <div className="route-summary-title">
+                      {result ? "Confirmed Travel Plan" : "Travel Route"} · {travelMode === "cycling" ? "Bicycle" : travelMode === "walking" ? "Walking" : travelMode === "transit" ? "Public Transit" : "Driving"}
+                    </div>
+                    <div className="route-summary-detail">
+                      <span>🏠 {startPlaceName.split(",")[0]}</span>
+                      <span>→</span>
+                      <span>🎯 {destPlaceName.split(",")[0]}</span>
+                      {routeSummary && <span className="route-summary-pill">{routeSummary}</span>}
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      style={{ margin: 0, padding: "6px 12px", fontSize: "0.8rem" }}
+                      onClick={() => setShowMap((prev) => !prev)}
+                    >
+                      {showMap ? "✕ Hide Map" : "🗺️ Show Map"}
+                    </button>
+                    {activeRecs.length > 0 && (
+                      <span style={{ fontSize: "0.82rem", color: "var(--on-paper-muted)" }}>
+                        {activeRecs.length} top places
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* ALWAYS-VISIBLE MAP CONTAINER */}
+              {showMap && (
+                <div style={{ marginBottom: "24px" }}>
+                  {currentStep === 1 ? (
+                    <RecommendationMap
+                      startLocation={null}
+                      destinationLocation={{ name: destPlaceName, lat: destLat, lng: destLng }}
+                      places={activeRecs.length > 0 ? mapPlaces : step1PreviewPlaces}
+                      selectedPlaceId={selectedPlaceId}
+                      travelMode={travelMode}
+                      activeRouteGeometry={null}
+                      routeStats={null}
+                      onSelectPlace={(id) => {
+                        if (id < 0) {
+                          const previewIdx = -(id + 1);
+                          const found = QUICK_DESTINATIONS.filter(q => q.name.toLowerCase() !== destInput.toLowerCase())[previewIdx];
+                          if (found) handleSelectDestination(found);
+                        } else {
+                          selectPlaceAndRoute(id);
+                        }
+                      }}
+                    />
+                  ) : currentStep === 2 ? (
+                    <RecommendationMap
+                      startLocation={{ name: startPlaceName, lat: startLat, lng: startLng }}
+                      destinationLocation={{ name: destPlaceName, lat: destLat, lng: destLng }}
+                      places={activeRecs.length > 0 ? mapPlaces : []}
+                      selectedPlaceId={selectedPlaceId}
+                      travelMode={travelMode}
+                      activeRouteGeometry={activeRouteGeometry}
+                      routeStats={routeStats}
+                      onSelectPlace={selectPlaceAndRoute}
+                    />
+                  ) : (
+                    <RecommendationMap
+                      startLocation={{ name: startPlaceName, lat: startLat, lng: startLng }}
+                      destinationLocation={{ name: destPlaceName, lat: destLat, lng: destLng }}
+                      places={mapPlaces}
+                      selectedPlaceId={selectedPlaceId}
+                      travelMode={travelMode}
+                      activeRouteGeometry={activeRouteGeometry}
+                      routeStats={routeStats}
+                      onSelectPlace={selectPlaceAndRoute}
+                    />
+                  )}
+                </div>
+              )}
+
+              {/* STEP 1 Contextual Content Below Map: Popular Districts Grid */}
+              {currentStep === 1 && activeRecs.length === 0 && (
+                <div className="fade-in" style={{ marginTop: "12px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                    <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "var(--on-paper-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                      Popular Districts to Explore
+                    </span>
+                    <span style={{ fontSize: "0.78rem", color: "var(--accent)", fontWeight: 600 }}>
+                      Click any district to explore
+                    </span>
+                  </div>
+                  <div className="step-preview-grid">
+                    {QUICK_DESTINATIONS.slice(0, 4).map((d) => (
+                      <div
+                        key={d.name}
+                        className="step-preview-card"
+                        onClick={() => handleSelectDestination(d)}
+                      >
+                        <img
+                          src={getPlaceImageUrl(d.name, "attraction")}
+                          alt={d.name}
+                          className="step-preview-thumb"
+                        />
+                        <div className="step-preview-details">
+                          <div className="step-preview-title">{d.name}</div>
+                          <div className="step-preview-desc">{d.label}</div>
+                          <div className="step-preview-action">Select destination →</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 2 Contextual Content Below Map: Travel Route Advice */}
+              {currentStep === 2 && activeRecs.length === 0 && (
+                <div className="step-context-banner fade-in" style={{ marginTop: "10px", display: "block" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "8px" }}>
+                    <span style={{ fontSize: "1.2rem" }}>
+                      {travelMode === "driving" ? "🚗" : travelMode === "transit" ? "🚌" : travelMode === "cycling" ? "🚲" : "🚶"}
+                    </span>
+                    <strong style={{ fontSize: "0.95rem", color: "var(--on-paper-ink)" }}>
+                      {travelMode === "driving"
+                        ? "Road Network Route Active"
+                        : travelMode === "transit"
+                        ? "Public Transit Guidance"
+                        : travelMode === "cycling"
+                        ? "Bicycle Trail Guidance"
+                        : "Walkway Route Guidance"}
+                    </strong>
+                  </div>
+                  <p style={{ margin: 0, fontSize: "0.86rem", color: "var(--on-paper-muted)", lineHeight: 1.55 }}>
+                    {travelMode === "driving"
+                      ? "Estimated travel duration is computed using actual road geometry and arterial highway speeds via OSRM routing."
+                      : travelMode === "transit"
+                      ? "Public transport corridors link primary bus stations and metro interchanges across the city district."
+                      : travelMode === "cycling"
+                      ? "Cycle routing balances secondary streets and accessible paths, estimated at an average pace of ~15 km/h."
+                      : "Walkway journey routes prioritize accessible footpaths and pedestrian-friendly thoroughfares."}
+                  </p>
+                  <div style={{ marginTop: "12px", display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                    <span className="step-context-pill">
+                      📍 {startPlaceName.split(",")[0]}
+                    </span>
+                    <span className="step-context-pill">
+                      🏁 {destPlaceName.split(",")[0]}
+                    </span>
+                    {routeSummary && (
+                      <span className="step-context-pill highlight">
+                        ⏱️ {routeSummary}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* STEP 3 Contextual Pre-search Card (if no search conducted yet) */}
+              {currentStep === 3 && !result && (
+                <div className="empty-state-card fade-in" style={{ marginTop: "10px" }}>
+                  <div className="empty-state-icon">✨</div>
+                  <h2 className="empty-state-title">Ready to Discover Great Places!</h2>
+                  <p className="empty-state-desc">
+                    We&apos;ll calculate real travel times from <strong>{startPlaceName.split(",")[0]}</strong> to top venues in <strong>{destPlaceName.split(",")[0]}</strong> tailored for your <strong>{OUTING_TYPES.find(o => o.value === outingType)?.label || outingType}</strong> outing.
+                  </p>
+                  <button
+                    type="button"
+                    className="wizard-btn-submit"
+                    style={{ margin: "14px auto 0", display: "inline-flex" }}
+                    onClick={(e) => submit(e as any)}
+                  >
+                    Find Places for Me →
+                  </button>
+                </div>
+              )}
+
+              {/* Weather & Context Banner (When results exist) */}
+              {result && (
+                <div className="context-banner" style={{ marginBottom: "18px" }}>
+                  <div className="context-line">
                     <span className="context-badge">
-                      👥 Group of {result.group_user_ids.length} ({result.group_aggregation})
+                      🌤️ {result.context.weather?.temp_c}°C · {result.context.weather?.condition}
+                    </span>
+                    <span>
+                      {result.context.time_of_day} · {result.context.day_of_week}
+                    </span>
+                    {result.group_user_ids && (
+                      <span className="context-badge">
+                        👥 Group of {result.group_user_ids.length} ({result.group_aggregation})
+                      </span>
+                    )}
+                  </div>
+                  {calculatingRoute && (
+                    <span className="recalculating-pill">
+                      ⟳ Updating {travelMode} travel times...
                     </span>
                   )}
                 </div>
-                {calculatingRoute && (
-                  <span className="recalculating-pill">
-                    ⟳ Updating {travelMode} travel times...
-                  </span>
-                )}
-              </div>
+              )}
 
-              {activeRecs.length === 0 && (
+              {/* No places left banner */}
+              {result && activeRecs.length === 0 && (
                 <div className="empty-state-card">
                   <p className="empty">
                     No places left to show. Try increasing the search radius or exploring another neighborhood.
@@ -1315,327 +1730,301 @@ export default function PlannerPage() {
                 </div>
               )}
 
-              {/* Modern Responsive Place Cards Grid (2-3 columns on desktop) */}
-              <div className="place-cards-grid">
-                {activeRecs.map((rec, index) => {
-                  const place = rec.place;
-                  const imageUrl = getPlaceImageUrl(place.name, place.category);
-                  const priceStr = formatEstimatedPrice(place.price_range, place.average_cost);
-                  const isSelected = selectedPlaceId === place.id;
-                  const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${startLat},${startLng}&destination=${place.lat},${place.lng}&travelmode=${googleTravelMode}`;
+              {/* Active Recommendations Place Cards Grid (Visible if recommendations exist) */}
+              {activeRecs.length > 0 && (
+                <div className="place-cards-grid">
+                  {activeRecs.map((rec, index) => {
+                    const place = rec.place;
+                    const imageUrl = getPlaceImageUrl(place.name, place.category);
+                    const priceStr = formatEstimatedPrice(place.price_range, place.average_cost);
+                    const isSelected = selectedPlaceId === place.id;
+                    const directionsUrl = `https://www.google.com/maps/dir/?api=1&origin=${startLat},${startLng}&destination=${place.lat},${place.lng}&travelmode=${googleTravelMode}`;
 
-                  return (
-                    <article
-                      key={place.id}
-                      className={`place-card ${isSelected ? "active-place" : ""}`}
-                      onClick={() => selectPlaceAndRoute(place.id)}
-                    >
-                      {/* Image Banner */}
-                      <div className="place-card-image-box">
-                        <img
-                          src={imageUrl}
-                          alt={place.name}
-                          className="place-card-image"
-                          loading="lazy"
-                        />
-                        <div className="place-score-badge">
-                          <span>★</span>
-                          <span>{Math.round(rec.score * 100)}% Match</span>
-                        </div>
-                        <div className="place-card-category-badge">
-                          #{index + 1} · {place.category}
-                        </div>
-                      </div>
-
-                      {/* Card Content Body */}
-                      <div className="place-card-body">
-                        <h3 className="place-card-title">{place.name}</h3>
-
-                        {place.description ? (
-                          <p className="place-card-desc">{place.description}</p>
-                        ) : (
-                          <p className="place-card-desc">
-                            Top-rated {place.category} in {destPlaceName.split(",")[0]}, popular for {outingType} outings.
-                          </p>
-                        )}
-
-                        {/* Travel Time & Distance from User's Starting Point */}
-                        <div className="place-card-travel-row">
-                          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
-                              <span style={{ fontWeight: 700, color: "var(--on-paper-ink)", fontSize: "0.88rem" }}>
-                                {travelMode === "cycling"
-                                  ? `🚲 ${rec.travel_info?.road_distance_km != null ? `${rec.travel_info.road_distance_km} km bike route` : `${place.distance_km} km`}`
-                                  : travelMode === "walking"
-                                  ? `🚶 ${rec.travel_info?.road_distance_km != null ? `${rec.travel_info.road_distance_km} km walk` : `${place.distance_km} km`}`
-                                  : travelMode === "transit"
-                                  ? `🚌 Transit timetable unavailable`
-                                  : `🚗 ${rec.travel_info?.road_distance_km != null ? `${rec.travel_info.road_distance_km} km drive` : `${place.distance_km} km`}`}
-                              </span>
-                              {rec.travel_info?.duration_minutes != null && (
-                                <span style={{ color: "var(--accent)", fontWeight: 600, fontSize: "0.84rem" }}>
-                                  · ~{rec.travel_info.duration_minutes} mins {travelMode === "cycling" ? "by cycle" : travelMode === "walking" ? "on foot" : "by car"}
-                                </span>
-                              )}
-                            </div>
-                            {rec.travel_info?.straight_line_km != null && travelMode !== "transit" && (
-                              <div style={{ fontSize: "0.74rem", color: "var(--on-paper-muted)" }}>
-                                📏 {rec.travel_info.straight_line_km} km straight line
-                                {rec.travel_info.detour_percent != null && rec.travel_info.detour_percent > 10 ? (
-                                  <span style={{ color: "#c2410c", fontWeight: 600 }}>
-                                    {" "}(+{rec.travel_info.detour_percent}% route detour)
-                                  </span>
-                                ) : (
-                                  <span style={{ color: "#15803d", fontWeight: 500 }}>
-                                    {" "}(direct route)
-                                  </span>
-                                )}
-                              </div>
-                            )}
+                    return (
+                      <article
+                        key={place.id}
+                        className={`place-card ${isSelected ? "active-place" : ""}`}
+                        onClick={() => selectPlaceAndRoute(place.id)}
+                      >
+                        {/* Image Banner */}
+                        <div className="place-card-image-box">
+                          <img
+                            src={imageUrl}
+                            alt={place.name}
+                            className="place-card-image"
+                            loading="lazy"
+                          />
+                          <div className="place-score-badge">
+                            <span>★</span>
+                            <span>{Math.round(rec.score * 100)}% Match</span>
                           </div>
-                          <span style={{ fontSize: "0.72rem", color: "var(--accent)", fontWeight: 600, alignSelf: "flex-start" }}>
-                            ✓ Verified hours
-                          </span>
+                          <div className="place-card-category-badge">
+                            #{index + 1} · {place.category}
+                          </div>
                         </div>
 
-                        {/* Rating and Price per person */}
-                        <div className="place-card-rating-price">
-                          <span className="rating-stars">
-                            ★ {place.rating ? place.rating.toFixed(1) : "4.6"} / 5
-                            {place.review_count ? ` (${place.review_count} reviews)` : ""}
-                          </span>
-                          <span className="price-indicator">{priceStr}</span>
-                        </div>
-
-                        {/* Personalized Explanation Chips */}
-                        <div className="reasons" style={{ marginBottom: "14px" }}>
-                          {rec.reasons.map((r, i) => (
-                            <span className="reason-chip" key={i}>
-                              {r}
+                        {/* Card Content Body */}
+                        <div className="place-card-body">
+                          <div className="place-card-header">
+                            <div>
+                              <h3 className="place-card-title">{place.name}</h3>
+                              <p className="place-card-distance">
+                                {rec.travel_info?.road_distance_km != null ? (
+                                  <>
+                                    <strong>{rec.travel_info.road_distance_km} km</strong>
+                                    {rec.travel_info.duration_minutes != null && (
+                                      <span> · ~{rec.travel_info.duration_minutes} mins {travelMode}</span>
+                                    )}
+                                  </>
+                                ) : (
+                                  <span>{place.distance_km} km away</span>
+                                )}
+                              </p>
+                            </div>
+                            <span style={{ fontSize: "0.72rem", color: "var(--accent)", fontWeight: 600, alignSelf: "flex-start" }}>
+                              ✓ Verified hours
                             </span>
-                          ))}
-                        </div>
+                          </div>
 
-                        {/* Action Buttons */}
-                        <div className="place-card-actions">
-                          {place.booking_url ? (
+                          {/* Rating and Price per person */}
+                          <div className="place-card-rating-price">
+                            <span className="rating-stars">
+                              ★ {place.rating ? place.rating.toFixed(1) : "4.6"} / 5
+                              {place.review_count ? ` (${place.review_count} reviews)` : ""}
+                            </span>
+                            <span className="price-indicator">{priceStr}</span>
+                          </div>
+
+                          {/* Personalized Explanation Chips */}
+                          <div className="reasons" style={{ marginBottom: "14px" }}>
+                            {rec.reasons.map((r, i) => (
+                              <span className="reason-chip" key={i}>
+                                {r}
+                              </span>
+                            ))}
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="place-card-actions">
+                            {place.booking_url ? (
+                              <a
+                                href={place.booking_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn-primary"
+                                style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: "6px",
+                                  fontSize: "0.82rem",
+                                  padding: "8px 14px",
+                                  margin: 0,
+                                  textDecoration: "none",
+                                }}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                Reserve spot →
+                              </a>
+                            ) : (
+                              <span
+                                className="btn-secondary"
+                                style={{ fontSize: "0.82rem", padding: "8px 12px", margin: 0, opacity: 0.85 }}
+                              >
+                                Walk-ins welcome
+                              </span>
+                            )}
+
                             <a
-                              href={place.booking_url}
+                              href={directionsUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="btn-primary"
+                              className="btn-secondary"
                               style={{
                                 display: "inline-flex",
                                 alignItems: "center",
-                                gap: "6px",
-                                fontSize: "0.82rem",
-                                padding: "8px 14px",
+                                gap: "4px",
+                                fontSize: "0.8rem",
+                                padding: "8px 12px",
                                 margin: 0,
                                 textDecoration: "none",
                               }}
                               onClick={(e) => e.stopPropagation()}
+                              title={`Get turn-by-turn navigation in Google Maps (${googleTravelMode})`}
                             >
-                              Reserve spot →
+                              🧭 Directions
                             </a>
-                          ) : (
-                            <span
-                              className="btn-secondary"
-                              style={{ fontSize: "0.82rem", padding: "8px 12px", margin: 0, opacity: 0.85 }}
-                            >
-                              Walk-ins welcome
-                            </span>
-                          )}
 
-                          <a
-                            href={directionsUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn-secondary"
-                            style={{
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: "4px",
-                              fontSize: "0.8rem",
-                              padding: "8px 12px",
-                              margin: 0,
-                              textDecoration: "none",
-                            }}
-                            onClick={(e) => e.stopPropagation()}
-                            title={`Get turn-by-turn navigation in Google Maps (${googleTravelMode})`}
-                          >
-                            🧭 Directions
-                          </a>
-
-                          <button
-                            type="button"
-                            className="btn-tiny"
-                            style={isSelected ? { background: "var(--accent)", color: "#fff", borderColor: "var(--accent)", fontWeight: 700 } : {}}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              selectPlaceAndRoute(place.id);
-                              setShowMap(true);
-                              window.scrollTo({ top: 320, behavior: "smooth" });
-                            }}
-                            title="View road route polyline from starting point on the map"
-                          >
-                            🛣️ {isSelected ? "Route Active" : "View Route"}
-                          </button>
-
-                          <button
-                            type="button"
-                            className="btn-tiny"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              sendFeedback(place.id, "like");
-                            }}
-                            title="Show more places like this"
-                          >
-                            👍 Like
-                          </button>
-
-                          <button
-                            type="button"
-                            className="btn-tiny"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              sendFeedback(place.id, "skip");
-                            }}
-                            title="Hide this place"
-                          >
-                            ✕ Skip
-                          </button>
-
-                          <button
-                            type="button"
-                            className="btn-tiny"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setExpandedId(expandedId === place.id ? null : place.id);
-                            }}
-                          >
-                            {expandedId === place.id ? "Hide" : "Why?"}
-                          </button>
-                        </div>
-
-                        {expandedId === place.id && (
-                          <pre className="breakdown" style={{ marginTop: "12px" }}>
-                            {JSON.stringify(rec.score_breakdown, null, 2)}
-                          </pre>
-                        )}
-
-                        {/* Inline Venue Issue Reporting */}
-                        <div style={{ marginTop: "10px", display: "flex", alignItems: "center", gap: "10px" }}>
-                          {reportStatus[place.id] === "success" ? (
-                            <span style={{ fontSize: "0.75rem", color: "#2e7d32" }}>
-                              ✓ Thanks — we&apos;ll review this venue!
-                            </span>
-                          ) : (
                             <button
                               type="button"
-                              style={{
-                                background: "none",
-                                border: "none",
-                                padding: 0,
-                                color: "var(--on-paper-muted)",
-                                fontSize: "0.74rem",
-                                cursor: "pointer",
-                                textDecoration: "underline",
-                              }}
+                              className="btn-tiny"
+                              style={isSelected ? { background: "var(--accent)", color: "#fff", borderColor: "var(--accent)", fontWeight: 700 } : {}}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                if (reportingPlaceId === place.id) {
-                                  setReportingPlaceId(null);
-                                } else {
-                                  setReportingPlaceId(place.id);
-                                  setReportIssueType("wrong_hours");
-                                  setReportDescription("");
-                                }
+                                selectPlaceAndRoute(place.id);
+                                setShowMap(true);
+                                window.scrollTo({ top: 320, behavior: "smooth" });
+                              }}
+                              title="View road route polyline from starting point on the map"
+                            >
+                              🛣️ {isSelected ? "Route Active" : "View Route"}
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn-tiny"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                sendFeedback(place.id, "like");
+                              }}
+                              title="Show more places like this"
+                            >
+                              👍 Like
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn-tiny"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                sendFeedback(place.id, "skip");
+                              }}
+                              title="Hide this place"
+                            >
+                              ✕ Skip
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn-tiny"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setExpandedId(expandedId === place.id ? null : place.id);
                               }}
                             >
-                              {reportingPlaceId === place.id ? "Cancel report" : "Report an issue"}
+                              {expandedId === place.id ? "Hide" : "Why?"}
                             </button>
+                          </div>
+
+                          {expandedId === place.id && (
+                            <pre className="breakdown" style={{ marginTop: "12px" }}>
+                              {JSON.stringify(rec.score_breakdown, null, 2)}
+                            </pre>
                           )}
-                          {reportStatus[place.id] === "error" && (
-                            <span style={{ fontSize: "0.75rem", color: "var(--burgundy, #b0505c)" }}>
-                              Couldn&apos;t submit report. Please try again.
-                            </span>
+
+                          {/* Inline Venue Issue Reporting */}
+                          <div style={{ marginTop: "10px", display: "flex", alignItems: "center", gap: "10px" }}>
+                            {reportStatus[place.id] === "success" ? (
+                              <span style={{ fontSize: "0.75rem", color: "#2e7d32" }}>
+                                ✓ Thanks — we&apos;ll review this venue!
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                style={{
+                                  background: "none",
+                                  border: "none",
+                                  padding: 0,
+                                  color: "var(--on-paper-muted)",
+                                  fontSize: "0.74rem",
+                                  cursor: "pointer",
+                                  textDecoration: "underline",
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (reportingPlaceId === place.id) {
+                                    setReportingPlaceId(null);
+                                  } else {
+                                    setReportingPlaceId(place.id);
+                                    setReportIssueType("wrong_hours");
+                                    setReportDescription("");
+                                  }
+                                }}
+                              >
+                                {reportingPlaceId === place.id ? "Cancel report" : "Report an issue"}
+                              </button>
+                            )}
+                            {reportStatus[place.id] === "error" && (
+                              <span style={{ fontSize: "0.75rem", color: "var(--burgundy, #b0505c)" }}>
+                                Couldn&apos;t submit report. Please try again.
+                              </span>
+                            )}
+                          </div>
+
+                          {reportingPlaceId === place.id && (
+                            <div
+                              style={{
+                                marginTop: "10px",
+                                padding: "12px 14px",
+                                background: "var(--surface-soft)",
+                                borderRadius: "6px",
+                                border: "1px solid var(--hairline-paper)",
+                              }}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <div style={{ marginBottom: "8px" }}>
+                                <label style={{ fontSize: "0.7rem", marginTop: 0, marginBottom: "4px" }}>
+                                  Issue type
+                                </label>
+                                <select
+                                  value={reportIssueType}
+                                  onChange={(e) => setReportIssueType(e.target.value)}
+                                  style={{ fontSize: "0.82rem", padding: "6px 8px" }}
+                                >
+                                  <option value="wrong_hours">Wrong operating hours</option>
+                                  <option value="wrong_price">Wrong price range</option>
+                                  <option value="closed_permanently">Permanently closed</option>
+                                  <option value="wrong_location">Wrong location / address</option>
+                                  <option value="other">Other issue</option>
+                                </select>
+                              </div>
+                              <div style={{ marginBottom: "8px" }}>
+                                <label style={{ fontSize: "0.7rem", marginTop: 0, marginBottom: "4px" }}>
+                                  Details (optional, max 280 chars)
+                                </label>
+                                <textarea
+                                  value={reportDescription}
+                                  onChange={(e) => setReportDescription(e.target.value)}
+                                  maxLength={280}
+                                  rows={2}
+                                  placeholder="e.g. Closed on Mondays, shifted location, etc."
+                                  style={{
+                                    width: "100%",
+                                    padding: "6px 8px",
+                                    border: "1px solid var(--hairline-paper)",
+                                    borderRadius: "4px",
+                                    fontSize: "0.82rem",
+                                    fontFamily: "var(--font-body)",
+                                    boxSizing: "border-box",
+                                  }}
+                                />
+                              </div>
+                              <div style={{ display: "flex", gap: "8px" }}>
+                                <button
+                                  type="button"
+                                  className="btn-tiny"
+                                  style={{ background: "var(--accent)", color: "#fff" }}
+                                  disabled={reportSubmitting}
+                                  onClick={() => submitVenueReport(place.id)}
+                                >
+                                  {reportSubmitting ? "Submitting..." : "Submit report"}
+                                </button>
+                                <button
+                                  type="button"
+                                  className="btn-tiny"
+                                  disabled={reportSubmitting}
+                                  onClick={() => setReportingPlaceId(null)}
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
                           )}
                         </div>
-
-                        {reportingPlaceId === place.id && (
-                          <div
-                            style={{
-                              marginTop: "10px",
-                              padding: "12px 14px",
-                              background: "var(--surface-soft)",
-                              borderRadius: "6px",
-                              border: "1px solid var(--hairline-paper)",
-                            }}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <div style={{ marginBottom: "8px" }}>
-                              <label style={{ fontSize: "0.7rem", marginTop: 0, marginBottom: "4px" }}>
-                                Issue type
-                              </label>
-                              <select
-                                value={reportIssueType}
-                                onChange={(e) => setReportIssueType(e.target.value)}
-                                style={{ fontSize: "0.82rem", padding: "6px 8px" }}
-                              >
-                                <option value="wrong_hours">Wrong operating hours</option>
-                                <option value="wrong_price">Wrong price range</option>
-                                <option value="closed_permanently">Permanently closed</option>
-                                <option value="wrong_location">Wrong location / address</option>
-                                <option value="other">Other issue</option>
-                              </select>
-                            </div>
-                            <div style={{ marginBottom: "8px" }}>
-                              <label style={{ fontSize: "0.7rem", marginTop: 0, marginBottom: "4px" }}>
-                                Details (optional, max 280 chars)
-                              </label>
-                              <textarea
-                                value={reportDescription}
-                                onChange={(e) => setReportDescription(e.target.value)}
-                                maxLength={280}
-                                rows={2}
-                                placeholder="e.g. Closed on Mondays, shifted location, etc."
-                                style={{
-                                  width: "100%",
-                                  padding: "6px 8px",
-                                  border: "1px solid var(--hairline-paper)",
-                                  borderRadius: "4px",
-                                  fontSize: "0.82rem",
-                                  fontFamily: "var(--font-body)",
-                                  boxSizing: "border-box",
-                                }}
-                              />
-                            </div>
-                            <div style={{ display: "flex", gap: "8px" }}>
-                              <button
-                                type="button"
-                                className="btn-tiny"
-                                style={{ background: "var(--accent)", color: "#fff" }}
-                                disabled={reportSubmitting}
-                                onClick={() => submitVenueReport(place.id)}
-                              >
-                                {reportSubmitting ? "Submitting..." : "Submit report"}
-                              </button>
-                              <button
-                                type="button"
-                                className="btn-tiny"
-                                disabled={reportSubmitting}
-                                onClick={() => setReportingPlaceId(null)}
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
 
               <p style={{ fontSize: "0.74rem", color: "var(--on-paper-muted)", marginTop: "2rem", textAlign: "center" }}>
                 Mode-specific routes and travel times calculated using OpenStreetMap routing. Venue information © OpenStreetMap contributors.
