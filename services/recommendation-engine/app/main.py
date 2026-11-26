@@ -12,10 +12,14 @@ from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 sys.path.insert(0, "/shared")
-from eventbus import consume_in_background  # noqa: E402
-from features import FEATURE_NAMES, build_feature_vector  # noqa: E402
-from ranking_config import load_config  # noqa: E402
-from tenant import require_tenant  # noqa: E402
+_local_shared = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "shared"))
+if os.path.isdir(_local_shared) and _local_shared not in sys.path:
+    sys.path.insert(0, _local_shared)
+
+from eventbus import consume_in_background
+from features import FEATURE_NAMES, build_feature_vector
+from ranking_config import load_config
+from tenant import require_tenant
 
 from app import clients, scoring
 

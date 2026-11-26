@@ -13,13 +13,17 @@ from jose import jwt
 from pydantic import BaseModel
 
 sys.path.insert(0, "/shared")
-from pgdb_platform import (  # noqa: E402
+_local_shared = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "shared"))
+if os.path.isdir(_local_shared) and _local_shared not in sys.path:
+    sys.path.insert(0, _local_shared)
+
+from pgdb_platform import (
     create_tenant,
     resolve_tenant_by_api_key,
     revoke_tenant_key,
     rotate_tenant_key,
 )
-from tenant import TENANT_HEADER, USER_HEADER  # noqa: E402
+from tenant import TENANT_HEADER, USER_HEADER
 
 try:
     from shared.logging_config import configure_logging, request_id_var
