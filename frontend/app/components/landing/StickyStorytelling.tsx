@@ -118,7 +118,7 @@ export default function StickyStorytelling({ primaryHref }: StickyStorytellingPr
     <section className="sticky-story-section" aria-label="Interactive Destination Storytelling">
       <div className="landing-container">
         {/* Section Header */}
-        <div className="section-header-split" style={{ marginBottom: "50px" }}>
+        <div className="section-header-split">
           <div>
             <p className="eyebrow">Interactive Journey</p>
             <h2 className="section-heading">

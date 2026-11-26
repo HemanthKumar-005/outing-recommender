@@ -33,18 +33,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           {children}
         </AuthProvider>
-        <footer style={{ textAlign: "center", padding: "2.25rem 1rem", fontSize: "0.82rem", color: "var(--on-paper-muted)", borderTop: "1px solid var(--hairline-paper)", background: "var(--surface-soft)" }}>
-          <Link href="/">Home</Link>
-          {" · "}
-          <Link href="/planner">Planner</Link>
-          {" · "}
-          <Link href="/model-card">Model Card</Link>
-          {" · "}
-          <Link href="/privacy">Privacy Policy</Link>
-          {" · "}
-          <Link href="/terms">Terms of Service</Link>
-          {" · "}
-          <span>Venue data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors (ODbL)</span>
+        <footer style={{ textAlign: "center", padding: "2rem clamp(20px, 3.5vw, 48px)", fontSize: "0.82rem", color: "var(--on-paper-muted)", borderTop: "1px solid var(--hairline-paper)", background: "var(--surface-soft)" }}>
+          <div style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: "8px" }}>
+            <Link href="/">Home</Link>
+            <span>·</span>
+            <Link href="/planner">Planner</Link>
+            <span>·</span>
+            <Link href="/model-card">Model Card</Link>
+            <span>·</span>
+            <Link href="/privacy">Privacy Policy</Link>
+            <span>·</span>
+            <Link href="/terms">Terms of Service</Link>
+            <span>·</span>
+            <span>Venue data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors (ODbL)</span>
+          </div>
         </footer>
         <ServiceWorkerRegistration />
       </body>
