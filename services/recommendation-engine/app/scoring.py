@@ -2,18 +2,24 @@ import math
 import sys
 from datetime import datetime
 
+import os
+
 sys.path.insert(0, "/shared")
-from ranking_config import load_config  # noqa: E402
+_local_shared = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "shared"))
+if os.path.isdir(_local_shared) and _local_shared not in sys.path:
+    sys.path.insert(0, _local_shared)
 
 try:
-    from shared.features import (  # noqa: E402
+    from shared.ranking_config import load_config
+    from shared.features import (
         FEATURE_NAMES,
         INTERACTION_WEIGHTS,
         POSITIVE_INTERACTION_TYPES,
         build_feature_vector,
     )
 except ImportError:
-    from features import (  # noqa: E402
+    from ranking_config import load_config  # type: ignore[import-not-found, import-untyped] # noqa: F401
+    from features import (  # type: ignore[import-not-found, import-untyped] # noqa: F401
         FEATURE_NAMES,
         INTERACTION_WEIGHTS,
         POSITIVE_INTERACTION_TYPES,

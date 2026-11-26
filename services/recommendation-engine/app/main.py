@@ -33,6 +33,14 @@ except ImportError:
     from request_id_middleware import RequestIdMiddleware  # type: ignore[import-not-found, import-untyped] # noqa: F401
     from sentry_config import init_sentry  # type: ignore[import-not-found, import-untyped] # noqa: F401
 
+try:
+    from app import clients, scoring
+except ImportError:
+    try:
+        from . import clients, scoring
+    except ImportError:
+        import clients, scoring  # type: ignore[import-not-found, import-untyped] # noqa: F401
+
 init_sentry("recommendation-engine")
 logger = configure_logging("recommendation-engine")
 

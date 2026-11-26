@@ -4,7 +4,14 @@ import sys
 import httpx
 
 sys.path.insert(0, "/shared")
-from tenant import tenant_headers  # noqa: E402
+_local_shared = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "shared"))
+if os.path.isdir(_local_shared) and _local_shared not in sys.path:
+    sys.path.insert(0, _local_shared)
+
+try:
+    from shared.tenant import tenant_headers
+except ImportError:
+    from tenant import tenant_headers  # type: ignore[import-not-found, import-untyped] # noqa: F401
 
 USER_SERVICE_URL = os.environ.get("USER_SERVICE_URL", "http://user-service:8000")
 PLACE_SERVICE_URL = os.environ.get("PLACE_SERVICE_URL", "http://place-service:8000")
