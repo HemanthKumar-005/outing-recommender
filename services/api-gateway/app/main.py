@@ -7,6 +7,7 @@ import time
 import httpx
 import redis
 from fastapi import FastAPI, Request, Response
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from jose import jwt
 from pydantic import BaseModel
@@ -37,6 +38,13 @@ if not JWT_SECRET:
     raise RuntimeError("JWT_SECRET environment variable is required")
 
 app = FastAPI(title="API Gateway")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.add_middleware(RequestIdMiddleware)
 
 REDIS_URL = os.environ.get("REDIS_URL", "redis://redis:6379/0")
@@ -235,7 +243,10 @@ async def proxy(service: str, path: str, request: Request):
 
     api_key = request.headers.get("x-api-key")
     if not api_key:
-        return JSONResponse(status_code=401, content={"detail": "missing X-API-Key"})
+        if service == "recommendations" and path.strip("/") in ("model-card", "model-info"):
+            api_key = "demo-key"
+        else:
+            return JSONResponse(status_code=401, content={"detail": "missing X-API-Key"})
     tenant_id = _resolve_tenant(api_key)
     if not tenant_id:
         return JSONResponse(status_code=401, content={"detail": "invalid X-API-Key"})
@@ -251,11 +262,19 @@ async def proxy(service: str, path: str, request: Request):
     if not _check_rate_limit(tenant_id, is_auth=is_auth_endpoint):
         return JSONResponse(status_code=429, content={"detail": "rate limit exceeded"})
 
-    # JWT verification on all /api/* routes except registration and login endpoints
+    # JWT verification on all /api/* routes except registration and login endpoints,
+    # and public model information/transparency endpoints
     is_auth_exempt = (
-        request.method == "POST"
-        and service == "users"
-        and path.strip("/") in ("users/register", "register", "users/login", "login")
+        (
+            request.method == "POST"
+            and service == "users"
+            and path.strip("/") in ("users/register", "register", "users/login", "login")
+        )
+        or (
+            request.method == "GET"
+            and service == "recommendations"
+            and path.strip("/") in ("model-card", "model-info")
+        )
     )
 
     user_id = None

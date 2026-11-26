@@ -14,12 +14,14 @@ async function handleProxy(request: NextRequest, { params }: { params: { path: s
   const cookieStore = cookies();
   const token = cookieStore.get("nearby_token");
   const session = cookieStore.get("nearby_session");
+  const subPath = params.path ? params.path.join("/") : "";
 
-  if (!token?.value && !session?.value) {
+  const isPublicEndpoint = ["recommendations/model-card", "recommendations/model-info", "model-card", "model-info"].includes(subPath);
+
+  if (!token?.value && !session?.value && !isPublicEndpoint) {
     return NextResponse.json({ detail: "Missing or invalid session" }, { status: 401 });
   }
 
-  const subPath = params.path ? params.path.join("/") : "";
   const gatewayUrl = getGatewayUrl();
   const targetUrl = `${gatewayUrl}/api/${subPath}${request.nextUrl.search}`;
 
