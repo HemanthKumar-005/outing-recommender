@@ -1,0 +1,12 @@
+{
+  "include": [
+    "."
+  ],
+  "extraPaths": [
+    ".",
+    "shared",
+    "services/api-gateway",
+    "services/recommendation-engine"
+  ],
+  "reportMissingImports": "none"
+}

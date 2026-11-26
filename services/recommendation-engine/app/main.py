@@ -16,21 +16,22 @@ _local_shared = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 if os.path.isdir(_local_shared) and _local_shared not in sys.path:
     sys.path.insert(0, _local_shared)
 
-from eventbus import consume_in_background
-from features import FEATURE_NAMES, build_feature_vector
-from ranking_config import load_config
-from tenant import require_tenant
-
-from app import clients, scoring
-
 try:
+    from shared.eventbus import consume_in_background
+    from shared.features import FEATURE_NAMES, build_feature_vector
+    from shared.ranking_config import load_config
+    from shared.tenant import require_tenant
     from shared.logging_config import configure_logging
     from shared.request_id_middleware import RequestIdMiddleware
     from shared.sentry_config import init_sentry
 except ImportError:
-    from logging_config import configure_logging
-    from request_id_middleware import RequestIdMiddleware
-    from sentry_config import init_sentry
+    from eventbus import consume_in_background  # type: ignore[import-not-found, import-untyped] # noqa: F401
+    from features import FEATURE_NAMES, build_feature_vector  # type: ignore[import-not-found, import-untyped] # noqa: F401
+    from ranking_config import load_config  # type: ignore[import-not-found, import-untyped] # noqa: F401
+    from tenant import require_tenant  # type: ignore[import-not-found, import-untyped] # noqa: F401
+    from logging_config import configure_logging  # type: ignore[import-not-found, import-untyped] # noqa: F401
+    from request_id_middleware import RequestIdMiddleware  # type: ignore[import-not-found, import-untyped] # noqa: F401
+    from sentry_config import init_sentry  # type: ignore[import-not-found, import-untyped] # noqa: F401
 
 init_sentry("recommendation-engine")
 logger = configure_logging("recommendation-engine")

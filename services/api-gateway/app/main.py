@@ -17,22 +17,28 @@ _local_shared = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".
 if os.path.isdir(_local_shared) and _local_shared not in sys.path:
     sys.path.insert(0, _local_shared)
 
-from pgdb_platform import (
-    create_tenant,
-    resolve_tenant_by_api_key,
-    revoke_tenant_key,
-    rotate_tenant_key,
-)
-from tenant import TENANT_HEADER, USER_HEADER
-
 try:
+    from shared.pgdb_platform import (
+        create_tenant,
+        resolve_tenant_by_api_key,
+        revoke_tenant_key,
+        rotate_tenant_key,
+    )
+    from shared.tenant import TENANT_HEADER, USER_HEADER
     from shared.logging_config import configure_logging, request_id_var
     from shared.request_id_middleware import RequestIdMiddleware
     from shared.sentry_config import init_sentry
 except ImportError:
-    from logging_config import configure_logging, request_id_var
-    from request_id_middleware import RequestIdMiddleware
-    from sentry_config import init_sentry
+    from pgdb_platform import (  # type: ignore[import-not-found, import-untyped] # noqa: F401
+        create_tenant,
+        resolve_tenant_by_api_key,
+        revoke_tenant_key,
+        rotate_tenant_key,
+    )
+    from tenant import TENANT_HEADER, USER_HEADER  # type: ignore[import-not-found, import-untyped] # noqa: F401
+    from logging_config import configure_logging, request_id_var  # type: ignore[import-not-found, import-untyped] # noqa: F401
+    from request_id_middleware import RequestIdMiddleware  # type: ignore[import-not-found, import-untyped] # noqa: F401
+    from sentry_config import init_sentry  # type: ignore[import-not-found, import-untyped] # noqa: F401
 
 init_sentry("api-gateway")
 logger = configure_logging("api-gateway")
