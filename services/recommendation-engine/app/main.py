@@ -103,6 +103,8 @@ class RecommendationRequest(BaseModel):
     at: str | None = None  # ISO datetime, defaults to now
     category: str | None = None
     outing_type: str = Field("friends", pattern="^(couple|friends|family|solo)$")
+    budget_min: int | None = Field(None, ge=0, le=4)
+    budget_max: int | None = Field(None, ge=0, le=4)
     open_now: bool = False
     top_k: int = Field(10, ge=1, le=50)
     diversity: float | None = Field(None, ge=0, le=1)  # explore/exploit dial; None = config default
@@ -216,15 +218,32 @@ def recommend(req: RecommendationRequest, tenant_id: str = Depends(require_tenan
     context = clients.get_context(req.lat, req.lng, req.at)
 
     primary_user = users[req.user_id] if req.user_id in users else next(iter(users.values()))
+
+    # Apply explicit request budget overrides to users if provided
+    if req.budget_min is not None or req.budget_max is not None:
+        for u in users.values():
+            if req.budget_min is not None:
+                u["budget_min"] = req.budget_min
+            if req.budget_max is not None:
+                u["budget_max"] = req.budget_max
+
+    # Determine filter price bounds: explicit request bounds take precedence
+    filter_min_price = req.budget_min if req.budget_min is not None else (None if is_group else primary_user.get("budget_min"))
+    filter_max_price = req.budget_max if req.budget_max is not None else (None if is_group else primary_user.get("budget_max"))
+
     candidates = clients.get_nearby_places(
         tenant_id, req.lat, req.lng, req.radius_km, category=req.category,
-        # Group requests use soft per-user budget_suitability instead of a hard
-        # filter, since a single price range can't correctly bound several
-        # different users' budgets at once.
-        min_price=None if is_group else primary_user.get("budget_min"),
-        max_price=None if is_group else primary_user.get("budget_max"),
+        min_price=filter_min_price,
+        max_price=filter_max_price,
         open_now=req.open_now, limit=100,
     )
+    # If strict price filtering yielded no places, fall back to soft scoring without hard price cutoff
+    if not candidates and (filter_min_price is not None or filter_max_price is not None):
+        candidates = clients.get_nearby_places(
+            tenant_id, req.lat, req.lng, req.radius_km, category=req.category,
+            open_now=req.open_now, limit=100,
+        )
+
     if not candidates:
         return {"user_id": req.user_id, "context": context, "recommendations": []}
 

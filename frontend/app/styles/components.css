@@ -1460,6 +1460,66 @@ table.eval-table th {
   cursor: not-allowed;
 }
 
+/* Wizard Budget Selector Pills */
+.budget-pills-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 640px) {
+  .budget-pills-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.budget-pill-btn {
+  padding: 8px 6px;
+  border-radius: 9px;
+  border: 1px solid var(--hairline-paper);
+  background: var(--surface);
+  color: var(--on-paper);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.budget-pill-btn:hover {
+  border-color: var(--accent);
+  background: rgba(8, 127, 115, 0.05);
+  transform: translateY(-1px);
+}
+
+.budget-pill-btn.active {
+  border-color: var(--accent);
+  background: rgba(8, 127, 115, 0.12);
+  color: var(--accent);
+  font-weight: 700;
+  box-shadow: 0 2px 8px -2px rgba(8, 127, 115, 0.25);
+}
+
+.budget-pill-icon {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--accent);
+}
+
+.budget-pill-name {
+  font-size: 0.72rem;
+  opacity: 0.88;
+  margin-top: 3px;
+  white-space: nowrap;
+}
+
 /* Right Panel Contextual Cards (When in Step 1 or Step 2) */
 .step-context-banner {
   background: var(--surface);

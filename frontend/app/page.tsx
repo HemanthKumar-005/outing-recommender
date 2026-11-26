@@ -7,45 +7,6 @@ import StickyStorytelling from "./components/landing/StickyStorytelling";
 import TravelRouteVisualization from "./components/landing/TravelRouteVisualization";
 import InteractiveDiscovery from "./components/landing/InteractiveDiscovery";
 
-const BUDGET_TIERS = [
-  {
-    title: "Pocket-Friendly Outings",
-    range: "₹150 – ₹350 per person",
-    badge: "$ · Budget",
-    desc: "Scenic parks, heritage street cafes, iconic breakfast joints, and free botanical gardens.",
-    examples: ["Cubbon Park", "Lalbagh Botanical Garden", "MTR Heritage Breakfast"],
-    image: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=800&q=80",
-    gradient: "linear-gradient(135deg, rgba(8, 127, 115, 0.88), rgba(18, 63, 53, 0.95))",
-  },
-  {
-    title: "Casual Dining & Bistros",
-    range: "₹400 – ₹750 per person",
-    badge: "$$ · Popular",
-    desc: "Artisan coffee roasteries, top burger bistros, outdoor garden dining, and cultural museums.",
-    examples: ["Truffles Bistro", "Third Wave Coffee", "Visvesvaraya Tech Museum"],
-    image: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
-    gradient: "linear-gradient(135deg, rgba(19, 168, 158, 0.88), rgba(8, 127, 115, 0.95))",
-  },
-  {
-    title: "Craft Breweries & Lounges",
-    range: "₹800 – ₹1,500 per person",
-    badge: "$$$ · Nightlife",
-    desc: "Famous microbreweries, rooftop cocktail lounges, and lively live-music taprooms.",
-    examples: ["Toit Brewpub", "Arbor Brewing Company", "The Biere Club"],
-    image: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80",
-    gradient: "linear-gradient(135deg, rgba(18, 63, 53, 0.9), rgba(10, 35, 30, 0.96))",
-  },
-  {
-    title: "Special Occasions & Fine Dining",
-    range: "₹1,800+ per person",
-    badge: "$$$$ · Premium",
-    desc: "Acoustic jazz clubs, luxury heritage dining, and unforgettable date night spots.",
-    examples: ["Windmills Craftworks", "Olive Beach", "Grasshopper"],
-    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
-    gradient: "linear-gradient(135deg, rgba(30, 60, 50, 0.92), rgba(8, 127, 115, 0.92))",
-  },
-];
-
 const FAQS = [
   {
     q: "How does Nearby calculate travel time and distance?",
@@ -337,59 +298,7 @@ export default function LandingPage() {
       {/* 5. SIGNATURE EXPERIENCE 3: Interactive Destination Discovery Preview */}
       <InteractiveDiscovery primaryHref={primaryHref} />
 
-      {/* 6. Budget-Based Destinations */}
-      <section id="budget" className="landing-section">
-        <div className="landing-container">
-          <div className="section-header-split">
-            <div className="reveal" ref={registerRef}>
-              <p className="eyebrow">Smart Budget Matching</p>
-              <h2 className="section-heading">
-                Outings designed for <em>every wallet.</em>
-              </h2>
-            </div>
-            <p className="section-lead reveal" ref={registerRef}>
-              Whether you want a casual ₹200 morning filter coffee and park walk, or a ₹2,000 craft dining celebration, Nearby finds the sweet spot.
-            </p>
-          </div>
-
-          <div className="tiers-grid stagger-children" ref={registerRef}>
-            {BUDGET_TIERS.map((tier, idx) => (
-              <div
-                className="tier-card budget-tier-card"
-                key={tier.title}
-                style={
-                  {
-                    "--i": idx,
-                    backgroundImage: `${tier.gradient}, url(${tier.image})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  } as React.CSSProperties
-                }
-              >
-                <div className="budget-tier-content">
-                  <div className="tier-badge">{tier.badge}</div>
-                  <h3 className="tier-title">{tier.title}</h3>
-                  <div className="tier-price">{tier.range}</div>
-                  <p className="tier-desc">{tier.desc}</p>
-                  <div className="tier-examples">
-                    <span className="tier-example-label">Featured Spots:</span>
-                    <ul className="tier-example-list">
-                      {tier.examples.map((ex) => (
-                        <li key={ex}>{ex}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <Link href={primaryHref} className="budget-tier-cta">
-                    Explore This Tier →
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 7. Travel-Smart Bento Features */}
+      {/* 6. Travel-Smart Bento Features */}
       <section id="travel-smart" className="landing-section landing-section-soft">
         <div className="landing-container">
           <div className="section-header reveal" ref={registerRef}>

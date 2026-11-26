@@ -28,6 +28,14 @@ const OUTING_TYPES = [
   { value: "solo", label: "Solo Exploration" },
 ];
 
+const BUDGET_OPTIONS = [
+  { value: "all", label: "Any Budget · Flexible (All Tiers)", shortLabel: "Any", priceMin: null, priceMax: null, badge: "All Tiers", icon: "🪙", desc: "Show places across all price points" },
+  { value: "1", label: "₹ Pocket-Friendly · ₹150 – ₹350 per person", shortLabel: "₹ Budget", priceMin: 1, priceMax: 1, badge: "$ · Budget", icon: "₹", desc: "Street eats, parks, budget cafes" },
+  { value: "2", label: "₹₹ Casual Dining & Bistros · ₹400 – ₹750 per person", shortLabel: "₹₹ Casual", priceMin: 2, priceMax: 2, badge: "$$ · Popular", icon: "₹₹", desc: "Artisan coffee, bistros, casual dining" },
+  { value: "3", label: "₹₹₹ Craft Breweries & Lounges · ₹800 – ₹1,500 per person", shortLabel: "₹₹₹ Nightlife", priceMin: 3, priceMax: 3, badge: "$$$ · Nightlife", icon: "₹₹₹", desc: "Microbreweries, rooftop cocktail bars" },
+  { value: "4", label: "₹₹₹₹ Fine Dining & Occasions · ₹1,800+ per person", shortLabel: "₹₹₹₹ Premium", priceMin: 4, priceMax: 4, badge: "$$$$ · Premium", icon: "₹₹₹₹", desc: "Luxury dining & special celebrations" },
+];
+
 const AGGREGATION_METHODS = [
   { value: "least_misery", label: "Least Misery — Nobody hates the pick" },
   { value: "average", label: "Group Average — Best overall score" },
@@ -158,6 +166,7 @@ export default function PlannerPage() {
   const [radiusKm, setRadiusKm] = useState<string>("8");
   const [category, setCategory] = useState<string>("");
   const [outingType, setOutingType] = useState<string>("friends");
+  const [budgetTier, setBudgetTier] = useState<string>("all");
 
   // Group planning
   const [groupMode, setGroupMode] = useState<boolean>(false);
@@ -620,6 +629,8 @@ export default function PlannerPage() {
         ? [Number(userId), ...extraUserIds.split(",").map((s) => s.trim()).filter(Boolean).map(Number)]
         : undefined;
 
+      const selectedBudget = BUDGET_OPTIONS.find((b) => b.value === budgetTier);
+
       const resp = await fetch("/api/recommendations/recommendations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -632,6 +643,8 @@ export default function PlannerPage() {
           radius_km: Number(radiusKm) || 8,
           category: category || undefined,
           outing_type: outingType,
+          budget_min: selectedBudget?.priceMin ?? undefined,
+          budget_max: selectedBudget?.priceMax ?? undefined,
           diversity,
           weight_overrides: weightOverrides || undefined,
           top_k: 10,
@@ -1279,6 +1292,48 @@ export default function PlannerPage() {
                   </div>
                 </div>
 
+                {/* Outing Budget Selection */}
+                <div style={{ marginTop: "14px" }}>
+                  <label htmlFor="budget-tier" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                    <span>Outing Budget <span className="label-hint">(Per person)</span></span>
+                    <span className="step-mini-tag" style={{ fontSize: "0.74rem", background: "rgba(8, 127, 115, 0.12)", color: "var(--accent)", padding: "2px 8px", borderRadius: "6px", fontWeight: 600 }}>
+                      {BUDGET_OPTIONS.find(b => b.value === budgetTier)?.badge || "All Tiers"}
+                    </span>
+                  </label>
+
+                  {/* Quick-select budget pills */}
+                  <div className="budget-pills-row" role="radiogroup" aria-label="Select outing budget tier">
+                    {BUDGET_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        role="radio"
+                        aria-checked={budgetTier === opt.value}
+                        className={`budget-pill-btn ${budgetTier === opt.value ? "active" : ""}`}
+                        onClick={() => setBudgetTier(opt.value)}
+                        title={opt.desc}
+                      >
+                        <span className="budget-pill-icon">{opt.icon}</span>
+                        <span className="budget-pill-name">{opt.shortLabel}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Accessible Select Dropdown */}
+                  <select
+                    id="budget-tier"
+                    value={budgetTier}
+                    onChange={(e) => setBudgetTier(e.target.value)}
+                    style={{ fontSize: "0.85rem", marginTop: "4px" }}
+                  >
+                    {BUDGET_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div style={{ marginTop: "12px" }}>
                   <label htmlFor="category">Category (Optional)</label>
                   <select
@@ -1684,7 +1739,8 @@ export default function PlannerPage() {
                   <div className="empty-state-icon">✨</div>
                   <h2 className="empty-state-title">Ready to Discover Great Places!</h2>
                   <p className="empty-state-desc">
-                    We&apos;ll calculate real travel times from <strong>{startPlaceName.split(",")[0]}</strong> to top venues in <strong>{destPlaceName.split(",")[0]}</strong> tailored for your <strong>{OUTING_TYPES.find(o => o.value === outingType)?.label || outingType}</strong> outing.
+                    We&apos;ll calculate real travel times from <strong>{startPlaceName.split(",")[0]}</strong> to top venues in <strong>{destPlaceName.split(",")[0]}</strong> tailored for your <strong>{OUTING_TYPES.find(o => o.value === outingType)?.label || outingType}</strong> outing
+                    {budgetTier !== "all" ? ` with a ${BUDGET_OPTIONS.find(b => b.value === budgetTier)?.badge || "budget"} target` : ""}.
                   </p>
                   <button
                     type="button"
