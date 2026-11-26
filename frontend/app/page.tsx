@@ -3,138 +3,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useAuth } from "./context/AuthContext";
-import { getPlaceImageUrl } from "./utils/placeImages";
-
-type PreviewScenario = "friends" | "couple" | "family";
-
-type PreviewSpot = {
-  name: string;
-  category: string;
-  score: number;
-  meta: string;
-  travel: string;
-  price: string;
-  reasons: string[];
-  bookingUrl?: string;
-  verified: boolean;
-};
-
-const SCENARIOS: Record<
-  PreviewScenario,
-  { label: string; context: string; spots: PreviewSpot[] }
-> = {
-  friends: {
-    label: "Friends Night Out",
-    context: "Starting from Koramangala → Exploring Indiranagar · Friday Evening · 22°C Clear",
-    spots: [
-      {
-        name: "Toit Brewpub",
-        category: "Craft Brewery",
-        score: 95,
-        meta: "Indiranagar · ★ 4.7 / 5 (620 reviews)",
-        travel: "📍 5.2 km · ~16 mins by car",
-        price: "₹800 – ₹1,400 per person · $$$",
-        reasons: ["Top consensus for groups", "Open until 1 AM", "Lively craft taproom"],
-        bookingUrl: "https://toit.in/indiranagar-reservations",
-        verified: true,
-      },
-      {
-        name: "Truffles",
-        category: "Burger Bistro",
-        score: 91,
-        meta: "St. Mark's Road · ★ 4.6 / 5 (850 reviews)",
-        travel: "📍 4.8 km · ~14 mins by car",
-        price: "₹350 – ₹600 per person · $$",
-        reasons: ["Budget-friendly favorites", "Short walk from metro", "Great burgers & desserts"],
-        bookingUrl: "https://www.zomato.com/bangalore/truffles-st-marks-road/book",
-        verified: true,
-      },
-      {
-        name: "Third Wave Coffee",
-        category: "Specialty Cafe",
-        score: 87,
-        meta: "Koramangala 4th Block · ★ 4.6 / 5",
-        travel: "📍 1.1 km · ~4 mins driving",
-        price: "₹250 – ₹450 per person · $$",
-        reasons: ["Outdoor seating", "Late-night coffee & dessert", "Cozy group seating"],
-        verified: true,
-      },
-    ],
-  },
-  couple: {
-    label: "Romantic Date Night",
-    context: "Starting from Jayanagar → Exploring Whitefield · Saturday Evening · 21°C Mild Breeze",
-    spots: [
-      {
-        name: "Windmills Craftworks",
-        category: "Jazz Lounge & Dining",
-        score: 96,
-        meta: "Whitefield · ★ 4.8 / 5",
-        travel: "📍 18.2 km · ~42 mins by car",
-        price: "₹1,800+ per person · $$$$",
-        reasons: ["Intimate acoustic setting", "Craft microbrewery", "Fine dining menu"],
-        bookingUrl: "https://craftworks.windmills.in/reserve",
-        verified: true,
-      },
-      {
-        name: "National Gallery of Modern Art",
-        category: "Heritage Museum & Garden",
-        score: 90,
-        meta: "Palace Road · ★ 4.6 / 5",
-        travel: "📍 6.8 km · ~20 mins by car",
-        price: "₹50 entry fee · $",
-        reasons: ["Serene courtyard cafe", "Beautiful sculpture gardens", "Calm afternoon pace"],
-        verified: true,
-      },
-      {
-        name: "Blue Tokai Coffee Roasters",
-        category: "Artisan Cafe",
-        score: 86,
-        meta: "Indiranagar · ★ 4.5 / 5",
-        travel: "📍 8.4 km · ~24 mins by car",
-        price: "₹300 – ₹550 per person · $$",
-        reasons: ["Artisan sourdough & pastries", "Warm ambient lighting", "Open now"],
-        verified: true,
-      },
-    ],
-  },
-  family: {
-    label: "Weekend Family Outing",
-    context: "Starting from Electronic City → Exploring Central BLR · Sunday Morning · Sunny 24°C",
-    spots: [
-      {
-        name: "Cubbon Park",
-        category: "Botanical Park",
-        score: 97,
-        meta: "Central Bengaluru · ★ 4.7 / 5",
-        travel: "📍 16.5 km · ~35 mins by car",
-        price: "Free Entry",
-        reasons: ["Sunny morning lawns", "Traffic-free walking trails", "Kid-friendly play areas"],
-        verified: true,
-      },
-      {
-        name: "Visvesvaraya Industrial & Tech Museum",
-        category: "Science Museum",
-        score: 93,
-        meta: "Kasturba Road · ★ 4.6 / 5",
-        travel: "📍 16.8 km · ~36 mins by car",
-        price: "₹85 per person · $",
-        reasons: ["Hands-on interactive exhibits", "Fun for kids & adults", "Air-conditioned indoor spot"],
-        verified: true,
-      },
-      {
-        name: "Mavalli Tiffin Room (MTR)",
-        category: "Heritage Restaurant",
-        score: 91,
-        meta: "Lalbagh Road · ★ 4.5 / 5",
-        travel: "📍 15.1 km · ~32 mins by car",
-        price: "₹200 – ₹400 per person · $$",
-        reasons: ["Iconic South Indian breakfast", "Pure vegetarian", "Decades of trusted quality"],
-        verified: true,
-      },
-    ],
-  },
-};
+import StickyStorytelling from "./components/landing/StickyStorytelling";
+import TravelRouteVisualization from "./components/landing/TravelRouteVisualization";
+import InteractiveDiscovery from "./components/landing/InteractiveDiscovery";
 
 const BUDGET_TIERS = [
   {
@@ -143,6 +14,8 @@ const BUDGET_TIERS = [
     badge: "$ · Budget",
     desc: "Scenic parks, heritage street cafes, iconic breakfast joints, and free botanical gardens.",
     examples: ["Cubbon Park", "Lalbagh Botanical Garden", "MTR Heritage Breakfast"],
+    image: "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=800&q=80",
+    gradient: "linear-gradient(135deg, rgba(8, 127, 115, 0.88), rgba(18, 63, 53, 0.95))",
   },
   {
     title: "Casual Dining & Bistros",
@@ -150,6 +23,8 @@ const BUDGET_TIERS = [
     badge: "$$ · Popular",
     desc: "Artisan coffee roasteries, top burger bistros, outdoor garden dining, and cultural museums.",
     examples: ["Truffles Bistro", "Third Wave Coffee", "Visvesvaraya Tech Museum"],
+    image: "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
+    gradient: "linear-gradient(135deg, rgba(19, 168, 158, 0.88), rgba(8, 127, 115, 0.95))",
   },
   {
     title: "Craft Breweries & Lounges",
@@ -157,6 +32,8 @@ const BUDGET_TIERS = [
     badge: "$$$ · Nightlife",
     desc: "Famous microbreweries, rooftop cocktail lounges, and lively live-music taprooms.",
     examples: ["Toit Brewpub", "Arbor Brewing Company", "The Biere Club"],
+    image: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80",
+    gradient: "linear-gradient(135deg, rgba(18, 63, 53, 0.9), rgba(10, 35, 30, 0.96))",
   },
   {
     title: "Special Occasions & Fine Dining",
@@ -164,25 +41,27 @@ const BUDGET_TIERS = [
     badge: "$$$$ · Premium",
     desc: "Acoustic jazz clubs, luxury heritage dining, and unforgettable date night spots.",
     examples: ["Windmills Craftworks", "Olive Beach", "Grasshopper"],
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
+    gradient: "linear-gradient(135deg, rgba(30, 60, 50, 0.92), rgba(8, 127, 115, 0.92))",
   },
 ];
 
 const FAQS = [
   {
     q: "How does Nearby calculate travel time and distance?",
-    a: "When you enter your starting point and destination, Nearby uses actual road routing to calculate real driving, walking, or cycling times to each venue, so you know exactly how long the trip will take.",
+    a: "When you enter your starting point and destination, Nearby uses actual road network routing (OSRM) to calculate real driving, walking, cycling, or transit durations to each venue, so you know exactly how long the trip will take rather than relying on misleading straight-line distances.",
   },
   {
     q: "Can I plan an outing with friends who have different tastes?",
-    a: "Yes! Nearby includes a smart group mode that balances everyone's preferences, budget, and favorite categories so no one gets stuck at a place they dislike.",
+    a: "Yes! Nearby includes a smart group mode that balances everyone's preferences, budget, and favorite categories using multi-agent algorithmic consensus (Least Misery and Borda Count) so no one gets stuck at a place they dislike.",
   },
   {
     q: "Do I have to share my GPS or coordinates?",
-    a: "No. You never need to share device location or understand geographic coordinates. Simply search any city, neighborhood, landmark, or street address.",
+    a: "No. You never need to share device location or understand geographic coordinates. Simply search any city, neighborhood, landmark, or street address and our geocoding maps it instantly.",
   },
   {
     q: "Can I book a table or get turn-by-turn directions?",
-    a: "Yes! Every place card features an interactive map button, a one-click Google Maps turn-by-turn directions link from your starting point, and direct table booking where supported.",
+    a: "Yes! Every place card features an interactive map button, a one-click Google Maps turn-by-turn directions link from your starting point, and direct table booking links where supported.",
   },
   {
     q: "Is Nearby free to use?",
@@ -192,13 +71,11 @@ const FAQS = [
 
 export default function LandingPage() {
   const { isAuthenticated } = useAuth();
-  const [scenario, setScenario] = useState<PreviewScenario>("friends");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const primaryHref = isAuthenticated ? "/planner" : "/login";
-  const currentScenario = SCENARIOS[scenario];
 
-  // ── Intersection Observer for scroll-reveal ──────────────────────────────
+  // Intersection Observer for scroll-reveal staggered animations
   const revealRefs = useRef<(Element | null)[]>([]);
 
   const registerRef = useCallback((el: Element | null) => {
@@ -208,7 +85,6 @@ export default function LandingPage() {
   }, []);
 
   useEffect(() => {
-    // Respect prefers-reduced-motion
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) {
       revealRefs.current.forEach((el) => {
@@ -222,11 +98,14 @@ export default function LandingPage() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             entry.target.classList.add("is-visible");
-            observer.unobserve(entry.target); // trigger once
+            observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.12, rootMargin: "0px 0px -48px 0px" }
+      {
+        threshold: 0.12,
+        rootMargin: "0px 0px -40px 0px",
+      }
     );
 
     revealRefs.current.forEach((el) => {
@@ -237,391 +116,272 @@ export default function LandingPage() {
   }, []);
 
   return (
-    <div className="landing">
-      {/* 1. Vibrant Travel-Discovery Hero Section */}
-      <section className="landing-hero" aria-label="Hero Section">
-        {/* Subtle Ambient Background Decorative Glow Orbs */}
-        <div className="hero-glow hero-glow-teal" aria-hidden="true" />
-        <div className="hero-glow hero-glow-peach" aria-hidden="true" />
-        <div className="hero-glow hero-glow-mint" aria-hidden="true" />
-
-        <div className="landing-hero-container landing-hero-grid">
-          {/* Left Column: Expressive Headline & Discovery CTAs */}
-          <div className="hero-content">
-            <div className="hero-eyebrow-pill hero-animate-eyebrow">
+    <div className="landing-page">
+      {/* 1. Hero Section */}
+      <section className="landing-hero">
+        <div className="landing-container landing-hero-grid">
+          {/* Left Column: Hero Content & CTAs */}
+          <div className="hero-content reveal" ref={registerRef}>
+            <div className="hero-eyebrow-pill">
               <span className="hero-eyebrow-dot" />
-              <span>SMART OUTING DISCOVERY</span>
+              <span>Context-Aware Outing Recommender · Bengaluru</span>
             </div>
 
-            <h1 className="landing-hero-title hero-animate-title">
-              Find Your Next Favourite Place. <br />
-              <span className="hero-title-highlight">Make Every Outing Special.</span>
+            <h1 className="landing-hero-title">
+              Plan the outing.
+              <br />
+              <span className="accent-text">Skip the debate.</span>
             </h1>
 
-            <p className="landing-hero-sub hero-animate-sub">
-              Discover beautiful places, explore new experiences and plan memorable outings with the people you love.
+            <p className="landing-hero-sub">
+              Nearby pairs real road-network travel times with AI-driven preference balancing.
+              Discover curated cafes, scenic botanical walks, craft breweries, and cultural spots tailored to your mood, companions, and budget.
             </p>
 
-            <div className="landing-hero-actions hero-animate-actions">
-              <Link href={primaryHref} className="btn-hero-primary" id="hero-plan-btn">
-                <span>Plan Your Outing</span>
-                <span className="btn-hero-arrow" aria-hidden="true">→</span>
+            <div className="landing-hero-actions">
+              <Link href={primaryHref} className="btn-hero-primary">
+                <span>Start Planning Free</span>
+                <span className="btn-arrow" aria-hidden="true">→</span>
               </Link>
-              <a href="#preview" className="btn-hero-secondary" id="hero-explore-btn">
-                <span className="btn-hero-compass" aria-hidden="true">🧭</span>
-                <span>Explore Destinations</span>
+              <a href="#how-it-works" className="btn-hero-secondary">
+                <span>See How It Works</span>
               </a>
             </div>
 
-            {/* Supporting Feature Labels */}
-            <div className="hero-feature-pills hero-animate-pills">
+            {/* Feature Highlights Pills */}
+            <div className="hero-feature-pills">
               <div className="hero-feature-item">
-                <span className="hero-feature-icon" aria-hidden="true">✨</span>
-                <span>Discover amazing places.</span>
+                <span className="hero-feature-icon">🚗</span>
+                <span>Real Road Routing</span>
               </div>
               <div className="hero-feature-item">
-                <span className="hero-feature-icon" aria-hidden="true">🏷️</span>
-                <span>Find experiences for every budget.</span>
+                <span className="hero-feature-icon">👥</span>
+                <span>Group Harmony</span>
               </div>
               <div className="hero-feature-item">
-                <span className="hero-feature-icon" aria-hidden="true">👥</span>
-                <span>Plan outings with friends and family.</span>
+                <span className="hero-feature-icon">🌤️</span>
+                <span>Weather Matching</span>
+              </div>
+              <div className="hero-feature-item">
+                <span className="hero-feature-icon">🕒</span>
+                <span>Verified Hours</span>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Visual Composition with Overlapping Photographs & Floating Cards */}
-          <div className="hero-visual-stage hero-animate-visual" aria-label="Curated Bangalore Destinations Showcase">
-            {/* Animated SVG Route Trail linking destination markers */}
+          {/* Right Column: Dynamic Visual Collage Stage */}
+          <div className="hero-visual-stage reveal" ref={registerRef}>
+            {/* Background Route Graphic SVG */}
             <svg
               className="hero-route-svg"
-              viewBox="0 0 540 480"
+              viewBox="0 0 500 500"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
               aria-hidden="true"
             >
               <path
-                d="M 175 145 C 240 100, 320 120, 390 155 C 430 180, 420 280, 360 340 C 310 390, 240 370, 205 400"
-                stroke="#087F73"
+                d="M 60 420 C 120 380, 160 300, 250 250 C 340 200, 380 120, 430 70"
+                stroke="var(--accent)"
                 strokeWidth="2.5"
-                strokeDasharray="6 8"
-                className="hero-svg-path"
+                strokeDasharray="6 6"
+                strokeOpacity="0.45"
               />
+              <circle cx="60" cy="420" r="6" fill="#087F73" />
+              <circle cx="250" cy="250" r="5" fill="#13A89E" />
+              <circle cx="430" cy="70" r="7" fill="#123F35" />
             </svg>
 
-            {/* Image 1: Main Anchor - Lalbagh Botanical Garden (Botanical & Scenic) */}
+            {/* Interactive Image Frame 1 - Main Centerpiece */}
             <div className="hero-photo-card hero-photo-main">
               <img
-                src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=900&q=85"
-                alt="Lalbagh Botanical Garden Glass House and lush landscaped gardens"
+                src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=700&q=85"
+                alt="Windmills Craftworks Dining"
                 className="hero-photo-img"
-                loading="eager"
               />
-              <div className="hero-pin-marker hero-pin-lalbagh">
-                <span className="hero-pin-radar" aria-hidden="true" />
-                <span className="hero-pin-dot">🌿</span>
-                <span className="hero-pin-label">Lalbagh Botanical Garden</span>
+              <div className="hero-photo-overlay" />
+              <div className="hero-photo-caption">
+                <span className="hero-photo-tag">Top Pick · 96% Match</span>
+                <span className="hero-photo-title">Windmills Craftworks</span>
               </div>
             </div>
 
-            {/* Image 2: Top-Right Overlapping - Toit Brewpub (Evening Dining & Friends) */}
+            {/* Interactive Image Frame 2 - Social Taproom */}
             <div className="hero-photo-card hero-photo-social">
               <img
-                src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=85"
-                alt="Toit Brewpub vibrant taproom and dining"
+                src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=500&q=80"
+                alt="Toit Brewpub"
                 className="hero-photo-img"
-                loading="eager"
               />
-              <div className="hero-pin-marker hero-pin-toit">
-                <span className="hero-pin-radar" aria-hidden="true" />
-                <span className="hero-pin-dot">🍺</span>
-                <span className="hero-pin-label">Toit · Indiranagar</span>
+              <div className="hero-photo-overlay" />
+              <div className="hero-photo-caption">
+                <span className="hero-photo-tag">Craft Brewery</span>
+                <span className="hero-photo-title">Toit Indiranagar</span>
               </div>
             </div>
 
-            {/* Image 3: Bottom-Right Overlapping - Cubbon Park (Outdoor Nature Walk) */}
+            {/* Interactive Image Frame 3 - Botanical Nature */}
             <div className="hero-photo-card hero-photo-park">
               <img
-                src="https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=800&q=85"
-                alt="Cubbon Park sunlit tree-lined walking avenue"
+                src="https://images.unsplash.com/photo-1519331379826-f10be5486c6f?auto=format&fit=crop&w=500&q=80"
+                alt="Cubbon Park trails"
                 className="hero-photo-img"
-                loading="eager"
               />
-              <div className="hero-pin-marker hero-pin-cubbon">
-                <span className="hero-pin-radar" aria-hidden="true" />
-                <span className="hero-pin-dot">🌳</span>
-                <span className="hero-pin-label">Cubbon Park</span>
+              <div className="hero-photo-overlay" />
+              <div className="hero-photo-caption">
+                <span className="hero-photo-tag">Nature & Trails</span>
+                <span className="hero-photo-title">Cubbon Park</span>
               </div>
             </div>
 
-            {/* Floating Recommendation Card 1: TOP PICK */}
+            {/* Floating Live Signal Cards */}
             <div className="hero-float-card hero-float-card-1">
-              <div className="float-card-badge float-badge-coral">
-                <span>🔥 TOP PICK</span>
-              </div>
-              <div className="float-card-content">
-                <div className="float-card-title">Toit Brewpub</div>
-                <div className="float-card-sub">Great for friends · Food &amp; Entertainment</div>
-                <div className="float-card-footer">
-                  <span className="float-rating">★ 4.7</span>
-                  <span className="float-dot">·</span>
-                  <span className="float-travel">📍 16 mins driving</span>
-                </div>
+              <div className="float-card-icon">⚡</div>
+              <div>
+                <p className="float-card-title">Real Road Route</p>
+                <p className="float-card-sub">Koramangala → Indiranagar · 16 mins</p>
               </div>
             </div>
 
-            {/* Floating Recommendation Card 2: POPULAR DESTINATION */}
             <div className="hero-float-card hero-float-card-2">
-              <div className="float-card-badge float-badge-teal">
-                <span>🌸 POPULAR DESTINATION</span>
-              </div>
-              <div className="float-card-content">
-                <div className="float-card-title">Lalbagh Botanical Garden</div>
-                <div className="float-card-sub">Nature · Relaxation · Outdoor Experience</div>
-                <div className="float-card-footer">
-                  <span className="float-rating">★ 4.8</span>
-                  <span className="float-dot">·</span>
-                  <span className="float-tag">Scenic Glasshouse &amp; Lake</span>
-                </div>
+              <div className="float-card-icon">🤝</div>
+              <div>
+                <p className="float-card-title">Group Harmony 94%</p>
+                <p className="float-card-sub">4 friends agreed · Zero vetoes</p>
               </div>
             </div>
 
-            {/* Floating Recommendation Card 3: DISCOVER MORE */}
             <div className="hero-float-card hero-float-card-3">
-              <div className="float-card-badge float-badge-mint">
-                <span>✨ DISCOVER MORE</span>
-              </div>
-              <div className="float-card-content">
-                <div className="float-card-title">Cubbon Park</div>
-                <div className="float-card-sub">Perfect for a peaceful outing.</div>
-                <div className="float-card-footer">
-                  <span className="float-tag">🌳 300+ Acres</span>
-                  <span className="float-dot">·</span>
-                  <span className="float-rating">Free Entry</span>
-                </div>
+              <div className="float-card-icon">🌤️</div>
+              <div>
+                <p className="float-card-title">Clear 22°C</p>
+                <p className="float-card-sub">Perfect for outdoor seating</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. How It Works Section */}
+      {/* 2. How It Works (4 Clear Progressive Steps) */}
       <section id="how-it-works" className="landing-section landing-section-soft">
         <div className="landing-container">
-          <div className="section-header-split reveal" ref={registerRef}>
-            <div>
-              <p className="eyebrow">Guided Workflow</p>
+          <div className="section-header-split">
+            <div className="reveal" ref={registerRef}>
+              <p className="eyebrow">Seamless Flow</p>
               <h2 className="section-heading">
-                How It <em>Works.</em>
+                Four smart steps to <em>the perfect outing.</em>
               </h2>
             </div>
-            <p className="section-lead">
-              From deciding where to go to reaching your table — planned in four effortless steps.
+            <p className="section-lead reveal" ref={registerRef}>
+              No endless group chats or conflicting schedules. Just enter where you are, who you&apos;re with, and let Nearby handle the rest.
             </p>
           </div>
 
           <div className="steps-grid stagger-children" ref={registerRef}>
             <div className="step-card" style={{ "--i": 0 } as React.CSSProperties}>
-              <div className="step-num">Step 01</div>
-              <h3 className="step-title">Where to Explore</h3>
-              <p className="step-desc">
-                Select your target city or area — like Bengaluru, Mysuru, Indiranagar, or Cubbon Park.
+              <div className="step-card-num">01</div>
+              <h3 className="step-card-title">Choose Your Destination</h3>
+              <p className="step-card-desc">
+                Search any city or district, or tap quick picks like Indiranagar, Koramangala, Cubbon Park, or Whitefield.
               </p>
+              <div className="step-tag-row">
+                <span className="step-mini-tag">Autocomplete Search</span>
+                <span className="step-mini-tag">Popular Hubs</span>
+              </div>
             </div>
+
             <div className="step-card" style={{ "--i": 1 } as React.CSSProperties}>
-              <div className="step-num">Step 02</div>
-              <h3 className="step-title">Starting Location</h3>
-              <p className="step-desc">
-                Enter where you are starting from so we can calculate exact driving, walking, and transit times.
+              <div className="step-card-num">02</div>
+              <h3 className="step-card-title">Set Your Starting Point &amp; Mode</h3>
+              <p className="step-card-desc">
+                Tell us where you are starting from. Select car, bus/metro, bicycle, or walking to compute authentic road network travel durations.
               </p>
+              <div className="step-tag-row">
+                <span className="step-mini-tag">OSRM Road Router</span>
+                <span className="step-mini-tag">4 Travel Modes</span>
+              </div>
             </div>
+
             <div className="step-card" style={{ "--i": 2 } as React.CSSProperties}>
-              <div className="step-num">Step 03</div>
-              <h3 className="step-title">Choose Your Vibe</h3>
-              <p className="step-desc">
-                Tell us who you&apos;re with — friends, family, date, or solo — and your preferred categories and radius.
+              <div className="step-card-num">03</div>
+              <h3 className="step-card-title">Select Outing Vibe &amp; Group</h3>
+              <p className="step-card-desc">
+                Pick your outing type—Casual Hangout, Romantic Date, or Family Outing. Enable group mode to balance budgets and avoid anyone&apos;s dislikes.
               </p>
+              <div className="step-tag-row">
+                <span className="step-mini-tag">Least Misery Consensus</span>
+                <span className="step-mini-tag">Budget Matching</span>
+              </div>
             </div>
+
             <div className="step-card" style={{ "--i": 3 } as React.CSSProperties}>
-              <div className="step-num">Step 04</div>
-              <h3 className="step-title">Discover, Navigate &amp; Book</h3>
-              <p className="step-desc">
-                Explore cards with photographs, interactive maps, live operating hours, and instant reservations.
+              <div className="step-card-num">04</div>
+              <h3 className="step-card-title">Explore on Map &amp; Reserve</h3>
+              <p className="step-card-desc">
+                View scored matches on an interactive map. Inspect photos, live open hours, weather fitness, and open turn-by-turn navigation in one tap.
               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Discover Places (Interactive Preview) */}
-      <section id="preview" className="landing-section">
-        <div className="landing-container">
-          <div className="section-header-split reveal" ref={registerRef}>
-            <div>
-              <p className="eyebrow">Discover Places</p>
-              <h2 className="section-heading">
-                Tailored for <em>whoever you&apos;re with.</em>
-              </h2>
-            </div>
-            <p className="section-lead">
-              Click the modes below to see how recommendations adapt with real photos, ratings, travel times, and directions.
-            </p>
-          </div>
-
-          <div className="preview-shell reveal" ref={registerRef}>
-            <div className="preview-sidebar">
-              <div>
-                <div className="eyebrow" style={{ marginBottom: 10 }}>Select Outing Mode</div>
-                <div className="preview-pill-group">
-                  {(Object.keys(SCENARIOS) as PreviewScenario[]).map((key) => (
-                    <button
-                      key={key}
-                      type="button"
-                      className={`preview-pill-btn ${scenario === key ? "active" : ""}`}
-                      onClick={() => setScenario(key)}
-                    >
-                      <span>{SCENARIOS[key].label}</span>
-                      <span>→</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ borderTop: "1px dashed var(--hairline-paper)", paddingTop: 14 }}>
-                <div style={{ fontSize: "0.82rem", color: "var(--on-paper-muted)", lineHeight: 1.55 }}>
-                  Every place card includes high-resolution photos, verified hours, travel times, and table booking.
-                </div>
-                <Link
-                  href={primaryHref}
-                  className="btn-hero-primary"
-                  style={{ marginTop: 14, width: "100%", justifyContent: "center", padding: "11px 16px", fontSize: "0.9rem" }}
-                >
-                  Plan Your Outing Now →
-                </Link>
-              </div>
-            </div>
-
-            <div>
-              <div className="context-line" style={{ marginBottom: 14, fontWeight: 500 }}>
-                {currentScenario.context}
-              </div>
-              <div
-                key={scenario}
-                className="stagger-children is-visible"
-                style={{ display: "flex", flexDirection: "column", gap: "14px" }}
-              >
-                {currentScenario.spots.map((spot, idx) => {
-                  const img = getPlaceImageUrl(spot.name, spot.category);
-                  return (
-                    <div
-                      className="ticket anim-card"
-                      key={spot.name}
-                      style={{ gridTemplateColumns: "110px 1fr", "--i": idx } as React.CSSProperties}
-                    >
-                      <div
-                        style={{
-                          backgroundImage: `url('${img}')`,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                          position: "relative",
-                        }}
-                      >
-                        <span
-                          style={{
-                            position: "absolute",
-                            bottom: 8,
-                            left: 8,
-                            background: "rgba(15, 118, 110, 0.92)",
-                            color: "#fff",
-                            fontSize: "0.72rem",
-                            fontWeight: 700,
-                            padding: "2px 6px",
-                            borderRadius: "4px",
-                          }}
-                        >
-                          {spot.score}%
-                        </span>
-                      </div>
-                      <div className="ticket-main">
-                        <div className="ticket-header">
-                          <span className="ticket-name">{spot.name}</span>
-                          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: "var(--accent)", fontWeight: 600 }}>
-                            ✓ Hours verified
-                          </span>
-                        </div>
-                        <div className="ticket-meta" style={{ margin: "2px 0 6px 0" }}>
-                          {spot.category} · {spot.meta}
-                        </div>
-                        <div style={{ fontSize: "0.78rem", color: "var(--on-paper-ink)", fontWeight: 600, marginBottom: "8px" }}>
-                          {spot.travel} · <span style={{ color: "var(--on-paper-muted)", fontWeight: "normal" }}>{spot.price}</span>
-                        </div>
-                        <div className="reasons" style={{ marginBottom: spot.bookingUrl ? 10 : 0 }}>
-                          {spot.reasons.map((r) => (
-                            <span className="reason-chip" key={r}>
-                              {r}
-                            </span>
-                          ))}
-                        </div>
-                        {spot.bookingUrl && (
-                          <Link
-                            href={primaryHref}
-                            className="btn-secondary"
-                            style={{ display: "inline-block", fontSize: "0.82rem", textDecoration: "none" }}
-                          >
-                            Reserve a spot →
-                          </Link>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="step-tag-row">
+                <span className="step-mini-tag">Interactive Map</span>
+                <span className="step-mini-tag">Table Reservations</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 4. Find Places That Match Your Budget */}
-      <section id="budget" className="landing-section landing-section-soft">
+      {/* 3. SIGNATURE EXPERIENCE 1: Sticky Destination Storytelling */}
+      <StickyStorytelling primaryHref={primaryHref} />
+
+      {/* 4. SIGNATURE EXPERIENCE 2: Animated Travel Route Visualization */}
+      <TravelRouteVisualization primaryHref={primaryHref} />
+
+      {/* 5. SIGNATURE EXPERIENCE 3: Interactive Destination Discovery Preview */}
+      <InteractiveDiscovery primaryHref={primaryHref} />
+
+      {/* 6. Budget-Based Destinations */}
+      <section id="budget" className="landing-section">
         <div className="landing-container">
-          <div className="section-header-split reveal" ref={registerRef}>
-            <div>
-              <p className="eyebrow">Clear Pricing</p>
+          <div className="section-header-split">
+            <div className="reveal" ref={registerRef}>
+              <p className="eyebrow">Smart Budget Matching</p>
               <h2 className="section-heading">
-                Find Places That Match <em>Your Budget.</em>
+                Outings designed for <em>every wallet.</em>
               </h2>
             </div>
-            <p className="section-lead">
-              Clear price indicators for every recommendation — from free nature walks to luxury weekend dining.
+            <p className="section-lead reveal" ref={registerRef}>
+              Whether you want a casual ₹200 morning filter coffee and park walk, or a ₹2,000 craft dining celebration, Nearby finds the sweet spot.
             </p>
           </div>
 
-          <div className="stagger-children" ref={registerRef} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "20px" }}>
-            {BUDGET_TIERS.map((tier, i) => (
+          <div className="tiers-grid stagger-children" ref={registerRef}>
+            {BUDGET_TIERS.map((tier, idx) => (
               <div
+                className="tier-card budget-tier-card"
                 key={tier.title}
-                className="card anim-card"
-                style={{ padding: "24px 22px", margin: 0, display: "flex", flexDirection: "column", "--i": i } as React.CSSProperties}
+                style={
+                  {
+                    "--i": idx,
+                    backgroundImage: `${tier.gradient}, url(${tier.image})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  } as React.CSSProperties
+                }
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                  <span className="eyebrow" style={{ margin: 0 }}>{tier.badge}</span>
-                </div>
-                <h3 style={{ margin: "4px 0", fontSize: "1.2rem", color: "var(--on-paper-ink)" }}>
-                  {tier.title}
-                </h3>
-                <div style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--accent)", marginBottom: 10 }}>
-                  {tier.range}
-                </div>
-                <p style={{ fontSize: "0.85rem", color: "var(--on-paper-muted)", lineHeight: 1.5, margin: "0 0 14px 0" }}>
-                  {tier.desc}
-                </p>
-                <div style={{ marginTop: "auto", borderTop: "1px dashed var(--hairline-paper)", paddingTop: "10px" }}>
-                  <span style={{ fontSize: "0.72rem", color: "var(--on-paper-muted)", textTransform: "uppercase" }}>
-                    Popular examples:
-                  </span>
-                  <div style={{ fontSize: "0.82rem", fontWeight: 500, color: "var(--on-paper-ink)", marginTop: "4px" }}>
-                    {tier.examples.join(" · ")}
+                <div className="budget-tier-content">
+                  <div className="tier-badge">{tier.badge}</div>
+                  <h3 className="tier-title">{tier.title}</h3>
+                  <div className="tier-price">{tier.range}</div>
+                  <p className="tier-desc">{tier.desc}</p>
+                  <div className="tier-examples">
+                    <span className="tier-example-label">Featured Spots:</span>
+                    <ul className="tier-example-list">
+                      {tier.examples.map((ex) => (
+                        <li key={ex}>{ex}</li>
+                      ))}
+                    </ul>
                   </div>
+                  <Link href={primaryHref} className="budget-tier-cta">
+                    Explore This Tier →
+                  </Link>
                 </div>
               </div>
             ))}
@@ -629,27 +389,25 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 5. Travel-Smart Discovery Section */}
-      <section id="travel" className="landing-section">
+      {/* 7. Travel-Smart Bento Features */}
+      <section id="travel-smart" className="landing-section landing-section-soft">
         <div className="landing-container">
-          <div className="section-header-split reveal" ref={registerRef}>
-            <div>
-              <p className="eyebrow">Travel-Smart</p>
-              <h2 className="section-heading">
-                Explore Nearby <em>with Confidence.</em>
-              </h2>
-            </div>
-            <p className="section-lead">
-              Calculations based on actual road routing, real operating hours, and live weather conditions.
+          <div className="reveal" ref={registerRef}>
+            <p className="eyebrow">Intelligent Recommender</p>
+            <h2 className="section-heading">
+              Engineered with <em>context awareness.</em>
+            </h2>
+            <p className="section-lead" style={{ maxWidth: "60ch", marginTop: "12px" }}>
+              Most discovery apps dump thousands of pins on a map. Nearby synthesizes six contextual signals to recommend places that genuinely fit your exact moment.
             </p>
           </div>
 
           <div className="bento-grid stagger-children" ref={registerRef}>
             <div className="bento-card" style={{ "--i": 0 } as React.CSSProperties}>
-              <div className="bento-kicker">Accurate Routing</div>
+              <div className="bento-kicker">OSRM Routing</div>
               <h3 className="bento-title">Real Road Distances</h3>
               <p className="bento-desc">
-                We calculate genuine driving, walking, and cycling times from your exact starting neighborhood, not just straight-line distance.
+                We calculate genuine driving, walking, and cycling times from your exact starting neighborhood, not just misleading straight-line distances.
               </p>
             </div>
 
@@ -665,7 +423,7 @@ export default function LandingPage() {
               <div className="bento-kicker">Weather-Smart</div>
               <h3 className="bento-title">Live Weather Matching</h3>
               <p className="bento-desc">
-                Sunny afternoon? We suggest open-air gardens and rooftop bistros. Rainy evening? Cozy indoor lounges and museums.
+                Sunny afternoon? We suggest open-air gardens and rooftop bistros. Rainy evening? Cozy indoor lounges, artisan cafes, and museums.
               </p>
             </div>
 
@@ -677,17 +435,23 @@ export default function LandingPage() {
               </p>
               <div className="signal-bar-row">
                 <span>Vibe &amp; Category Match</span>
-                <div className="signal-track"><div className="signal-fill signal-fill-animated" style={{ width: "95%" }} /></div>
+                <div className="signal-track">
+                  <div className="signal-fill signal-fill-animated" style={{ width: "95%" }} />
+                </div>
                 <span>95%</span>
               </div>
               <div className="signal-bar-row">
                 <span>Distance &amp; Travel Convenience</span>
-                <div className="signal-track"><div className="signal-fill signal-fill-animated" style={{ width: "92%", animationDelay: "0.5s" }} /></div>
+                <div className="signal-track">
+                  <div className="signal-fill signal-fill-animated" style={{ width: "92%", animationDelay: "0.5s" }} />
+                </div>
                 <span>92%</span>
               </div>
               <div className="signal-bar-row">
                 <span>Weather &amp; Timing Fit</span>
-                <div className="signal-track"><div className="signal-fill signal-fill-animated" style={{ width: "88%", animationDelay: "0.7s" }} /></div>
+                <div className="signal-track">
+                  <div className="signal-fill signal-fill-animated" style={{ width: "88%", animationDelay: "0.7s" }} />
+                </div>
                 <span>88%</span>
               </div>
             </div>
@@ -696,15 +460,15 @@ export default function LandingPage() {
               <div className="bento-kicker">No Closed Doors</div>
               <h3 className="bento-title">Verified Operating Hours</h3>
               <p className="bento-desc">
-                Every venue is cross-checked against current day-of-week hours so you never encounter locked doors.
+                Every venue is cross-checked against current day-of-week hours so you never encounter locked doors when you arrive.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 6. FAQ Section */}
-      <section id="faq" className="landing-section landing-section-soft">
+      {/* 8. FAQ Section */}
+      <section id="faq" className="landing-section">
         <div className="landing-container faq-grid">
           <div className="reveal" ref={registerRef}>
             <p className="eyebrow">Frequently Asked Questions</p>
@@ -740,7 +504,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Closing Call to Action Banner */}
+      {/* 9. Closing Call to Action Banner */}
       <section className="closing-band">
         <div className="landing-container reveal" ref={registerRef}>
           <p className="eyebrow">Ready for your next adventure?</p>
