@@ -33,8 +33,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           {children}
         </AuthProvider>
-        <footer style={{ textAlign: "center", padding: "2rem clamp(20px, 3.5vw, 48px)", fontSize: "0.82rem", color: "var(--on-paper-muted)", borderTop: "1px solid var(--hairline-paper)", background: "var(--surface-soft)" }}>
-          <div style={{ maxWidth: "1400px", margin: "0 auto", display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: "8px" }}>
+        <footer style={{ textAlign: "center", padding: "2rem clamp(20px, 3.5vw, 40px)", fontSize: "0.82rem", color: "var(--on-paper-muted)", borderTop: "1px solid var(--hairline-paper)", background: "var(--surface-soft)" }}>
+          <div style={{ maxWidth: "1240px", margin: "0 auto", display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", gap: "8px" }}>
             <Link href="/">Home</Link>
             <span>·</span>
             <Link href="/planner">Planner</Link>

@@ -14,18 +14,18 @@
 
 .landing-container {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1240px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: clamp(20px, 3.5vw, 48px);
-  padding-right: clamp(20px, 3.5vw, 48px);
+  padding-left: clamp(20px, 3.5vw, 40px);
+  padding-right: clamp(20px, 3.5vw, 40px);
   box-sizing: border-box;
 }
 
 /* ---------- Standard Section Spacing & Headers ---------- */
 
 .landing-section {
-  padding: clamp(52px, 6vw, 76px) 0;
+  padding: clamp(54px, 6vw, 76px) 0;
   position: relative;
   width: 100%;
 }
@@ -36,13 +36,16 @@
   border-bottom: 1px solid rgba(8, 127, 115, 0.1);
 }
 
-.section-header-split {
+/* Unified Left-Aligned Section Header System */
+.section-header-split,
+.section-header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  gap: 28px;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  max-width: 680px;
   margin-bottom: clamp(32px, 4vw, 44px);
-  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .eyebrow {
@@ -52,7 +55,7 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #087F73;
-  margin: 0 0 8px;
+  margin: 0;
   display: block;
 }
 
@@ -72,11 +75,11 @@
 }
 
 .section-lead {
-  max-width: 50ch;
   font-size: 1.02rem;
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--on-paper-muted);
   margin: 0;
+  max-width: 58ch;
 }
 
 /* ==========================================================================
@@ -791,9 +794,40 @@
 
 .route-vis-mode-bar {
   display: flex;
-  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 24px;
   flex-wrap: wrap;
+}
+
+.route-vis-mode-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.route-mode-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(8, 127, 115, 0.14);
+}
+
+.route-mode-speed-tag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #087F73;
+  text-transform: uppercase;
+}
+
+.route-mode-note-text {
+  font-size: 0.82rem;
+  color: var(--on-paper-muted);
 }
 
 .route-mode-btn {

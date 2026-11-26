@@ -392,12 +392,12 @@ export default function LandingPage() {
       {/* 7. Travel-Smart Bento Features */}
       <section id="travel-smart" className="landing-section landing-section-soft">
         <div className="landing-container">
-          <div className="reveal" ref={registerRef}>
+          <div className="section-header reveal" ref={registerRef}>
             <p className="eyebrow">Intelligent Recommender</p>
             <h2 className="section-heading">
               Engineered with <em>context awareness.</em>
             </h2>
-            <p className="section-lead" style={{ maxWidth: "60ch", marginTop: "12px" }}>
+            <p className="section-lead">
               Most discovery apps dump thousands of pins on a map. Nearby synthesizes six contextual signals to recommend places that genuinely fit your exact moment.
             </p>
           </div>
@@ -470,12 +470,12 @@ export default function LandingPage() {
       {/* 8. FAQ Section */}
       <section id="faq" className="landing-section">
         <div className="landing-container faq-grid">
-          <div className="reveal" ref={registerRef}>
+          <div className="section-header reveal" ref={registerRef}>
             <p className="eyebrow">Frequently Asked Questions</p>
             <h2 className="section-heading">
               Got <em>questions?</em>
             </h2>
-            <p className="section-lead" style={{ marginTop: 12 }}>
+            <p className="section-lead">
               Everything you need to know about planning your next outing with Nearby &amp; Co.
             </p>
           </div>

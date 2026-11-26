@@ -148,7 +148,7 @@ export default function TravelRouteVisualization({ primaryHref }: TravelRouteVis
     >
       <div className="landing-container">
         {/* Section Header */}
-        <div className="section-header-split" style={{ marginBottom: "40px" }}>
+        <div className="section-header-split">
           <div>
             <p className="eyebrow">Real Road Routing</p>
             <h2 className="section-heading">

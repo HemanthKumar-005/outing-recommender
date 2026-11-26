@@ -21,10 +21,10 @@
 }
 
 .site-header-container {
-  max-width: 1400px;
+  max-width: 1240px;
   width: 100%;
   margin: 0 auto;
-  padding: 14px clamp(20px, 3.5vw, 48px);
+  padding: 14px clamp(20px, 3.5vw, 40px);
   display: flex;
   align-items: center;
   justify-content: space-between;
