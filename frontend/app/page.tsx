@@ -175,12 +175,14 @@ export default function LandingPage() {
                 d="M 60 420 C 120 380, 160 300, 250 250 C 340 200, 380 120, 430 70"
                 stroke="var(--accent)"
                 strokeWidth="2.5"
-                strokeDasharray="6 6"
-                strokeOpacity="0.45"
+                strokeDasharray="600"
+                strokeDashoffset="600"
+                strokeOpacity="0.55"
+                style={{ animation: "drawRoute 2s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.3s" }}
               />
-              <circle cx="60" cy="420" r="6" fill="#087F73" />
-              <circle cx="250" cy="250" r="5" fill="#13A89E" />
-              <circle cx="430" cy="70" r="7" fill="#123F35" />
+              <circle cx="60" cy="420" r="6" fill="#087F73" style={{ animation: "springIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.3s", transformOrigin: "60px 420px" }} />
+              <circle cx="250" cy="250" r="5" fill="#13A89E" style={{ animation: "springIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.9s", transformOrigin: "250px 250px" }} />
+              <circle cx="430" cy="70" r="7" fill="#123F35" style={{ animation: "springIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 1.5s", transformOrigin: "430px 70px" }} />
             </svg>
 
             {/* Interactive Image Frame 1 - Main Centerpiece */}
@@ -229,7 +231,10 @@ export default function LandingPage() {
             <div className="hero-float-card hero-float-card-1">
               <div className="float-card-icon">⚡</div>
               <div>
-                <p className="float-card-title">Real Road Route</p>
+                <p className="float-card-title">
+                  <span style={{ display: "inline-block", width: "6px", height: "6px", borderRadius: "50%", background: "#10b981", marginRight: "6px", verticalAlign: "middle", boxShadow: "0 0 6px #10b981" }} />
+                  Real Road Route
+                </p>
                 <p className="float-card-sub">Koramangala → Indiranagar · 16 mins</p>
               </div>
             </div>
