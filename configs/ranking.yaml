@@ -55,9 +55,9 @@ group_aggregation:
 # disables it (safe picks); diversity=1 favors variety aggressively. The
 # request-level `diversity` param overrides this default.
 diversity:
-  default: 0.15
-  category_similarity_weight: 0.7
-  ambience_similarity_weight: 0.3
+  default: 0.35
+  category_similarity_weight: 0.8
+  ambience_similarity_weight: 0.2
 
 # Feature flags for machine learning and experimental capabilities
 feature_flags:
