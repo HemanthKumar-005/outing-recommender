@@ -317,6 +317,7 @@
   border-radius: 20px;
   z-index: 2;
   transform: rotate(-2deg);
+  animation: floatA 7s ease-in-out infinite;
 }
 
 .hero-photo-main:hover {
@@ -332,6 +333,7 @@
   border-radius: 16px;
   z-index: 3;
   transform: rotate(2.5deg);
+  animation: floatB 8s ease-in-out infinite 0.5s;
 }
 
 .hero-photo-social:hover {
@@ -347,6 +349,7 @@
   border-radius: 16px;
   z-index: 3;
   transform: rotate(-1.5deg);
+  animation: floatC 9s ease-in-out infinite 1s;
 }
 
 .hero-photo-park:hover {
@@ -1746,8 +1749,18 @@
   transition: color 0.18s ease;
 }
 
-.faq-trigger:hover {
-  color: #087F73;
+.faq-toggle-icon {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  color: var(--accent);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+  display: inline-block;
+  line-height: 1;
+}
+
+.faq-item.faq-open .faq-toggle-icon {
+  transform: rotate(45deg);
+  color: var(--coral);
 }
 
 .faq-answer {

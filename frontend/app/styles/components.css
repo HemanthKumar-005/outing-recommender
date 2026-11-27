@@ -1,4 +1,116 @@
-/* Part of the Nearby & Co. design system — imported via globals.css */
+/* Shimmer Button */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transform: translateX(-150%) skewX(-20deg);
+  animation: shimmerSweep 3.5s infinite ease-in-out;
+  pointer-events: none;
+}
+
+/* Skeleton Loading Shimmer */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(234, 242, 239, 0.8) 25%,
+    rgba(255, 255, 255, 0.9) 37%,
+    rgba(234, 242, 239, 0.8) 63%
+  );
+  background-size: 400% 100%;
+  animation: skeletonPulse 1.6s ease infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-card {
+  border: 1px solid var(--hairline-paper);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Glassmorphism & Elevation Cards */
+.card-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-xl);
+}
+
+.card-accent {
+  background: var(--surface);
+  border-top: 3px solid var(--accent);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--radius-lg);
+}
+
+.card-soft {
+  background: var(--surface-soft);
+  border: 1px solid var(--hairline-paper);
+  border-radius: var(--radius-md);
+}
+
+/* Score Badge with Pulsing Ring */
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-pill);
+  background: var(--gradient-accent);
+  color: #ffffff;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
+.score-badge.pulse {
+  animation: ringPulse 2.4s infinite;
+}
+
+/* Category & Info Pills */
+.pill-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-soft);
+  color: var(--accent);
+  border: 1px solid rgba(15, 118, 110, 0.18);
+}
+
+.pill-travel {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  color: var(--on-paper-muted);
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: rgba(26, 40, 38, 0.05);
+}
 
 .eyebrow {
   font-family: var(--font-mono);

@@ -256,7 +256,7 @@ export default function RecommendationMap({
       const placeIcon = L.divIcon({
         className: `custom-map-marker-place ${isSelected ? "selected" : ""}`,
         html: `
-          <div style="background:${markerColor}; color:#fff; border:2.5px solid #fff; border-radius:50%; width:${markerSize}px; height:${markerSize}px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.35); font-weight:700; font-size:13px; font-family:sans-serif; cursor:pointer; transition:transform 0.15s ease;">
+          <div style="background:${markerColor}; color:#fff; border:2.5px solid #fff; border-radius:50%; width:${markerSize}px; height:${markerSize}px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.35); font-weight:700; font-size:13px; font-family:sans-serif; cursor:pointer; transition:transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); animation: markerBounceDrop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; animation-delay: ${Math.min(index * 60, 600)}ms;">
             ${index + 1}
           </div>
         `,

@@ -34,6 +34,27 @@ export default function LandingPage() {
   const { isAuthenticated } = useAuth();
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
+  // Cycling hero taglines
+  const HERO_TAGLINES = [
+    "Skip the debate.",
+    "Ditch the group chat.",
+    "Just go.",
+    "Make a memory.",
+  ];
+  const [taglineIdx, setTaglineIdx] = useState(0);
+  const [taglineFade, setTaglineFade] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTaglineFade(false);
+      setTimeout(() => {
+        setTaglineIdx((prev) => (prev + 1) % HERO_TAGLINES.length);
+        setTaglineFade(true);
+      }, 300);
+    }, 3200);
+    return () => clearInterval(interval);
+  }, [HERO_TAGLINES.length]);
+
   const primaryHref = isAuthenticated ? "/planner" : "/login";
 
   // Intersection Observer for scroll-reveal staggered animations
@@ -91,7 +112,17 @@ export default function LandingPage() {
             <h1 className="landing-hero-title">
               Plan the outing.
               <br />
-              <span className="accent-text">Skip the debate.</span>
+              <span
+                className="accent-text hero-dynamic-tagline"
+                style={{
+                  display: "inline-block",
+                  opacity: taglineFade ? 1 : 0,
+                  transform: taglineFade ? "translateY(0)" : "translateY(6px)",
+                  transition: "opacity 0.3s ease, transform 0.3s ease",
+                }}
+              >
+                {HERO_TAGLINES[taglineIdx]}
+              </span>
             </h1>
 
             <p className="landing-hero-sub">
@@ -100,7 +131,7 @@ export default function LandingPage() {
             </p>
 
             <div className="landing-hero-actions">
-              <Link href={primaryHref} className="btn-hero-primary">
+              <Link href={primaryHref} className="btn-hero-primary btn-shimmer">
                 <span>Start Planning Free</span>
                 <span className="btn-arrow" aria-hidden="true">→</span>
               </Link>
@@ -393,7 +424,7 @@ export default function LandingPage() {
             {FAQS.map((item, idx) => {
               const isOpen = openFaq === idx;
               return (
-                <div className="faq-item" key={item.q} style={{ "--i": idx } as React.CSSProperties}>
+                <div className={`faq-item ${isOpen ? "faq-open" : ""}`} key={item.q} style={{ "--i": idx } as React.CSSProperties}>
                   <button
                     type="button"
                     className="faq-trigger"
@@ -401,11 +432,22 @@ export default function LandingPage() {
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
                   >
                     <span>{item.q}</span>
-                    <span style={{ color: "var(--accent)", fontFamily: "var(--font-mono)" }}>
-                      {isOpen ? "−" : "+"}
+                    <span className="faq-toggle-icon" aria-hidden="true">
+                      +
                     </span>
                   </button>
-                  {isOpen && <p className="faq-answer">{item.a}</p>}
+                  <div
+                    className="faq-accordion-body"
+                    style={{
+                      maxHeight: isOpen ? "400px" : "0",
+                      opacity: isOpen ? 1 : 0,
+                      overflow: "hidden",
+                      transition: "max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, margin 0.3s ease",
+                      marginBottom: isOpen ? "16px" : "0",
+                    }}
+                  >
+                    <p className="faq-answer">{item.a}</p>
+                  </div>
                 </div>
               );
             })}
@@ -424,7 +466,7 @@ export default function LandingPage() {
             Enter your starting point, choose your destination, and discover great places with real travel times in seconds.
           </p>
           <div style={{ display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
-            <Link href={primaryHref} className="btn-hero-primary" style={{ fontSize: "1.05rem", padding: "13px 26px" }}>
+            <Link href={primaryHref} className="btn-hero-primary btn-shimmer" style={{ fontSize: "1.05rem", padding: "13px 26px" }}>
               Plan Your Outing →
             </Link>
           </div>

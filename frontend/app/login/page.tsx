@@ -199,6 +199,32 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {/* Social Proof Strip */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              padding: "10px 14px",
+              background: "rgba(255, 255, 255, 0.12)",
+              backdropFilter: "blur(10px)",
+              WebkitBackdropFilter: "blur(10px)",
+              borderRadius: "999px",
+              border: "1px solid rgba(255, 255, 255, 0.22)",
+              width: "fit-content",
+              marginBottom: "20px",
+            }}
+          >
+            <div style={{ display: "flex", marginLeft: "6px" }}>
+              <span style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#13A89E", display: "inline-block", border: "2px solid #14332e", marginRight: "-8px" }} />
+              <span style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#d96b43", display: "inline-block", border: "2px solid #14332e", marginRight: "-8px" }} />
+              <span style={{ width: "24px", height: "24px", borderRadius: "50%", background: "#087F73", display: "inline-block", border: "2px solid #14332e" }} />
+            </div>
+            <span style={{ fontSize: "0.78rem", fontWeight: 600, color: "#ffffff", paddingRight: "8px" }}>
+              Joined by 2,400+ explorers in Bengaluru
+            </span>
+          </div>
+
           {/* Floating Spot Card Preview */}
           <div className="auth-preview-badge">
             <div className="auth-preview-badge-left">
@@ -420,7 +446,7 @@ export default function LoginPage() {
               )}
 
               {/* Submit Action Button */}
-              <button type="submit" className="auth-submit-btn" disabled={isSubmitDisabled}>
+              <button type="submit" className="auth-submit-btn btn-shimmer" disabled={isSubmitDisabled}>
                 {loading ? (
                   <>
                     <span className="auth-spinner" aria-hidden="true" />

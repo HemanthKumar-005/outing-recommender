@@ -1744,7 +1744,7 @@ export default function PlannerPage() {
                   </p>
                   <button
                     type="button"
-                    className="wizard-btn-submit"
+                    className="wizard-btn-submit btn-shimmer"
                     style={{ margin: "14px auto 0", display: "inline-flex" }}
                     onClick={(e) => submit(e as any)}
                   >
@@ -1810,7 +1810,7 @@ export default function PlannerPage() {
                             className="place-card-image"
                             loading="lazy"
                           />
-                          <div className="place-score-badge">
+                          <div className="place-score-badge pulse">
                             <span>★</span>
                             <span>{Math.round(rec.score * 100)}% Match</span>
                           </div>

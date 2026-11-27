@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import ServiceWorkerRegistration from "./components/ServiceWorkerRegistration";
 import { AuthProvider } from "./context/AuthContext";
 import Header from "./components/layout/Header";
+import ScrollProgress from "./components/ScrollProgress";
+import CursorBlob from "./components/CursorBlob";
 
 export const metadata: Metadata = {
   title: "Nearby & Co. — Outing Concierge",
@@ -29,6 +31,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <ScrollProgress />
+        <CursorBlob />
         <AuthProvider>
           <Header />
           {children}
