@@ -12,10 +12,16 @@ from fastapi.responses import JSONResponse
 from jose import jwt
 from pydantic import BaseModel
 
+import importlib
+
 sys.path.insert(0, "/shared")
+sys.path.insert(0, "/")
 _local_shared = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "shared"))
 if os.path.isdir(_local_shared) and _local_shared not in sys.path:
     sys.path.insert(0, _local_shared)
+_local_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+if os.path.isdir(_local_root) and _local_root not in sys.path:
+    sys.path.insert(0, _local_root)
 
 try:
     from shared.pgdb_platform import (
@@ -29,16 +35,25 @@ try:
     from shared.request_id_middleware import RequestIdMiddleware
     from shared.sentry_config import init_sentry
 except ImportError:
-    from pgdb_platform import (  # type: ignore[import-not-found, import-untyped] # noqa: F401
-        create_tenant,
-        resolve_tenant_by_api_key,
-        revoke_tenant_key,
-        rotate_tenant_key,
-    )
-    from tenant import TENANT_HEADER, USER_HEADER  # type: ignore[import-not-found, import-untyped] # noqa: F401
-    from logging_config import configure_logging, request_id_var  # type: ignore[import-not-found, import-untyped] # noqa: F401
-    from request_id_middleware import RequestIdMiddleware  # type: ignore[import-not-found, import-untyped] # noqa: F401
-    from sentry_config import init_sentry  # type: ignore[import-not-found, import-untyped] # noqa: F401
+    _pgdb = importlib.import_module("pgdb_platform")
+    create_tenant = _pgdb.create_tenant
+    resolve_tenant_by_api_key = _pgdb.resolve_tenant_by_api_key
+    revoke_tenant_key = _pgdb.revoke_tenant_key
+    rotate_tenant_key = _pgdb.rotate_tenant_key
+
+    _tenant = importlib.import_module("tenant")
+    TENANT_HEADER = _tenant.TENANT_HEADER
+    USER_HEADER = _tenant.USER_HEADER
+
+    _log_cfg = importlib.import_module("logging_config")
+    configure_logging = _log_cfg.configure_logging
+    request_id_var = _log_cfg.request_id_var
+
+    _req_mw = importlib.import_module("request_id_middleware")
+    RequestIdMiddleware = _req_mw.RequestIdMiddleware
+
+    _sentry_cfg = importlib.import_module("sentry_config")
+    init_sentry = _sentry_cfg.init_sentry
 
 init_sentry("api-gateway")
 logger = configure_logging("api-gateway")

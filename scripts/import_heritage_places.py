@@ -6,11 +6,20 @@ into the PostgreSQL places.places database for all active tenants.
 import os
 import json
 import random
-import pandas as pd
 try:
-    import psycopg2
+    import pandas as pd  # type: ignore
 except ImportError:
-    psycopg2 = None
+    pd = None  # type: ignore
+
+try:
+    import psycopg2  # type: ignore
+except ImportError:
+    psycopg2 = None  # type: ignore
+
+try:
+    import psycopg  # type: ignore
+except ImportError:
+    psycopg = None  # type: ignore
 
 BASE_DIR = r"c:\Final Year Project\outing-recommender"
 DATA_DIR = os.environ.get("DATA_DIR", os.path.join(BASE_DIR, "scratch", "indian_heritage", "indian-heritage-streamlit-main"))

@@ -13,14 +13,20 @@ import json
 import os
 import time
 import threading
+from typing import Any
 
-import pika
+try:
+    import pika
+except ImportError:
+    pika = None  # type: ignore
 
 RABBITMQ_URL = os.environ.get("RABBITMQ_URL", "amqp://guest:guest@rabbitmq:5672/%2F")
 EXCHANGE = "events"
 
 
-def _connect(retries: int = 15, delay: float = 3.0) -> pika.BlockingConnection:
+def _connect(retries: int = 15, delay: float = 3.0) -> Any:
+    if pika is None:
+        raise RuntimeError("pika is required for eventbus but not installed")
     last_err = None
     for attempt in range(retries):
         try:

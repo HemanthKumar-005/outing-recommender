@@ -1,17 +1,22 @@
+import importlib
 import os
 import sys
 
 import httpx
 
 sys.path.insert(0, "/shared")
+sys.path.insert(0, "/")
 _local_shared = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "shared"))
 if os.path.isdir(_local_shared) and _local_shared not in sys.path:
     sys.path.insert(0, _local_shared)
+_local_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+if os.path.isdir(_local_root) and _local_root not in sys.path:
+    sys.path.insert(0, _local_root)
 
 try:
     from shared.tenant import tenant_headers
 except ImportError:
-    from tenant import tenant_headers  # type: ignore[import-not-found, import-untyped] # noqa: F401
+    tenant_headers = importlib.import_module("tenant").tenant_headers
 
 USER_SERVICE_URL = os.environ.get("USER_SERVICE_URL", "http://user-service:8000")
 PLACE_SERVICE_URL = os.environ.get("PLACE_SERVICE_URL", "http://place-service:8000")
@@ -31,6 +36,7 @@ def get_user(tenant_id: str, user_id: int) -> dict | None:
     return resp.json()
 
 
+
 def get_context(lat: float, lng: float, at: str | None = None) -> dict:
     # context-service is not tenant-scoped (weather is shared, not tenant data).
     params = {"lat": lat, "lng": lng}
@@ -39,6 +45,7 @@ def get_context(lat: float, lng: float, at: str | None = None) -> dict:
     resp = _client.get(f"{CONTEXT_SERVICE_URL}/context", params=params)
     resp.raise_for_status()
     return resp.json()
+
 
 
 def get_nearby_places(tenant_id: str, lat: float, lng: float, radius_km: float, category: str | None = None,
@@ -56,12 +63,14 @@ def get_nearby_places(tenant_id: str, lat: float, lng: float, radius_km: float, 
     return resp.json()
 
 
+
 def get_all_interactions(tenant_id: str, limit: int = 5000) -> list:
     resp = _client.get(
         f"{INTERACTION_SERVICE_URL}/interactions", params={"limit": limit}, headers=tenant_headers(tenant_id),
     )
     resp.raise_for_status()
     return resp.json()
+
 
 
 def get_user_interactions(tenant_id: str, user_id: int) -> list:

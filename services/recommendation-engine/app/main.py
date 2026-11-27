@@ -11,10 +11,16 @@ import xgboost as xgb
 from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
+import importlib
+
 sys.path.insert(0, "/shared")
+sys.path.insert(0, "/")
 _local_shared = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "shared"))
 if os.path.isdir(_local_shared) and _local_shared not in sys.path:
     sys.path.insert(0, _local_shared)
+_local_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+if os.path.isdir(_local_root) and _local_root not in sys.path:
+    sys.path.insert(0, _local_root)
 
 try:
     from shared.eventbus import consume_in_background
@@ -25,13 +31,16 @@ try:
     from shared.request_id_middleware import RequestIdMiddleware
     from shared.sentry_config import init_sentry
 except ImportError:
-    from eventbus import consume_in_background  # type: ignore[import-not-found, import-untyped] # noqa: F401
-    from features import FEATURE_NAMES, build_feature_vector  # type: ignore[import-not-found, import-untyped] # noqa: F401
-    from ranking_config import load_config  # type: ignore[import-not-found, import-untyped] # noqa: F401
-    from tenant import require_tenant  # type: ignore[import-not-found, import-untyped] # noqa: F401
-    from logging_config import configure_logging  # type: ignore[import-not-found, import-untyped] # noqa: F401
-    from request_id_middleware import RequestIdMiddleware  # type: ignore[import-not-found, import-untyped] # noqa: F401
-    from sentry_config import init_sentry  # type: ignore[import-not-found, import-untyped] # noqa: F401
+    _eb = importlib.import_module("eventbus")
+    consume_in_background = getattr(_eb, "consume_in_background", None)
+    _feat = importlib.import_module("features")
+    FEATURE_NAMES = _feat.FEATURE_NAMES
+    build_feature_vector = _feat.build_feature_vector
+    load_config = importlib.import_module("ranking_config").load_config
+    require_tenant = importlib.import_module("tenant").require_tenant
+    configure_logging = importlib.import_module("logging_config").configure_logging
+    RequestIdMiddleware = importlib.import_module("request_id_middleware").RequestIdMiddleware
+    init_sentry = importlib.import_module("sentry_config").init_sentry
 
 try:
     from app import clients, scoring
@@ -39,7 +48,8 @@ except ImportError:
     try:
         from . import clients, scoring
     except ImportError:
-        import clients, scoring  # type: ignore[import-not-found, import-untyped] # noqa: F401
+        clients = importlib.import_module("clients")
+        scoring = importlib.import_module("scoring")
 
 init_sentry("recommendation-engine")
 logger = configure_logging("recommendation-engine")

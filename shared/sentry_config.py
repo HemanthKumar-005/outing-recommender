@@ -1,11 +1,15 @@
 import os
-import sentry_sdk
+
+try:
+    import sentry_sdk
+except ImportError:
+    sentry_sdk = None  # type: ignore
 
 
 def init_sentry(service_name: str) -> None:
     dsn = os.environ.get("SENTRY_DSN")
-    if not dsn:
-        return  # Sentry is optional — don't crash if DSN is unset
+    if not dsn or sentry_sdk is None:
+        return  # Sentry is optional — don't crash if DSN is unset or SDK not installed
     integrations = []
     try:
         from sentry_sdk.integrations.fastapi import FastApiIntegration
@@ -20,3 +24,4 @@ def init_sentry(service_name: str) -> None:
         traces_sample_rate=0.1,  # 10% of requests traced — adjust per traffic
         send_default_pii=False,  # never send PII to Sentry
     )
+
