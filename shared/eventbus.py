@@ -15,17 +15,22 @@ import time
 import threading
 from typing import Any
 
+class _PikaStub:
+    @staticmethod
+    def BasicProperties(**kwargs: Any) -> Any:
+        return None
+
 try:
     import pika
 except ImportError:
-    pika = None  # type: ignore
+    pika = _PikaStub()  # type: ignore
 
 RABBITMQ_URL = os.environ.get("RABBITMQ_URL", "amqp://guest:guest@rabbitmq:5672/%2F")
 EXCHANGE = "events"
 
 
 def _connect(retries: int = 15, delay: float = 3.0) -> Any:
-    if pika is None:
+    if isinstance(pika, _PikaStub):
         raise RuntimeError("pika is required for eventbus but not installed")
     last_err = None
     for attempt in range(retries):

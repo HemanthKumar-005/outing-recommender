@@ -6,20 +6,34 @@ into the PostgreSQL places.places database for all active tenants.
 import os
 import json
 import random
+from typing import Any
+
+class _PdStub:
+    @staticmethod
+    def read_csv(*args: Any, **kwargs: Any) -> Any:
+        return []
+
+    @staticmethod
+    def notnull(val: Any) -> bool:
+        return val is not None
+
 try:
     import pandas as pd  # type: ignore
 except ImportError:
-    pd = None  # type: ignore
+    pd = _PdStub()  # type: ignore
+
+class _PsycopgStub:
+    @staticmethod
+    def connect(*args: Any, **kwargs: Any) -> Any:
+        raise RuntimeError("psycopg not installed")
 
 try:
     import psycopg2  # type: ignore
 except ImportError:
-    psycopg2 = None  # type: ignore
-
-try:
-    import psycopg  # type: ignore
-except ImportError:
-    psycopg = None  # type: ignore
+    try:
+        import psycopg as psycopg2  # type: ignore
+    except ImportError:
+        psycopg2 = _PsycopgStub()  # type: ignore
 
 BASE_DIR = r"c:\Final Year Project\outing-recommender"
 DATA_DIR = os.environ.get("DATA_DIR", os.path.join(BASE_DIR, "scratch", "indian_heritage", "indian-heritage-streamlit-main"))
@@ -440,7 +454,7 @@ BANGALORE_HERITAGE_VENUES = [
 
 def load_all_heritage_venues():
     venues = list(BANGALORE_HERITAGE_VENUES)
-    seen_names = {v["name"].lower().strip() for v in venues}
+    seen_names = {str(v["name"]).lower().strip() for v in venues}
 
     # 1. Cultural Heritage CSV
     cult_path = os.path.join(DATA_DIR, "cultural_heritage.csv")

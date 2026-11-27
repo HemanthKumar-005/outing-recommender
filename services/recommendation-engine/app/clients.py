@@ -1,3 +1,4 @@
+from typing import Any
 import importlib
 import os
 import sys
@@ -39,7 +40,7 @@ def get_user(tenant_id: str, user_id: int) -> dict | None:
 
 def get_context(lat: float, lng: float, at: str | None = None) -> dict:
     # context-service is not tenant-scoped (weather is shared, not tenant data).
-    params = {"lat": lat, "lng": lng}
+    params: dict[str, Any] = {"lat": lat, "lng": lng}
     if at:
         params["at"] = at
     resp = _client.get(f"{CONTEXT_SERVICE_URL}/context", params=params)
@@ -51,7 +52,7 @@ def get_context(lat: float, lng: float, at: str | None = None) -> dict:
 def get_nearby_places(tenant_id: str, lat: float, lng: float, radius_km: float, category: str | None = None,
                        min_price: int | None = None, max_price: int | None = None,
                        open_now: bool = False, limit: int = 100) -> list:
-    params = {"lat": lat, "lng": lng, "radius_km": radius_km, "open_now": open_now, "limit": limit}
+    params: dict[str, Any] = {"lat": lat, "lng": lng, "radius_km": radius_km, "open_now": open_now, "limit": limit}
     if category:
         params["category"] = category
     if min_price is not None:

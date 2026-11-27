@@ -9,7 +9,7 @@ import redis
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from jose import jwt
+from jose import jwt  # type: ignore # pyrefly: ignore
 from pydantic import BaseModel
 
 import importlib
@@ -225,7 +225,7 @@ def _resolve_tenant(api_key: str) -> str | None:
     try:
         cached = _redis.get(cache_key)
         if cached:
-            return cached
+            return cached.decode("utf-8") if isinstance(cached, bytes) else str(cached)
     except Exception as e:  # noqa: BLE001
         logger.warning(f"tenant cache read failed: {e}")
 
@@ -314,7 +314,7 @@ async def proxy(service: str, path: str, request: Request):
             token_tenant_id = token_payload.get("tenant_id")
             if not user_id:
                 return JSONResponse(status_code=401, content={"detail": "invalid token payload: missing user_id"})
-            if token_tenant_id and str(token_tenant_id) != str(tenant_id):
+            if token_tenant_id and str(token_tenant_id) != tenant_id:
                 return JSONResponse(status_code=401, content={"detail": "token does not match tenant"})
         except Exception as e:
             return JSONResponse(status_code=401, content={"detail": f"invalid or expired token: {e}"})

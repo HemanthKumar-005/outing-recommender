@@ -11,6 +11,9 @@ import xgboost as xgb
 from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
+from contextlib import asynccontextmanager
+from typing import Any, Callable
+
 import importlib
 
 sys.path.insert(0, "/shared")
@@ -32,7 +35,7 @@ try:
     from shared.sentry_config import init_sentry
 except ImportError:
     _eb = importlib.import_module("eventbus")
-    consume_in_background = getattr(_eb, "consume_in_background", None)
+    consume_in_background: Callable[..., Any] = getattr(_eb, "consume_in_background", lambda *a, **k: None)
     _feat = importlib.import_module("features")
     FEATURE_NAMES = _feat.FEATURE_NAMES
     build_feature_vector = _feat.build_feature_vector
@@ -43,18 +46,28 @@ except ImportError:
     init_sentry = importlib.import_module("sentry_config").init_sentry
 
 try:
-    from app import clients, scoring
-except ImportError:
+    from . import clients, scoring  # type: ignore # pyrefly: ignore
+except (ImportError, ValueError):
     try:
-        from . import clients, scoring
-    except ImportError:
+        from app import clients, scoring  # type: ignore # pyrefly: ignore
+    except (ImportError, ValueError):
         clients = importlib.import_module("clients")
         scoring = importlib.import_module("scoring")
 
 init_sentry("recommendation-engine")
 logger = configure_logging("recommendation-engine")
 
-app = FastAPI(title="Recommendation Engine")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    _load_model()
+    logger.info(f"XGBoost enabled: {scoring.XGBOOST_ENABLED}")
+    if callable(consume_in_background):
+        consume_in_background("recommendation-engine.model-updates", ["model.updated"], _on_event)
+    yield
+
+
+app = FastAPI(title="Recommendation Engine", lifespan=lifespan)
 app.add_middleware(RequestIdMiddleware)
 
 MODEL_PATH = os.environ.get("MODEL_PATH", "/models/xgboost_model.json")
@@ -108,12 +121,6 @@ def _on_event(routing_key: str, payload: dict):
         logger.info("model.updated event received — reloading model")
         _load_model()
 
-
-@app.on_event("startup")
-def startup():
-    _load_model()
-    logger.info(f"XGBoost enabled: {scoring.XGBOOST_ENABLED}")
-    consume_in_background("recommendation-engine.model-updates", ["model.updated"], _on_event)
 
 
 class RecommendationRequest(BaseModel):
