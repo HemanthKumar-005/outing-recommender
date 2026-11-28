@@ -258,67 +258,205 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 2. How It Works (4 Clear Progressive Steps) */}
+      {/* 2. How It Works (4 Connected Progressive Stages) */}
       <section id="how-it-works" className="landing-section landing-section-soft">
         <div className="landing-container">
           <div className="section-header-split">
             <div className="reveal" ref={registerRef}>
-              <p className="eyebrow">Seamless Flow</p>
+              <div className="steps-flow-eyebrow">
+                <span className="steps-pulse-dot" />
+                <span>Seamless Four-Stage Flow</span>
+              </div>
               <h2 className="section-heading">
                 Four smart steps to <em>the perfect outing.</em>
               </h2>
             </div>
             <p className="section-lead reveal" ref={registerRef}>
-              No endless group chats or conflicting schedules. Just enter where you are, who you&apos;re with, and let Nearby handle the rest.
+              No endless group chats, no conflicting schedules, and zero guesswork. Just enter where you are, who you&apos;re with, and let Nearby orchestrate the outing.
             </p>
           </div>
 
-          <div className="steps-grid stagger-children" ref={registerRef}>
-            <div className="step-card" style={{ "--i": 0 } as React.CSSProperties}>
-              <div className="step-card-num">01</div>
-              <h3 className="step-card-title">Choose Your Destination</h3>
-              <p className="step-card-desc">
-                Search any city or district, or tap quick picks like Indiranagar, Koramangala, Cubbon Park, or Whitefield.
-              </p>
-              <div className="step-tag-row">
-                <span className="step-mini-tag">Autocomplete Search</span>
-                <span className="step-mini-tag">Popular Hubs</span>
-              </div>
+          <div className="steps-flow-wrapper reveal" ref={registerRef}>
+            {/* Visual connecting pipeline bar on desktop */}
+            <div className="steps-flow-pipeline" aria-hidden="true">
+              <div className="steps-pipeline-line" />
+              <div className="steps-pipeline-node node-1" />
+              <div className="steps-pipeline-node node-2" />
+              <div className="steps-pipeline-node node-3" />
+              <div className="steps-pipeline-node node-4" />
             </div>
 
-            <div className="step-card" style={{ "--i": 1 } as React.CSSProperties}>
-              <div className="step-card-num">02</div>
-              <h3 className="step-card-title">Set Your Starting Point &amp; Mode</h3>
-              <p className="step-card-desc">
-                Tell us where you are starting from. Select car, bus/metro, bicycle, or walking to compute authentic road network travel durations.
-              </p>
-              <div className="step-tag-row">
-                <span className="step-mini-tag">OSRM Road Router</span>
-                <span className="step-mini-tag">4 Travel Modes</span>
-              </div>
-            </div>
+            <div className="steps-grid stagger-children">
+              {/* STEP 1 */}
+              <div className="step-card" style={{ "--i": 0 } as React.CSSProperties}>
+                <div className="step-header">
+                  <div className="step-badge">
+                    <span className="step-icon">📍</span>
+                    <span className="step-num">01</span>
+                  </div>
+                  <span className="step-stage-pill">Destination Hub</span>
+                </div>
 
-            <div className="step-card" style={{ "--i": 2 } as React.CSSProperties}>
-              <div className="step-card-num">03</div>
-              <h3 className="step-card-title">Select Outing Vibe &amp; Group</h3>
-              <p className="step-card-desc">
-                Pick your outing type—Casual Hangout, Romantic Date, or Family Outing. Enable group mode to balance budgets and avoid anyone&apos;s dislikes.
-              </p>
-              <div className="step-tag-row">
-                <span className="step-mini-tag">Least Misery Consensus</span>
-                <span className="step-mini-tag">Budget Matching</span>
-              </div>
-            </div>
+                <h3 className="step-card-title">Choose Your Destination</h3>
+                <p className="step-card-desc">
+                  Search any neighborhood across Bengaluru, or tap curated popular hubs with verified cultural attractions, cafes, and scenic walks.
+                </p>
 
-            <div className="step-card" style={{ "--i": 3 } as React.CSSProperties}>
-              <div className="step-card-num">04</div>
-              <h3 className="step-card-title">Explore on Map &amp; Reserve</h3>
-              <p className="step-card-desc">
-                View scored matches on an interactive map. Inspect photos, live open hours, weather fitness, and open turn-by-turn navigation in one tap.
-              </p>
-              <div className="step-tag-row">
-                <span className="step-mini-tag">Interactive Map</span>
-                <span className="step-mini-tag">Table Reservations</span>
+                {/* Step 1 Visual Mockup Preview */}
+                <div className="step-mockup">
+                  <div className="mockup-search-bar">
+                    <span className="mockup-search-icon">🔍</span>
+                    <span className="mockup-search-text">Indiranagar, Bengaluru</span>
+                    <span className="mockup-search-cursor" />
+                  </div>
+                  <div className="mockup-chips-row">
+                    <span className="mockup-chip active">✨ Indiranagar</span>
+                    <span className="mockup-chip">🌳 Cubbon Park</span>
+                    <span className="mockup-chip">☕ Koramangala</span>
+                  </div>
+                  <div className="mockup-stat-note">
+                    <span className="mockup-live-dot" />
+                    <span>790+ verified local spots</span>
+                  </div>
+                </div>
+
+                <div className="step-tag-row">
+                  <span className="step-mini-tag">⚡ Autocomplete Search</span>
+                  <span className="step-mini-tag">🏛️ Heritage &amp; Hubs</span>
+                </div>
+              </div>
+
+              {/* STEP 2 */}
+              <div className="step-card" style={{ "--i": 1 } as React.CSSProperties}>
+                <div className="step-header">
+                  <div className="step-badge">
+                    <span className="step-icon">🚗</span>
+                    <span className="step-num">02</span>
+                  </div>
+                  <span className="step-stage-pill">Road Routing</span>
+                </div>
+
+                <h3 className="step-card-title">Set Starting Point &amp; Mode</h3>
+                <p className="step-card-desc">
+                  Calculate authentic road network travel durations using live OSRM routing—never misleading straight-line distances.
+                </p>
+
+                {/* Step 2 Visual Mockup Preview */}
+                <div className="step-mockup">
+                  <div className="mockup-mode-switch">
+                    <span className="mockup-mode-btn active">🚗 16m</span>
+                    <span className="mockup-mode-btn">🚇 24m</span>
+                    <span className="mockup-mode-btn">🚲 28m</span>
+                    <span className="mockup-mode-btn">🚶 45m</span>
+                  </div>
+                  <div className="mockup-route-preview">
+                    <div className="mockup-route-line">
+                      <span className="mockup-route-dot start" />
+                      <span className="mockup-route-dash" />
+                      <span className="mockup-car-icon">🚗</span>
+                      <span className="mockup-route-dash" />
+                      <span className="mockup-route-dot end" />
+                    </div>
+                    <div className="mockup-route-labels">
+                      <span>Koramangala</span>
+                      <span className="mockup-route-dist">6.8 km · 100ft Rd</span>
+                      <span>Indiranagar</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="step-tag-row">
+                  <span className="step-mini-tag">🛣️ OSRM Road Router</span>
+                  <span className="step-mini-tag">⏱️ 4 Transit Modes</span>
+                </div>
+              </div>
+
+              {/* STEP 3 */}
+              <div className="step-card" style={{ "--i": 2 } as React.CSSProperties}>
+                <div className="step-header">
+                  <div className="step-badge">
+                    <span className="step-icon">👥</span>
+                    <span className="step-num">03</span>
+                  </div>
+                  <span className="step-stage-pill">Group Harmony</span>
+                </div>
+
+                <h3 className="step-card-title">Select Outing Vibe &amp; Group</h3>
+                <p className="step-card-desc">
+                  Choose your vibe—casual, romantic, or family. Multi-agent consensus balances everyone&apos;s budget and prevents vetoes.
+                </p>
+
+                {/* Step 3 Visual Mockup Preview */}
+                <div className="step-mockup">
+                  <div className="mockup-vibe-chips">
+                    <span className="mockup-vibe-tag active">🎉 Friends Hangout</span>
+                    <span className="mockup-vibe-tag">🍷 Romantic</span>
+                  </div>
+                  <div className="mockup-group-status">
+                    <div className="mockup-avatar-stack">
+                      <span className="mockup-avatar avatar-1" title="You">🧑</span>
+                      <span className="mockup-avatar avatar-2" title="Priya">👩</span>
+                      <span className="mockup-avatar avatar-3" title="Rahul">👨</span>
+                      <span className="mockup-avatar avatar-count">+2</span>
+                    </div>
+                    <div className="mockup-harmony-metric">
+                      <span className="mockup-harmony-pct">96% Harmony</span>
+                      <span className="mockup-harmony-desc">Zero Vetoes</span>
+                    </div>
+                  </div>
+                  <div className="mockup-budget-preview">
+                    <span>🪙 Budget Match:</span>
+                    <span className="mockup-budget-pill">₹150 – ₹350 / person</span>
+                  </div>
+                </div>
+
+                <div className="step-tag-row">
+                  <span className="step-mini-tag">⚖️ Least Misery AI</span>
+                  <span className="step-mini-tag">🏷️ 4 Budget Tiers</span>
+                </div>
+              </div>
+
+              {/* STEP 4 */}
+              <div className="step-card" style={{ "--i": 3 } as React.CSSProperties}>
+                <div className="step-header">
+                  <div className="step-badge">
+                    <span className="step-icon">🗺️</span>
+                    <span className="step-num">04</span>
+                  </div>
+                  <span className="step-stage-pill">Map &amp; Reserve</span>
+                </div>
+
+                <h3 className="step-card-title">Explore on Map &amp; Reserve</h3>
+                <p className="step-card-desc">
+                  Inspect scored matches on an interactive map. Check verified hours, weather fitness, and reserve or navigate in one tap.
+                </p>
+
+                {/* Step 4 Visual Mockup Preview */}
+                <div className="step-mockup mockup-spot-card">
+                  <div className="mockup-spot-header">
+                    <div className="mockup-spot-thumb">
+                      <span>🍺</span>
+                    </div>
+                    <div className="mockup-spot-info">
+                      <div className="mockup-spot-name">Toit Brewpub</div>
+                      <div className="mockup-spot-meta">⭐ 4.8 · Craft Brewery</div>
+                    </div>
+                    <span className="mockup-match-pill">96%</span>
+                  </div>
+                  <div className="mockup-spot-status">
+                    <span className="mockup-open-dot" />
+                    <span>Open Now · Closes 11:30 PM</span>
+                  </div>
+                  <div className="mockup-spot-actions">
+                    <span className="mockup-action-btn primary">🧭 Directions</span>
+                    <span className="mockup-action-btn">📅 Reserve</span>
+                  </div>
+                </div>
+
+                <div className="step-tag-row">
+                  <span className="step-mini-tag">🗺️ Interactive Map</span>
+                  <span className="step-mini-tag">📲 One-Tap Nav</span>
+                </div>
               </div>
             </div>
           </div>
